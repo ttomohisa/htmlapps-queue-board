@@ -722,7 +722,7 @@
     }
 
 
-    /* Queue Board v0.3.0 multi counter */
+    /* Queue Board multi counter */
     .counter-setup {
       margin: 20px 0 0;
       padding: 18px;
@@ -896,6 +896,297 @@
       .counter-current-number.pulse { animation: none; }
     }
 
+
+    /* Queue Board v0.4.0 display board */
+    .session-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+    .display-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 32px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--surface-muted);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .display-status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line-strong); }
+    .display-status.connected { background: var(--accent-soft); color: var(--accent); }
+    .display-status.connected .display-status-dot { background: var(--accent); }
+    .display-settings {
+      margin-top: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+      overflow: hidden;
+    }
+    .display-settings summary {
+      padding: 12px 14px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      cursor: pointer;
+    }
+    .display-settings[open] summary { border-bottom: 1px solid var(--line); color: var(--text); }
+    .display-settings-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(150px, .8fr);
+      gap: 12px;
+      padding: 14px;
+    }
+    .text-input {
+      width: 100%;
+      min-height: 46px;
+      padding: 9px 11px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-weight: 750;
+    }
+    .checkbox-field {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 46px;
+      padding: 9px 11px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 750;
+    }
+    .checkbox-field input { width: 18px; height: 18px; accent-color: var(--accent); }
+    .display-board {
+      box-sizing: border-box;
+      width: 100%;
+      min-height: 100dvh;
+      padding: clamp(20px, 3vw, 42px);
+      background: #f7f8f6;
+      color: #14211e;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: clamp(20px, 3vw, 40px);
+    }
+    .display-board-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+    }
+    .display-board-title {
+      margin: 0;
+      max-width: 80vw;
+      font-size: clamp(26px, 4vw, 52px);
+      line-height: 1.15;
+      letter-spacing: -.025em;
+      overflow-wrap: anywhere;
+    }
+    .display-board-sync {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      flex: 0 0 auto;
+      color: #61706b;
+      font-size: clamp(11px, 1.3vw, 14px);
+      font-weight: 800;
+    }
+    .display-board-sync-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #9fa9a5;
+    }
+    .display-board-sync.connected .display-board-sync-dot { background: var(--accent); }
+    .display-current-wrap {
+      display: grid;
+      align-content: center;
+      gap: clamp(18px, 3vw, 34px);
+      min-height: 0;
+    }
+    .display-current-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(14px, 2vw, 26px);
+      align-items: stretch;
+    }
+    .display-current-grid[data-count="1"] { grid-template-columns: minmax(0, 1fr); }
+    .display-current-grid[data-count="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .display-current-grid[data-count="4"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .display-call-card {
+      min-width: 0;
+      min-height: clamp(230px, 34vh, 390px);
+      padding: clamp(18px, 2.4vw, 34px);
+      border: 2px solid color-mix(in srgb, var(--accent) 20%, #d8dfdc);
+      border-radius: clamp(18px, 2vw, 28px);
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      box-shadow: 0 12px 36px rgba(17, 50, 41, .08);
+    }
+    .display-call-number {
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      font-size: clamp(88px, 15vw, 220px);
+      font-weight: 950;
+      line-height: .9;
+      letter-spacing: .035em;
+    }
+    .display-current-grid[data-count="2"] .display-call-number,
+    .display-current-grid[data-count="3"] .display-call-number,
+    .display-current-grid[data-count="4"] .display-call-number {
+      font-size: clamp(66px, 10vw, 150px);
+    }
+    .display-call-counter {
+      margin-top: clamp(14px, 2vw, 24px);
+      color: #263934;
+      font-size: clamp(22px, 3.4vw, 44px);
+      font-weight: 850;
+      overflow-wrap: anywhere;
+    }
+    .display-call-card.changed { animation: displayNumberChange .42s ease; }
+    @keyframes displayNumberChange {
+      0% { transform: scale(.96); opacity: .55; }
+      55% { transform: scale(1.025); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .display-idle {
+      display: grid;
+      place-items: center;
+      min-height: clamp(260px, 50vh, 520px);
+      padding: 30px;
+      border: 2px dashed #cad3cf;
+      border-radius: 26px;
+      text-align: center;
+      background: rgba(255,255,255,.6);
+    }
+    .display-idle strong {
+      display: block;
+      font-size: clamp(34px, 5vw, 68px);
+      line-height: 1.2;
+    }
+    .display-idle span {
+      display: block;
+      margin-top: 10px;
+      color: #61706b;
+      font-size: clamp(15px, 2vw, 24px);
+    }
+    .display-bottom {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: clamp(16px, 2vw, 28px);
+      align-items: end;
+    }
+    .display-recent-title {
+      margin: 0 0 10px;
+      color: #61706b;
+      font-size: clamp(14px, 1.8vw, 20px);
+      font-weight: 850;
+    }
+    .display-recent-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      min-height: 46px;
+    }
+    .display-recent-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 46px;
+      padding: 8px 13px;
+      border-radius: 12px;
+      background: #eaf2ef;
+      color: #193c33;
+      font-size: clamp(18px, 2.4vw, 30px);
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+    .display-recent-chip small { color: #52635e; font-size: .55em; font-weight: 800; }
+    .display-waiting {
+      min-width: 150px;
+      padding: 13px 17px;
+      border-radius: 14px;
+      background: #fff;
+      text-align: right;
+      box-shadow: 0 8px 24px rgba(17, 50, 41, .06);
+    }
+    .display-waiting-label { color: #61706b; font-size: clamp(12px, 1.5vw, 16px); font-weight: 800; }
+    .display-waiting-value {
+      display: block;
+      margin-top: 2px;
+      color: var(--accent);
+      font-size: clamp(32px, 4vw, 56px);
+      font-weight: 950;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+    .display-ended {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      background: #f7f8f6;
+      text-align: center;
+    }
+    .display-ended-card { max-width: 720px; }
+    .display-ended-card strong {
+      display: block;
+      font-size: clamp(36px, 6vw, 72px);
+      line-height: 1.15;
+    }
+    .display-ended-card span {
+      display: block;
+      margin-top: 14px;
+      color: #61706b;
+      font-size: clamp(16px, 2vw, 24px);
+    }
+    body.display-mode { margin: 0; background: #f7f8f6; overflow: auto; }
+    body.display-mode > header,
+    body.display-mode > footer,
+    body.display-mode > .app-toast,
+    body.display-mode > dialog { display: none !important; }
+    body.display-mode .main.queue-main { width: 100%; max-width: none; min-height: 100dvh; padding: 0; margin: 0; }
+    body.display-mode .queue-intro,
+    body.display-mode #setupView,
+    body.display-mode #operatorView { display: none !important; }
+    body.display-mode #displayView { display: grid !important; }
+    @media (max-width: 760px) {
+      .session-actions { width: 100%; justify-content: stretch; }
+      .session-actions .button { flex: 1 1 auto; }
+      .display-settings-grid { grid-template-columns: 1fr; }
+      .display-current-grid,
+      .display-current-grid[data-count="2"],
+      .display-current-grid[data-count="3"],
+      .display-current-grid[data-count="4"] { grid-template-columns: 1fr; }
+      .display-call-card { min-height: 210px; }
+      .display-bottom { grid-template-columns: 1fr; }
+      .display-waiting { text-align: left; }
+    }
+    @media (orientation: landscape) and (max-height: 650px) {
+      .display-board { padding: 16px 22px; gap: 14px; }
+      .display-board-title { font-size: clamp(22px, 3vw, 34px); }
+      .display-call-card { min-height: 150px; padding: 14px; }
+      .display-call-number { font-size: clamp(66px, 15vh, 118px); }
+      .display-current-grid[data-count="2"] .display-call-number,
+      .display-current-grid[data-count="3"] .display-call-number,
+      .display-current-grid[data-count="4"] .display-call-number { font-size: clamp(54px, 13vh, 94px); }
+      .display-call-counter { margin-top: 8px; font-size: clamp(18px, 4vh, 28px); }
+      .display-recent-chip { min-height: 38px; font-size: clamp(16px, 3vh, 24px); }
+      .display-waiting-value { font-size: clamp(28px, 6vh, 42px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .display-call-card.changed { animation: none; }
+    }
+
   </style>
 </head>
 <body>
@@ -931,7 +1222,7 @@
       </div>
     </section>
 
-    <!-- APP:BEGIN Queue Board v0.3.0 multi counter -->
+    <!-- APP:BEGIN Queue Board v0.4.0 display board -->
     <section class="queue-card setup-card" id="setupView" aria-labelledby="setupTitle">
       <h2 id="setupTitle" data-i18n="setupTitle">受付を始める</h2>
       <p data-i18n="setupBody">開始番号と窓口を設定します。窓口は1〜4個まで使えます。</p>
@@ -960,6 +1251,31 @@
           </div>
         </fieldset>
 
+        <details class="display-settings">
+          <summary data-i18n="displaySettings">表示画面の設定</summary>
+          <div class="display-settings-grid">
+            <label class="field" for="displayTitleInput">
+              <span class="field-label" data-i18n="displayTitleLabel">表示タイトル</span>
+              <input class="text-input" id="displayTitleInput" type="text" maxlength="40" autocomplete="off" value="お呼びしています">
+            </label>
+            <label class="field" for="recentCallCount">
+              <span class="field-label" data-i18n="recentCallCountLabel">最近呼んだ番号</span>
+              <select class="select-input" id="recentCallCount">
+                <option value="0" data-i18n="recentNone">表示しない</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </label>
+            <label class="checkbox-field" for="showWaitingCount">
+              <input id="showWaitingCount" type="checkbox" checked>
+              <span data-i18n="showWaitingCountLabel">待ち人数を表示</span>
+            </label>
+          </div>
+        </details>
+
         <div class="setup-actions">
           <button class="button primary large with-icon" type="submit">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -979,10 +1295,20 @@
             <div class="session-meta"><span data-i18n="startedAt">開始</span>: <span id="sessionStartedAt">--:--</span> · <span id="sessionCounterSummary">1窓口</span></div>
           </div>
         </div>
-        <button class="button danger with-icon" id="resetButton" type="button">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4v6h6"/><path d="M5.5 15a7 7 0 1 0 1.7-7.2L4 10"/></svg>
-          <span data-i18n="resetSession">受付をリセット</span>
-        </button>
+        <div class="session-actions">
+          <span class="display-status" id="operatorDisplayStatus">
+            <span class="display-status-dot" aria-hidden="true"></span>
+            <span id="operatorDisplayStatusText" data-i18n="displayDisconnected">表示画面 未接続</span>
+          </span>
+          <button class="button with-icon" id="openDisplayButton" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            <span data-i18n="openDisplay">表示画面を開く</span>
+          </button>
+          <button class="button danger with-icon" id="resetButton" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4v6h6"/><path d="M5.5 15a7 7 0 1 0 1.7-7.2L4 10"/></svg>
+            <span data-i18n="resetSession">受付をリセット</span>
+          </button>
+        </div>
       </div>
 
       <div class="metrics" aria-live="polite">
@@ -1060,6 +1386,41 @@
       </section>
       <div class="sr-only" id="liveStatus" aria-live="polite" aria-atomic="true"></div>
     </section>
+
+    <section class="display-board" id="displayView" hidden aria-labelledby="displayBoardTitle">
+      <div class="display-board-top">
+        <h1 class="display-board-title" id="displayBoardTitle">お呼びしています</h1>
+        <div class="display-board-sync" id="displayBoardSync">
+          <span class="display-board-sync-dot" aria-hidden="true"></span>
+          <span id="displayBoardSyncText">接続待ち</span>
+        </div>
+      </div>
+      <div class="display-current-wrap">
+        <div class="display-current-grid" id="displayCurrentGrid" data-count="0"></div>
+        <div class="display-idle" id="displayIdle">
+          <div>
+            <strong data-i18n="displayIdleTitle">呼び出しをお待ちください</strong>
+            <span data-i18n="displayIdleBody">番号が呼ばれると、ここに大きく表示されます。</span>
+          </div>
+        </div>
+      </div>
+      <div class="display-bottom">
+        <section id="displayRecentSection">
+          <h2 class="display-recent-title" data-i18n="recentCallsTitle">最近お呼びした番号</h2>
+          <div class="display-recent-list" id="displayRecentList"></div>
+        </section>
+        <div class="display-waiting" id="displayWaiting">
+          <span class="display-waiting-label" data-i18n="displayWaitingLabel">待ち人数</span>
+          <strong class="display-waiting-value" id="displayWaitingValue">0</strong>
+        </div>
+      </div>
+      <div class="display-ended" id="displayEnded" hidden>
+        <div class="display-ended-card">
+          <strong data-i18n="displayEndedTitle">表示を終了しました</strong>
+          <span data-i18n="displayEndedBody">Operator画面から再び表示画面を開くと再接続できます。</span>
+        </div>
+      </div>
+    </section>
     <!-- APP:END -->
   </main>
 
@@ -1094,24 +1455,24 @@
       </button>
     </div>
     <div class="dialog-body">
-      <!-- APP:HELP:BEGIN Queue Board v0.3.0 -->
+      <!-- APP:HELP:BEGIN Queue Board v0.4.0 -->
       <h3 data-i18n="helpBasicsTitle">基本操作</h3>
       <ol>
-        <li data-i18n="helpStep1">開始番号と窓口数、必要なら各窓口名を設定して受付を開始します。</li>
+        <li data-i18n="helpStep1">開始番号と窓口数、必要なら各窓口名と表示画面設定を決めて受付を開始します。</li>
         <li data-i18n="helpStep2">「番号を発行」、または手動追加で待ち列へ番号を登録します。</li>
-        <li data-i18n="helpStep3">空いている窓口の「次を呼ぶ」で、待ち列の先頭番号をその窓口へ割り当てます。</li>
-        <li data-i18n="helpStep4">窓口ごとに再呼び出し、完了、不在、削除を操作できます。</li>
-        <li data-i18n="helpStep5">不在番号は待ち列の末尾へ戻せます。待機中・不在の削除は直後ならUndoできます。</li>
+        <li data-i18n="helpStep3">「表示画面を開く」で待合向けDisplayを別ウィンドウに開きます。外部モニターへ移動して使えます。</li>
+        <li data-i18n="helpStep4">空いている窓口の「次を呼ぶ」で、Displayへ番号と窓口がリアルタイム反映されます。</li>
+        <li data-i18n="helpStep5">Displayを閉じてもOperatorは継続できます。再度「表示画面を開く」で現在状態へ再接続します。</li>
       </ol>
       <h3 data-i18n="helpPrivacyTitle">プライバシー</h3>
-      <p data-i18n="helpPrivacyBody">Ticket番号、窓口設定、操作状態はこのページ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。</p>
-      <h3 data-i18n="helpNotesTitle">v0.3.0 の範囲</h3>
+      <p data-i18n="helpPrivacyBody">Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。</p>
+      <h3 data-i18n="helpNotesTitle">v0.4.0 の範囲</h3>
       <ul>
-        <li data-i18n="helpNoteCounters">1〜4窓口を1画面で操作できます。各窓口は同じ待ち列から別々のTicketを取得します。</li>
+        <li data-i18n="helpNoteDisplay">DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。別端末への送信は行いません。</li>
+        <li data-i18n="helpNoteNoSound">チャイム、全画面表示、Wake Lockは次のマイルストーンで追加します。</li>
         <li data-i18n="helpNoteNoRecovery">自動保存とSession復旧はまだありません。再読み込み・タブを閉じる・リセットで現在の受付状態は失われます。</li>
-        <li data-i18n="helpNoteLater">Display、CSV、印刷はv0.3.0には含みません。</li>
       </ul>
-      <p class="dialog-note" data-i18n="helpOffline">配布用HTMLは実行時の外部通信を必要とせず、入力した番号や窓口設定を外部へ送信しません。</p>
+      <p class="dialog-note" data-i18n="helpOffline">配布用HTMLは実行時の外部通信を必要とせず、Display同期もブラウザ内だけで行います。</p>
       <!-- APP:HELP:END -->
     </div>
   </dialog>
@@ -1239,6 +1600,25 @@
           counterCountLabel: '窓口数',
           counterCountHelp: '同じ画面で最大4窓口まで操作できます。',
           counterNameLabel: '窓口 {number} の名前',
+          displaySettings: '表示画面の設定',
+          displayTitleLabel: '表示タイトル',
+          recentCallCountLabel: '最近呼んだ番号',
+          recentNone: '表示しない',
+          showWaitingCountLabel: '待ち人数を表示',
+          displayDisconnected: '表示画面 未接続',
+          displayConnected: '表示画面 接続中',
+          openDisplay: '表示画面を開く',
+          displayOpenFailed: '表示画面を開けませんでした。ブラウザでポップアップがブロックされている可能性があります。',
+          displayOpened: '表示画面を開きました。',
+          displayReconnected: '表示画面へ再接続しました。',
+          displayWaitingConnection: '接続待ち',
+          displayLive: 'Operatorと同期中',
+          displayIdleTitle: '呼び出しをお待ちください',
+          displayIdleBody: '番号が呼ばれると、ここに大きく表示されます。',
+          recentCallsTitle: '最近お呼びした番号',
+          displayWaitingLabel: '待ち人数',
+          displayEndedTitle: '表示を終了しました',
+          displayEndedBody: 'Operator画面から再び表示画面を開くと再接続できます。',
           startSession: '受付を開始',
           setupNote: 'この開発段階では受付状態を自動保存しません。ページを再読み込みすると現在のSessionは失われます。',
           sessionRunning: '受付中', startedAt: '開始', resetSession: '受付をリセット',
@@ -1256,18 +1636,19 @@
           absentEmptyTitle: '不在の番号はありません。', absentEmptyBody: '呼び出し中の番号を「不在」にすると、ここへ移動します。',
           returnToWaiting: '待ち列へ戻す', acceptedAt: '受付', calls: '呼出',
           helpBasicsTitle: '基本操作',
-          helpStep1: '開始番号と窓口数、必要なら各窓口名を設定して受付を開始します。',
+          helpStep1: '開始番号と窓口数、必要なら各窓口名と表示画面設定を決めて受付を開始します。',
           helpStep2: '「番号を発行」、または手動追加で待ち列へ番号を登録します。',
-          helpStep3: '空いている窓口の「次を呼ぶ」で、待ち列の先頭番号をその窓口へ割り当てます。',
-          helpStep4: '窓口ごとに再呼び出し、完了、不在、削除を操作できます。',
-          helpStep5: '不在番号は待ち列の末尾へ戻せます。待機中・不在の削除は直後ならUndoできます。',
+          helpStep3: '「表示画面を開く」で待合向けDisplayを別ウィンドウに開きます。外部モニターへ移動して使えます。',
+          helpStep4: '空いている窓口の「次を呼ぶ」で、Displayへ番号と窓口がリアルタイム反映されます。',
+          helpStep5: 'Displayを閉じてもOperatorは継続できます。再度「表示画面を開く」で現在状態へ再接続します。',
           helpPrivacyTitle: 'プライバシー',
-          helpPrivacyBody: 'Ticket番号、窓口設定、操作状態はこのページ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。',
-          helpNotesTitle: 'v0.3.0 の範囲',
-          helpNoteCounters: '1〜4窓口を1画面で操作できます。各窓口は同じ待ち列から別々のTicketを取得します。',
+          helpPrivacyBody: 'Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。',
+          helpNotesTitle: 'v0.4.0 の範囲',
+          helpNoteDisplay: 'DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。別端末への送信は行いません。',
+          helpNoteNoSound: 'チャイム、全画面表示、Wake Lockは次のマイルストーンで追加します。',
           helpNoteNoRecovery: '自動保存とSession復旧はまだありません。再読み込み・タブを閉じる・リセットで現在の受付状態は失われます。',
-          helpNoteLater: 'Display、CSV、印刷はv0.3.0には含みません。',
-          helpOffline: '配布用HTMLは実行時の外部通信を必要とせず、入力した番号や窓口設定を外部へ送信しません。',
+
+          helpOffline: '配布用HTMLは実行時の外部通信を必要とせず、Display同期もブラウザ内だけで行います。',
           footer: '番号を発行して順番に呼び出すローカルツール',
           confirmTitle: '確認', confirmAction: '実行する', cancel: 'キャンセル',
           resetTitle: '受付をリセットしますか？', resetBody: '現在の受付番号と状態を破棄して、開始画面へ戻ります。', resetConfirm: 'リセット',
@@ -1306,6 +1687,25 @@
           counterCountLabel: 'Number of counters',
           counterCountHelp: 'Operate up to four counters from the same screen.',
           counterNameLabel: 'Counter {number} name',
+          displaySettings: 'Display settings',
+          displayTitleLabel: 'Display title',
+          recentCallCountLabel: 'Recent calls',
+          recentNone: 'Do not show',
+          showWaitingCountLabel: 'Show waiting count',
+          displayDisconnected: 'Display disconnected',
+          displayConnected: 'Display connected',
+          openDisplay: 'Open display',
+          displayOpenFailed: 'The display window could not be opened. Your browser may be blocking pop-ups.',
+          displayOpened: 'Display window opened.',
+          displayReconnected: 'Display reconnected.',
+          displayWaitingConnection: 'Waiting for connection',
+          displayLive: 'Synced with Operator',
+          displayIdleTitle: 'Please wait to be called',
+          displayIdleBody: 'Called numbers will appear here in large type.',
+          recentCallsTitle: 'Recently called',
+          displayWaitingLabel: 'Waiting',
+          displayEndedTitle: 'Display ended',
+          displayEndedBody: 'Open the display again from the Operator screen to reconnect.',
           startSession: 'Start reception',
           setupNote: 'This development version does not save an active session yet. Reloading the page loses the current session.',
           sessionRunning: 'Reception in progress', startedAt: 'Started', resetSession: 'Reset reception',
@@ -1323,18 +1723,19 @@
           absentEmptyTitle: 'No absent numbers.', absentEmptyBody: 'Mark an active ticket Absent to move it here.',
           returnToWaiting: 'Return to queue', acceptedAt: 'Issued', calls: 'Calls',
           helpBasicsTitle: 'Basics',
-          helpStep1: 'Set the starting number, counter count, and optional counter names, then start reception.',
+          helpStep1: 'Set the starting number, counter count, optional counter names, and Display settings, then start reception.',
           helpStep2: 'Use Issue number or manual entry to add a ticket to the waiting queue.',
-          helpStep3: 'Use Call next at any available counter to assign the first waiting ticket to that counter.',
-          helpStep4: 'Recall, complete, mark absent, or delete independently at each counter.',
-          helpStep5: 'Absent tickets can return to the end of the queue. Waiting and absent deletions can be undone immediately.',
+          helpStep3: 'Use Open display to launch the waiting-room Display in a separate window that can be moved to an external monitor.',
+          helpStep4: 'Use Call next at any available counter and the number and Counter will update on the Display in real time.',
+          helpStep5: 'Closing the Display does not stop the Operator. Open it again to reconnect to the current state.',
           helpPrivacyTitle: 'Privacy',
-          helpPrivacyBody: 'Ticket numbers, counter settings, and queue state are processed inside this page. The app uses no external API, analytics, or telemetry and does not send session data outside.',
-          helpNotesTitle: 'v0.3.0 scope',
-          helpNoteCounters: 'Operate one to four counters on one screen. Each counter takes a different Ticket from the same waiting queue.',
+          helpPrivacyBody: 'Ticket numbers, Counter settings, Display settings, and queue state are processed inside the same browser. The app uses no external API, analytics, or telemetry and does not send session data outside.',
+          helpNotesTitle: 'v0.4.0 scope',
+          helpNoteDisplay: 'The Display syncs in a separate window of the same browser. It does not transmit data to another device.',
+          helpNoteNoSound: 'Chime, fullscreen, and Wake Lock are planned for the next milestone.',
           helpNoteNoRecovery: 'Autosave and session recovery are not implemented yet. Reloading, closing the tab, or resetting loses the current queue.',
-          helpNoteLater: 'Display, CSV export, and printing are not part of v0.3.0.',
-          helpOffline: 'The distributable HTML needs no runtime external network access and does not send entered numbers or counter settings outside.',
+
+          helpOffline: 'The distributable HTML needs no runtime external network access, and Display synchronization stays inside the browser.',
           footer: 'Local tool for issuing numbers and calling them in order',
           confirmTitle: 'Confirm', confirmAction: 'Continue', cancel: 'Cancel',
           resetTitle: 'Reset reception?', resetBody: 'Discard the current ticket numbers and state, then return to the start screen.', resetConfirm: 'Reset',
@@ -1368,6 +1769,16 @@
       let lastIssuedId = null;
       let counterDraftNames = ['', '', '', ''];
       let counterDraftCustom = [false, false, false, false];
+      const displayMode = location.hash === '#display' || location.hash.startsWith('#display=');
+      const displaySessionKey = displayMode && location.hash.startsWith('#display=') ? decodeURIComponent(location.hash.slice('#display='.length)) : '';
+      const displayChannelBase = APP_CONFIG.slug + ':display:v1:';
+      const displayWindowName = APP_CONFIG.slug + '-display';
+      let displayWindow = null;
+      let displayConnected = false;
+      let displayChannel = null;
+      let lastDisplaySnapshot = null;
+      let lastDisplaySignature = '';
+      let displayTitleCustom = false;
 
       function readStorage(key) {
         try { return localStorage.getItem(key); } catch { return null; }
@@ -1396,6 +1807,9 @@
       }
       function defaultCounterName(index) {
         return language === 'ja' ? '窓口 ' + (index + 1) : 'Counter ' + (index + 1);
+      }
+      function defaultDisplayTitle() {
+        return language === 'ja' ? 'お呼びしています' : 'Now calling';
       }
 
       const AppConfirm = (() => {
@@ -1578,14 +1992,16 @@
           endedAt: null,
           nextNumber: startNumber,
           digits: 3,
-          title: language === 'ja' ? 'お呼びしています' : 'Now calling',
+          title: $('#displayTitleInput').value.trim() || defaultDisplayTitle(),
           counters,
           tickets: [],
           usedNumbers: [],
           soundEnabled: false,
-          showWaitingCount: true
+          showWaitingCount: $('#showWaitingCount').checked,
+          recentCallCount: Math.min(5, Math.max(0, Number($('#recentCallCount').value) || 0))
         };
         lastIssuedId = null;
+        setupDisplayChannel();
         render();
         announce(translate('sessionStarted', { count: counters.length }), { tone: 'success' });
         $('#issueButton').focus();
@@ -1779,12 +2195,17 @@
           tone: 'danger'
         });
         if (!ok) return;
+        sendDisplayEnded();
         session = null;
         lastIssuedId = null;
         counterDraftNames = ['', '', '', ''];
         counterDraftCustom = [false, false, false, false];
+        displayTitleCustom = false;
         $('#startNumber').value = '001';
         $('#counterCount').value = '1';
+        $('#displayTitleInput').value = defaultDisplayTitle();
+        $('#showWaitingCount').checked = true;
+        $('#recentCallCount').value = '3';
         $('#manualNumber').value = '';
         $('#manualNumberError').textContent = '';
         renderCounterSetupFields();
@@ -1922,7 +2343,261 @@
         void element.offsetWidth;
         element.classList.add('pulse');
       }
+      function createDisplaySnapshot() {
+        if (!session) return null;
+        const waiting = session.tickets.filter(ticket => ticket.status === 'waiting');
+        const current = session.counters.map(counter => {
+          const ticket = currentTicket(counter.id);
+          return ticket ? {
+            counterId: counter.id,
+            counterName: counter.name,
+            ticketId: ticket.id,
+            number: ticket.displayNumber,
+            callCount: ticket.callCount,
+            lastCalledAt: ticket.lastCalledAt || ticket.calledAt || 0
+          } : null;
+        }).filter(Boolean);
+        const activeIds = new Set(current.map(item => item.ticketId));
+        const recent = session.tickets
+          .filter(ticket => (ticket.lastCalledAt || ticket.calledAt) && !activeIds.has(ticket.id))
+          .sort((a, b) => (b.lastCalledAt || b.calledAt || 0) - (a.lastCalledAt || a.calledAt || 0))
+          .slice(0, session.recentCallCount)
+          .map(ticket => {
+            const counter = session.counters.find(item => item.id === ticket.counterId);
+            return {
+              ticketId: ticket.id,
+              number: ticket.displayNumber,
+              counterName: counter?.name || '',
+              calledAt: ticket.lastCalledAt || ticket.calledAt || 0
+            };
+          });
+        return {
+          schemaVersion: 1,
+          sessionId: session.id,
+          language,
+          ended: false,
+          title: session.title,
+          waitingCount: waiting.length,
+          showWaitingCount: session.showWaitingCount,
+          recentCallCount: session.recentCallCount,
+          current,
+          recent
+        };
+      }
+      function safeDisplayWindow() {
+        if (!displayWindow || displayWindow.closed) {
+          displayWindow = null;
+          return null;
+        }
+        try {
+          const currentUrl = displayWindow.location.href.split('#')[0];
+          const expectedUrl = location.href.split('#')[0];
+          if (currentUrl !== expectedUrl) {
+            displayWindow = null;
+            displayConnected = false;
+            return null;
+          }
+        } catch {
+          displayWindow = null;
+          displayConnected = false;
+          return null;
+        }
+        return displayWindow;
+      }
+      function postDisplayMessage(message) {
+        const target = safeDisplayWindow();
+        if (target) {
+          const targetOrigin = location.protocol === 'file:' ? '*' : location.origin;
+          try { target.postMessage(message, targetOrigin); } catch { }
+        }
+        if (displayChannel) {
+          try { displayChannel.postMessage(message); } catch { }
+        }
+      }
+      function syncDisplayState(force = false) {
+        if (displayMode || !session) return;
+        const snapshot = createDisplaySnapshot();
+        if (!snapshot) return;
+        const signature = JSON.stringify(snapshot);
+        if (!force && signature === lastDisplaySignature) {
+          renderOperatorDisplayStatus();
+          return;
+        }
+        lastDisplaySignature = signature;
+        lastDisplaySnapshot = snapshot;
+        postDisplayMessage({ type: 'queue-board-state', snapshot });
+        renderOperatorDisplayStatus();
+      }
+      function sendDisplayEnded() {
+        if (displayMode) return;
+        const snapshot = session ? createDisplaySnapshot() : lastDisplaySnapshot;
+        postDisplayMessage({
+          type: 'queue-board-state',
+          snapshot: {
+            ...(snapshot || { schemaVersion: 1, language, title: defaultDisplayTitle(), current: [], recent: [], waitingCount: 0, showWaitingCount: true }),
+            language,
+            ended: true
+          }
+        });
+        lastDisplaySignature = '';
+      }
+      function renderOperatorDisplayStatus() {
+        if (displayMode) return;
+        const status = $('#operatorDisplayStatus');
+        const text = $('#operatorDisplayStatusText');
+        if (!status || !text) return;
+        const connected = Boolean(displayConnected && safeDisplayWindow());
+        status.classList.toggle('connected', connected);
+        text.textContent = translate(connected ? 'displayConnected' : 'displayDisconnected');
+      }
+      function openDisplayWindow() {
+        if (!session) return;
+        const url = location.href.split('#')[0] + '#display=' + encodeURIComponent(session.id);
+        const existing = safeDisplayWindow();
+        if (existing) {
+          try { existing.focus(); } catch { }
+          syncDisplayState(true);
+          announce(translate('displayReconnected'), { tone: 'success' });
+          return;
+        }
+        const opened = window.open(url, displayWindowName);
+        if (!opened) {
+          displayWindow = null;
+          displayConnected = false;
+          renderOperatorDisplayStatus();
+          announce(translate('displayOpenFailed'), { tone: 'warning', duration: 5200 });
+          return;
+        }
+        displayWindow = opened;
+        displayConnected = false;
+        renderOperatorDisplayStatus();
+        announce(translate('displayOpened'));
+      }
+      function setupDisplayChannel() {
+        const channelKey = displayMode ? displaySessionKey : session?.id || '';
+        if (displayChannel) {
+          try { displayChannel.close(); } catch { }
+          displayChannel = null;
+        }
+        if (!channelKey || typeof BroadcastChannel !== 'function') return;
+        try {
+          displayChannel = new BroadcastChannel(displayChannelBase + channelKey);
+          displayChannel.addEventListener('message', event => handleDisplayTransportMessage(event.data, null, 'broadcast'));
+        } catch {
+          displayChannel = null;
+        }
+      }
+      function handleDisplayTransportMessage(data, source, transport) {
+        if (!data || typeof data !== 'object') return;
+        if (data.type === 'queue-board-display-ready' && !displayMode) {
+          if (transport === 'window' && displayWindow && source !== displayWindow) return;
+          displayConnected = true;
+          renderOperatorDisplayStatus();
+          syncDisplayState(true);
+          return;
+        }
+        if (data.type === 'queue-board-display-closing' && !displayMode) {
+          if (transport === 'window' && displayWindow && source !== displayWindow) return;
+          displayConnected = false;
+          renderOperatorDisplayStatus();
+          return;
+        }
+        if (data.type === 'queue-board-state' && displayMode && data.snapshot) {
+          if (transport === 'window' && window.opener && source !== window.opener) return;
+          renderDisplaySnapshot(data.snapshot);
+        }
+      }
+      function notifyDisplayReady() {
+        if (!displayMode) return;
+        const message = { type: 'queue-board-display-ready' };
+        if (window.opener && !window.opener.closed) {
+          const targetOrigin = location.protocol === 'file:' ? '*' : location.origin;
+          try { window.opener.postMessage(message, targetOrigin); } catch { }
+        }
+        if (displayChannel) {
+          try { displayChannel.postMessage(message); } catch { }
+        }
+      }
+      function notifyDisplayClosing() {
+        if (!displayMode) return;
+        const message = { type: 'queue-board-display-closing' };
+        if (window.opener && !window.opener.closed) {
+          const targetOrigin = location.protocol === 'file:' ? '*' : location.origin;
+          try { window.opener.postMessage(message, targetOrigin); } catch { }
+        }
+        if (displayChannel) {
+          try { displayChannel.postMessage(message); } catch { }
+        }
+      }
+      function renderDisplaySnapshot(snapshot) {
+        if (!displayMode || !snapshot) return;
+        lastDisplaySnapshot = snapshot;
+        if (snapshot.language === 'ja' || snapshot.language === 'en') language = snapshot.language;
+        document.documentElement.lang = language;
+        document.title = (snapshot.title || defaultDisplayTitle()) + ' | ' + (language === 'ja' ? APP_CONFIG.nameJa : APP_CONFIG.name);
+        $('#displayBoardTitle').textContent = snapshot.title || defaultDisplayTitle();
+        const sync = $('#displayBoardSync');
+        sync.classList.add('connected');
+        $('#displayBoardSyncText').textContent = translate('displayLive');
+        $('#displayEnded').hidden = !snapshot.ended;
+        if (snapshot.ended) return;
+
+        const current = Array.isArray(snapshot.current) ? snapshot.current : [];
+        const grid = $('#displayCurrentGrid');
+        const previousSignature = grid.dataset.signature || '';
+        const currentSignature = current.map(item => item.ticketId + ':' + item.callCount + ':' + item.counterId).join('|');
+        grid.dataset.count = String(current.length);
+        grid.dataset.signature = currentSignature;
+        grid.replaceChildren();
+        current.forEach(item => {
+          const card = document.createElement('section');
+          card.className = 'display-call-card' + (previousSignature !== currentSignature ? ' changed' : '');
+          const number = document.createElement('div');
+          number.className = 'display-call-number';
+          number.textContent = item.number;
+          const counter = document.createElement('div');
+          counter.className = 'display-call-counter';
+          counter.textContent = item.counterName;
+          card.append(number, counter);
+          grid.append(card);
+        });
+        $('#displayIdle').hidden = current.length > 0;
+
+        const recent = Array.isArray(snapshot.recent) ? snapshot.recent : [];
+        const recentSection = $('#displayRecentSection');
+        const recentList = $('#displayRecentList');
+        recentList.replaceChildren();
+        recent.forEach(item => {
+          const chip = document.createElement('span');
+          chip.className = 'display-recent-chip';
+          const number = document.createElement('span');
+          number.textContent = item.number;
+          chip.append(number);
+          if (item.counterName) {
+            const counter = document.createElement('small');
+            counter.textContent = item.counterName;
+            chip.append(counter);
+          }
+          recentList.append(chip);
+        });
+        recentSection.hidden = Number(snapshot.recentCallCount || 0) === 0 || recent.length === 0;
+        $('#displayWaiting').hidden = !snapshot.showWaitingCount;
+        $('#displayWaitingValue').textContent = new Intl.NumberFormat(language).format(Number(snapshot.waitingCount || 0));
+        document.querySelectorAll('#displayView [data-i18n]').forEach(element => {
+          if (!['displayBoardTitle'].includes(element.id)) element.textContent = translate(element.dataset.i18n);
+        });
+      }
+      function initializeDisplayMode() {
+        if (!displayMode) return;
+        document.body.classList.add('display-mode');
+        $('#displayView').hidden = false;
+        $('#displayBoardTitle').textContent = defaultDisplayTitle();
+        $('#displayBoardSyncText').textContent = translate('displayWaitingConnection');
+        document.title = defaultDisplayTitle() + ' | ' + (language === 'ja' ? APP_CONFIG.nameJa : APP_CONFIG.name);
+        notifyDisplayReady();
+      }
       function render() {
+        if (displayMode) return;
         const active = Boolean(session);
         $('#setupView').hidden = active;
         $('#operatorView').hidden = !active;
@@ -1947,6 +2622,7 @@
         if (lastIssued) $('#lastIssuedNumber').textContent = lastIssued.displayNumber;
         renderCounters(waiting);
         renderTicketLists(waiting, absent);
+        syncDisplayState();
       }
       function applyLanguage() {
         document.documentElement.lang = language;
@@ -1955,10 +2631,14 @@
         document.querySelectorAll('[data-i18n-aria-label]').forEach(element => { element.setAttribute('aria-label', translate(element.dataset.i18nAriaLabel)); });
         $('#languageButton').textContent = language === 'ja' ? 'EN' : '日本語';
         $('#languageButton').setAttribute('aria-label', language === 'ja' ? '英語に切り替え' : 'Switch to Japanese');
-        document.title = language === 'ja' ? APP_CONFIG.nameJa + ' | Queue Board' : APP_CONFIG.name;
+        document.title = displayMode ? defaultDisplayTitle() + ' | ' + (language === 'ja' ? APP_CONFIG.nameJa : APP_CONFIG.name) : (language === 'ja' ? APP_CONFIG.nameJa + ' | Queue Board' : APP_CONFIG.name);
         $('#brandName').textContent = language === 'ja' ? APP_CONFIG.nameJa : APP_CONFIG.name;
         $('#footerName').textContent = language === 'ja' ? APP_CONFIG.nameJa : APP_CONFIG.name;
-        if (!session) renderCounterSetupFields();
+        if (!session && !displayMode) {
+          renderCounterSetupFields();
+          if (!displayTitleCustom) $('#displayTitleInput').value = defaultDisplayTitle();
+        }
+        if (displayMode && lastDisplaySnapshot) renderDisplaySnapshot(lastDisplaySnapshot);
         render();
       }
 
@@ -1994,11 +2674,34 @@
           case 'delete': deleteCurrentTicket(counterId); break;
         }
       });
+      $('#openDisplayButton').addEventListener('click', openDisplayWindow);
+      $('#displayTitleInput').addEventListener('input', () => { displayTitleCustom = true; });
+      window.addEventListener('message', event => {
+        const allowedOrigin = location.protocol === 'file:' || event.origin === location.origin;
+        if (!allowedOrigin) return;
+        handleDisplayTransportMessage(event.data, event.source, 'window');
+      });
+      window.addEventListener('pagehide', () => {
+        if (displayMode) notifyDisplayClosing();
+        else if (session) sendDisplayEnded();
+        if (displayChannel) {
+          try { displayChannel.close(); } catch { }
+        }
+      });
+      window.setInterval(() => {
+        if (!displayMode && displayWindow && displayWindow.closed) {
+          displayWindow = null;
+          displayConnected = false;
+          renderOperatorDisplayStatus();
+        }
+      }, 1200);
       $('#resetButton').addEventListener('click', resetSession);
 
       $('#versionBadge').textContent = 'v' + APP_CONFIG.version;
+      setupDisplayChannel();
       renderCounterSetupFields();
       applyLanguage();
+      initializeDisplayMode();
     })();
   </script>
 </body>

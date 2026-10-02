@@ -2,48 +2,56 @@
 
 Queue Board is a Browser Kitty app for temporary reception desks and small events. It issues numbered tickets, keeps a shared waiting queue, and calls people in order.
 
-The project is currently at **v0.3.0 — Multi Counter**.
+The project is currently at **v0.4.0 — Display Board**.
 
 ## Features
 
-- Start a session with a chosen starting number
-- Configure one to four counters
-- Give each counter a custom name
-- Issue sequential tickets
+- Start a Session with a chosen starting number
+- Configure one to four Counters with custom names
+- Issue sequential Tickets
 - Add an arbitrary number manually
-- Prevent duplicate numbers within the same session
-- Let each counter call from the same shared waiting queue
-- Prevent the same Ticket from being assigned to multiple counters
-- Recall, complete, mark absent, or delete independently at each counter
-- Return absent tickets to the end of the queue
-- Delete waiting / absent tickets with Undo
-- Show waiting, active-counter, registered, and completed counts
+- Prevent duplicate numbers within the same Session
+- Let each Counter call from the same shared waiting queue
+- Prevent one Ticket from being assigned to multiple Counters
+- Recall, complete, mark absent, or delete independently at each Counter
+- Return absent Tickets to the end of the queue
+- Delete waiting / absent Tickets with Undo
+- Open a waiting-room Display in a separate window
+- Sync current numbers, Counters, recent calls, waiting count, and Display title from Operator to Display
+- Keep Operator running if Display is closed and reconnect to current state when reopened
+- Support portrait and landscape Display layouts
 - Japanese / English UI
-- Desktop layout optimized for multiple counters and a stacked smartphone layout
 - Fully local processing
 
-## Usage
+## Display Board
 
-1. Set the starting number, counter count, and optional counter names, then select **Start reception**.
-2. Use **Issue number** for normal sequential tickets, or manual entry for existing paper tickets.
-3. Select **Call next** at any available counter to assign the first waiting ticket to that counter.
-4. Use **Call again** at that counter when needed.
-5. Finish with **Complete** or **Absent** at the same counter.
-6. Return an absent ticket to the end of the queue when the visitor comes back.
+Before starting reception, **Display settings** can configure:
 
-## v0.3.0 limitations
+- Display title
+- Waiting-count visibility
+- Number of recent calls to show (0–5)
 
-- Up to four counters
-- No autosave or session recovery
-- No Display window
+After reception starts, select **Open display** to open the same HTML in Display mode in a separate browser window. On desktop, that window can be moved to an external monitor.
+
+Synchronization stays inside the same browser. `postMessage` is the primary path, with `BroadcastChannel` used as a supplementary path when available. The standalone HTML does not need an external server when opened through `file://`.
+
+## v0.4.0 limitations
+
+- Up to four Counters
+- Display is limited to another window in the same browser
+- No call chime yet
+- No Fullscreen or Wake Lock yet
+- No autosave or Session recovery
 - No CSV export
 - No ticket printing
 
-Reloading the page, closing the tab, or resetting the session discards the current queue. Persistence is planned for a later version.
+Chime, Fullscreen, and Wake Lock are planned for the next milestone.
 
 ## Privacy
 
-Ticket numbers, counter settings, and session state are processed in the browser. The app uses no external API, analytics, or telemetry, and its Content Security Policy blocks runtime external connections.
+Ticket numbers, Counter settings, Display settings, and Session state are processed in the browser. The app uses no external API, analytics, or telemetry, and its Content Security Policy blocks runtime external connections.
+
+Display synchronization does not send entered data to an external server.
 
 ## Single HTML
 
