@@ -2317,6 +2317,7 @@
         }
         loadSetupSettings();
         renderCounterSetupFields();
+        initializeSoundSupport();
         let record = null;
         try {
           record = await readPersistedSessionRecord();
