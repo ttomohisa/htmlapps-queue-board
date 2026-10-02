@@ -1865,7 +1865,26 @@
           displayEndedTitle: '表示を終了しました',
           displayEndedBody: 'Operator画面から再び表示画面を開くと再接続できます。',
           startSession: '受付を開始',
-          setupNote: 'この開発段階では受付状態を自動保存しません。ページを再読み込みすると現在のSessionは失われます。',
+          setupNote: '受付状態はこの端末内へ自動保存されます。再読み込みしても、進行中の受付を再開できます。',
+          checkingSavedSession: '端末内の受付を確認しています',
+          checkingSavedSessionBody: '保存済みの進行中Sessionがないか確認します。',
+          recoveryTitle: '進行中の受付があります',
+          recoveryBody: '前回の受付状態がこの端末に保存されています。',
+          recoveryStarted: '開始',
+          recoveryWaiting: '待ち',
+          recoveryCounters: '窓口',
+          resumeSession: '受付を再開',
+          startNewSession: '新しく始める',
+          resumeSuccess: '保存されていた受付を再開しました。',
+          discardSavedTitle: '保存されている受付を破棄しますか？',
+          discardSavedBody: '進行中として保存されている受付を破棄し、新しい受付の設定画面へ進みます。',
+          discardSavedConfirm: '破棄して新しく始める',
+          savedSessionDiscarded: '保存されていた受付を破棄しました。',
+          saveStatusSaving: '保存中',
+          saveStatusSaved: '保存済み',
+          saveStatusError: '保存失敗',
+          saveFailed: '受付状態を端末へ保存できませんでした。ブラウザのストレージ設定や空き容量を確認してください。',
+          loadFailed: '保存済みの受付を読み込めませんでした。新しい受付は開始できますが、自動保存が利用できない可能性があります。',
           sessionRunning: '受付中', startedAt: '開始', resetSession: '受付をリセット',
           counterSummary: '{count}窓口',
           waitingCount: '待ち', activeCounterCount: '対応中', completedCount: '完了', issuedCount: '登録',
@@ -1888,10 +1907,10 @@
           helpStep5: '呼び出し音を試聴・ON/OFFできます。Displayでは全画面表示と対応環境でのWake Lockを利用できます。',
           helpPrivacyTitle: 'プライバシー',
           helpPrivacyBody: 'Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。',
-          helpNotesTitle: 'v0.5.0 の範囲',
+          helpNotesTitle: 'v0.6.0 の範囲',
           helpNoteDisplay: 'DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。別端末への送信は行いません。',
           helpNoteFeatures: 'Fullscreen / Wake LockはFeature Detectionを行い、非対応環境ではその機能だけを無効化します。',
-          helpNoteNoRecovery: '自動保存とSession復旧はまだありません。再読み込み・タブを閉じる・リセットで現在の受付状態は失われます。',
+          helpNotePersistence: '進行中SessionはIndexedDBを第一候補として端末内へ自動保存します。再読み込み時は「再開 / 新しく始める」を選べます。',
 
           helpOffline: '配布用HTMLは実行時の外部通信を必要とせず、Display同期もブラウザ内だけで行います。',
           footer: '番号を発行して順番に呼び出すローカルツール',
@@ -1972,7 +1991,26 @@
           displayEndedTitle: 'Display ended',
           displayEndedBody: 'Open the display again from the Operator screen to reconnect.',
           startSession: 'Start reception',
-          setupNote: 'This development version does not save an active session yet. Reloading the page loses the current session.',
+          setupNote: 'The active reception is saved automatically on this device so it can be resumed after a reload.',
+          checkingSavedSession: 'Checking this device for active reception',
+          checkingSavedSessionBody: 'Looking for a locally saved in-progress Session.',
+          recoveryTitle: 'An active reception was found',
+          recoveryBody: 'The previous reception state is saved on this device.',
+          recoveryStarted: 'Started',
+          recoveryWaiting: 'Waiting',
+          recoveryCounters: 'Counters',
+          resumeSession: 'Resume reception',
+          startNewSession: 'Start new',
+          resumeSuccess: 'Saved reception resumed.',
+          discardSavedTitle: 'Discard the saved reception?',
+          discardSavedBody: 'Discard the in-progress reception saved on this device and return to the setup screen.',
+          discardSavedConfirm: 'Discard and start new',
+          savedSessionDiscarded: 'Saved reception discarded.',
+          saveStatusSaving: 'Saving',
+          saveStatusSaved: 'Saved',
+          saveStatusError: 'Save failed',
+          saveFailed: 'The reception state could not be saved on this device. Check browser storage settings or available space.',
+          loadFailed: 'The saved reception could not be loaded. You can start a new reception, but autosave may be unavailable.',
           sessionRunning: 'Reception in progress', startedAt: 'Started', resetSession: 'Reset reception',
           counterSummary: '{count} counters',
           waitingCount: 'Waiting', activeCounterCount: 'In service', completedCount: 'Completed', issuedCount: 'Registered',
@@ -1995,10 +2033,10 @@
           helpStep5: 'Preview or toggle the call sound. On Display, use Fullscreen and Wake Lock when supported.',
           helpPrivacyTitle: 'Privacy',
           helpPrivacyBody: 'Ticket numbers, Counter settings, Display settings, and queue state are processed inside the same browser. The app uses no external API, analytics, or telemetry and does not send session data outside.',
-          helpNotesTitle: 'v0.5.0 scope',
+          helpNotesTitle: 'v0.6.0 scope',
           helpNoteDisplay: 'The Display syncs in a separate window of the same browser. It does not transmit data to another device.',
           helpNoteFeatures: 'Fullscreen and Wake Lock use feature detection. Unsupported environments disable only that optional feature.',
-          helpNoteNoRecovery: 'Autosave and session recovery are not implemented yet. Reloading, closing the tab, or resetting loses the current queue.',
+          helpNotePersistence: 'The in-progress Session is saved locally with IndexedDB as the primary store. After reload, choose Resume or Start new.',
 
           helpOffline: 'The distributable HTML needs no runtime external network access, and Display synchronization stays inside the browser.',
           footer: 'Local tool for issuing numbers and calling them in order',
@@ -2029,6 +2067,11 @@
 
       const $ = selector => document.querySelector(selector);
       const storageKey = APP_CONFIG.slug + ':language';
+      const settingsStorageKey = APP_CONFIG.slug + ':settings:v1';
+      const fallbackSessionStorageKey = APP_CONFIG.slug + ':active-session:v1';
+      const persistenceDbName = APP_CONFIG.slug + '-db';
+      const persistenceStoreName = 'sessions';
+      const persistenceRecordKey = 'active';
       let language = readStorage(storageKey) || detectLanguage();
       let session = null;
       let lastIssuedId = null;
@@ -2048,12 +2091,248 @@
       let wakeLockSentinel = null;
       let wakeLockRequested = false;
       let displayFeatureRuntimeMessage = '';
+      let persistenceReady = displayMode;
+      let recoveryCandidate = null;
+      let persistenceDbPromise = null;
+      let persistenceTimer = 0;
+      let saveState = 'saved';
+      let saveFailureNotified = false;
 
       function readStorage(key) {
         try { return localStorage.getItem(key); } catch { return null; }
       }
       function writeStorage(key, value) {
-        try { localStorage.setItem(key, value); } catch { }
+        try { localStorage.setItem(key, value); return true; } catch { return false; }
+      }
+      function removeStorage(key) {
+        try { localStorage.removeItem(key); return true; } catch { return false; }
+      }
+      function openPersistenceDb() {
+        if (persistenceDbPromise) return persistenceDbPromise;
+        persistenceDbPromise = new Promise((resolve, reject) => {
+          if (typeof indexedDB === 'undefined') {
+            reject(new Error('IndexedDB unavailable'));
+            return;
+          }
+          const request = indexedDB.open(persistenceDbName, 1);
+          request.onupgradeneeded = () => {
+            const db = request.result;
+            if (!db.objectStoreNames.contains(persistenceStoreName)) db.createObjectStore(persistenceStoreName, { keyPath: 'key' });
+          };
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = () => reject(request.error || new Error('IndexedDB open failed'));
+          request.onblocked = () => reject(new Error('IndexedDB open blocked'));
+        }).catch(error => {
+          persistenceDbPromise = null;
+          throw error;
+        });
+        return persistenceDbPromise;
+      }
+      async function readPersistedSessionRecord() {
+        try {
+          const db = await openPersistenceDb();
+          const value = await new Promise((resolve, reject) => {
+            const tx = db.transaction(persistenceStoreName, 'readonly');
+            const request = tx.objectStore(persistenceStoreName).get(persistenceRecordKey);
+            request.onsuccess = () => resolve(request.result || null);
+            request.onerror = () => reject(request.error || new Error('IndexedDB read failed'));
+          });
+          if (value) return value;
+        } catch { }
+        const fallback = readStorage(fallbackSessionStorageKey);
+        if (!fallback) return null;
+        try { return JSON.parse(fallback); } catch { return null; }
+      }
+      async function writePersistedSessionRecord(record) {
+        let indexedDbSaved = false;
+        try {
+          const db = await openPersistenceDb();
+          await new Promise((resolve, reject) => {
+            const tx = db.transaction(persistenceStoreName, 'readwrite');
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error || new Error('IndexedDB write failed'));
+            tx.onabort = () => reject(tx.error || new Error('IndexedDB write aborted'));
+            tx.objectStore(persistenceStoreName).put(record);
+          });
+          indexedDbSaved = true;
+          removeStorage(fallbackSessionStorageKey);
+        } catch { }
+        if (indexedDbSaved) return true;
+        return writeStorage(fallbackSessionStorageKey, JSON.stringify(record));
+      }
+      async function deletePersistedSessionRecord() {
+        let ok = false;
+        try {
+          const db = await openPersistenceDb();
+          await new Promise((resolve, reject) => {
+            const tx = db.transaction(persistenceStoreName, 'readwrite');
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error || new Error('IndexedDB delete failed'));
+            tx.onabort = () => reject(tx.error || new Error('IndexedDB delete aborted'));
+            tx.objectStore(persistenceStoreName).delete(persistenceRecordKey);
+          });
+          ok = true;
+        } catch { }
+        const fallbackOk = removeStorage(fallbackSessionStorageKey);
+        return ok || fallbackOk;
+      }
+      function setSaveState(state) {
+        saveState = state;
+        const root = $('#saveStatus');
+        const text = $('#saveStatusText');
+        if (!root || !text) return;
+        root.dataset.state = state;
+        text.textContent = translate(state === 'saving' ? 'saveStatusSaving' : state === 'error' ? 'saveStatusError' : 'saveStatusSaved');
+      }
+      function collectSetupSettings() {
+        return {
+          schemaVersion: 1,
+          startNumber: $('#startNumber')?.value || '001',
+          counterCount: Math.min(4, Math.max(1, Number($('#counterCount')?.value) || 1)),
+          counterNames: counterDraftNames.slice(0, 4),
+          soundEnabled: Boolean($('#soundEnabled')?.checked),
+          displayTitle: $('#displayTitleInput')?.value || defaultDisplayTitle(),
+          recentCallCount: Math.min(5, Math.max(0, Number($('#recentCallCount')?.value) || 0)),
+          showWaitingCount: Boolean($('#showWaitingCount')?.checked)
+        };
+      }
+      function saveSetupSettings() {
+        if (displayMode) return;
+        writeStorage(settingsStorageKey, JSON.stringify(collectSetupSettings()));
+      }
+      function loadSetupSettings() {
+        if (displayMode) return;
+        const raw = readStorage(settingsStorageKey);
+        if (!raw) return;
+        try {
+          const settings = JSON.parse(raw);
+          if (!settings || settings.schemaVersion !== 1) return;
+          $('#startNumber').value = typeof settings.startNumber === 'string' ? settings.startNumber : '001';
+          $('#counterCount').value = String(Math.min(4, Math.max(1, Number(settings.counterCount) || 1)));
+          if (Array.isArray(settings.counterNames)) {
+            counterDraftNames = Array.from({ length: 4 }, (_, index) => String(settings.counterNames[index] || ''));
+            counterDraftCustom = counterDraftNames.map((name, index) => Boolean(name && name !== defaultCounterName(index)));
+          }
+          $('#soundEnabled').checked = settings.soundEnabled !== false;
+          $('#displayTitleInput').value = typeof settings.displayTitle === 'string' && settings.displayTitle.trim() ? settings.displayTitle : defaultDisplayTitle();
+          displayTitleCustom = $('#displayTitleInput').value !== defaultDisplayTitle();
+          $('#recentCallCount').value = String(Math.min(5, Math.max(0, Number(settings.recentCallCount) || 0)));
+          $('#showWaitingCount').checked = settings.showWaitingCount !== false;
+        } catch { }
+      }
+      function normalizeRecoveredSession(value) {
+        const candidate = value && typeof value === 'object' ? value : null;
+        if (!candidate || typeof candidate.id !== 'string' || !Number.isFinite(candidate.startedAt)) return null;
+        if (!Array.isArray(candidate.counters) || candidate.counters.length < 1 || candidate.counters.length > 4) return null;
+        if (!Array.isArray(candidate.tickets) || !Array.isArray(candidate.usedNumbers)) return null;
+        const counters = candidate.counters.map((counter, index) => ({
+          id: typeof counter?.id === 'string' ? counter.id : 'counter-' + (index + 1),
+          name: typeof counter?.name === 'string' && counter.name.trim() ? counter.name : defaultCounterName(index),
+          currentTicketId: typeof counter?.currentTicketId === 'string' ? counter.currentTicketId : null
+        }));
+        const tickets = candidate.tickets.filter(ticket => ticket && typeof ticket.id === 'string' && Number.isFinite(ticket.number)).map(ticket => ({
+          ...ticket,
+          displayNumber: typeof ticket.displayNumber === 'string' ? ticket.displayNumber : formatTicketNumber(ticket.number),
+          counterId: typeof ticket.counterId === 'string' ? ticket.counterId : null,
+          callCount: Number.isFinite(ticket.callCount) ? ticket.callCount : 0
+        }));
+        return {
+          ...candidate,
+          counters,
+          tickets,
+          usedNumbers: candidate.usedNumbers.filter(Number.isFinite),
+          nextNumber: candidate.nextNumber === null ? null : Number(candidate.nextNumber),
+          title: typeof candidate.title === 'string' && candidate.title.trim() ? candidate.title : defaultDisplayTitle(),
+          soundEnabled: candidate.soundEnabled !== false,
+          showWaitingCount: candidate.showWaitingCount !== false,
+          recentCallCount: Math.min(5, Math.max(0, Number(candidate.recentCallCount) || 0))
+        };
+      }
+      async function persistSessionNow() {
+        clearTimeout(persistenceTimer);
+        persistenceTimer = 0;
+        if (displayMode || !session) return true;
+        setSaveState('saving');
+        const record = {
+          key: persistenceRecordKey,
+          schemaVersion: 1,
+          savedAt: Date.now(),
+          session: structuredClone ? structuredClone(session) : JSON.parse(JSON.stringify(session))
+        };
+        const ok = await writePersistedSessionRecord(record);
+        if (ok) {
+          setSaveState('saved');
+          saveFailureNotified = false;
+          return true;
+        }
+        setSaveState('error');
+        if (!saveFailureNotified) {
+          saveFailureNotified = true;
+          announce(translate('saveFailed'), { tone: 'warning', duration: 6500 });
+        }
+        return false;
+      }
+      function schedulePersistSession() {
+        if (displayMode || !persistenceReady || !session) return;
+        setSaveState('saving');
+        clearTimeout(persistenceTimer);
+        persistenceTimer = window.setTimeout(() => { void persistSessionNow(); }, 120);
+      }
+      function renderRecoveryCandidate() {
+        if (!recoveryCandidate) return;
+        const recovered = recoveryCandidate;
+        const waiting = recovered.tickets.filter(ticket => ticket.status === 'waiting').length;
+        $('#recoveryStartedAt').textContent = formatTime(recovered.startedAt);
+        $('#recoveryWaitingCount').textContent = new Intl.NumberFormat(language).format(waiting);
+        $('#recoveryCounterCount').textContent = new Intl.NumberFormat(language).format(recovered.counters.length);
+      }
+      async function initializePersistence() {
+        if (displayMode) {
+          persistenceReady = true;
+          $('#persistenceGate').hidden = true;
+          return;
+        }
+        loadSetupSettings();
+        renderCounterSetupFields();
+        let record = null;
+        try {
+          record = await readPersistedSessionRecord();
+        } catch {
+          announce(translate('loadFailed'), { tone: 'warning', duration: 6500 });
+        }
+        if (record?.schemaVersion === 1) {
+          recoveryCandidate = normalizeRecoveredSession(record.session);
+          if (!recoveryCandidate && record.session) announce(translate('loadFailed'), { tone: 'warning', duration: 6500 });
+        }
+        persistenceReady = true;
+        render();
+      }
+      function resumeSavedSession() {
+        if (!recoveryCandidate) return;
+        session = normalizeRecoveredSession(recoveryCandidate);
+        if (!session) return;
+        recoveryCandidate = null;
+        lastIssuedId = null;
+        setupDisplayChannel();
+        render();
+        schedulePersistSession();
+        announce(translate('resumeSuccess'), { tone: 'success' });
+      }
+      async function discardSavedSession() {
+        if (!recoveryCandidate) return;
+        const ok = await AppConfirm.ask({
+          title: translate('discardSavedTitle'),
+          message: translate('discardSavedBody'),
+          confirmLabel: translate('discardSavedConfirm'),
+          cancelLabel: translate('cancel'),
+          tone: 'danger'
+        });
+        if (!ok) return;
+        await deletePersistedSessionRecord();
+        recoveryCandidate = null;
+        render();
+        announce(translate('savedSessionDiscarded'));
+        $('#startNumber').focus();
       }
       function detectLanguage() {
         if (APP_CONFIG.defaultLanguage === 'ja' || APP_CONFIG.defaultLanguage === 'en') return APP_CONFIG.defaultLanguage;
