@@ -3,7 +3,7 @@
   "name": "Queue Board",
   "nameJa": "呼び出し番号",
   "slug": "queue-board",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Issue numbered tickets, keep a waiting queue, and call people in order from one browser.",
   "descriptionJa": "番号を発行し、待ち列を管理して、順番に呼び出すためのブラウザー用ツールです。",
   "defaultLanguage": "auto",
