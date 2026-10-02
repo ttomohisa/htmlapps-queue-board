@@ -2514,6 +2514,54 @@
         const fallbackDeleted = removeStorage(fallbackSessionStorageKey);
         return indexedDbAvailable ? indexedDbDeleted && fallbackDeleted : fallbackDeleted;
       }
+      async function readLatestArchivedSessionRecord() {
+        try {
+          const db = await openPersistenceDb();
+          const records = await new Promise((resolve, reject) => {
+            const tx = db.transaction(persistenceStoreName, 'readonly');
+            const request = tx.objectStore(persistenceStoreName).getAll();
+            request.onsuccess = () => resolve(Array.isArray(request.result) ? request.result : []);
+            request.onerror = () => reject(request.error || new Error('IndexedDB history read failed'));
+          });
+          const histories = records
+            .filter(record => record && record.kind === 'history' && record.session)
+            .sort((a, b) => Number(b.endedAt || b.savedAt || 0) - Number(a.endedAt || a.savedAt || 0));
+          if (histories[0]) return histories[0];
+        } catch { }
+        const fallback = readStorage(fallbackHistoryStorageKey);
+        if (!fallback) return null;
+        try { return JSON.parse(fallback); } catch { return null; }
+      }
+      async function finalizeSessionPersistence(sessionSnapshot) {
+        const record = {
+          key: 'history:' + String(sessionSnapshot.endedAt || Date.now()) + ':' + sessionSnapshot.id,
+          kind: 'history',
+          schemaVersion: 1,
+          savedAt: Date.now(),
+          endedAt: sessionSnapshot.endedAt || Date.now(),
+          session: typeof structuredClone === 'function' ? structuredClone(sessionSnapshot) : JSON.parse(JSON.stringify(sessionSnapshot))
+        };
+        let indexedDbAvailable = false;
+        let indexedDbSaved = false;
+        try {
+          const db = await openPersistenceDb();
+          indexedDbAvailable = true;
+          await new Promise((resolve, reject) => {
+            const tx = db.transaction(persistenceStoreName, 'readwrite');
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error || new Error('IndexedDB history write failed'));
+            tx.onabort = () => reject(tx.error || new Error('IndexedDB history write aborted'));
+            const store = tx.objectStore(persistenceStoreName);
+            store.put(record);
+            store.delete(persistenceRecordKey);
+          });
+          indexedDbSaved = true;
+        } catch { }
+        const fallbackHistorySaved = writeStorage(fallbackHistoryStorageKey, JSON.stringify(record));
+        const fallbackActiveCleared = removeStorage(fallbackSessionStorageKey) || readStorage(fallbackSessionStorageKey) === null;
+        if (indexedDbAvailable) return indexedDbSaved && fallbackActiveCleared;
+        return fallbackHistorySaved && fallbackActiveCleared;
+      }
       function enqueuePersistenceOperation(task) {
         const operation = persistenceOperation.catch(() => undefined).then(task);
         persistenceOperation = operation.catch(() => undefined);
@@ -2660,6 +2708,10 @@
         if (record?.schemaVersion === 1) {
           recoveryCandidate = normalizeRecoveredSession(record.session);
           if (!recoveryCandidate && record.session) announce(translate('loadFailed'), { tone: 'warning', duration: 6500 });
+        }
+        if (!recoveryCandidate) {
+          const historyRecord = await readLatestArchivedSessionRecord();
+          if (historyRecord?.schemaVersion === 1 && historyRecord.session) endedSession = normalizeRecoveredSession(historyRecord.session);
         }
         persistenceReady = true;
         render();
@@ -2973,6 +3025,8 @@
           counterDraftCustom[index] = name !== defaultCounterName(index);
           return { id: 'counter-' + (index + 1), name, currentTicketId: null };
         });
+        endedSession = null;
+        historyVisible = false;
         session = {
           id: makeId(),
           startedAt: Date.now(),
@@ -3201,6 +3255,7 @@
         session = null;
         lastIssuedId = null;
         recoveryCandidate = null;
+        historyVisible = false;
         $('#manualNumber').value = '';
         $('#manualNumberError').textContent = '';
         loadSetupSettings();
@@ -3208,6 +3263,212 @@
         initializeSoundSupport();
         render();
         announce(translate('sessionReset'));
+        $('#startNumber').focus();
+      }
+      function historySession() {
+        return session || endedSession || null;
+      }
+      function counterNameForTicket(targetSession, ticket) {
+        const counterId = ticket.lastCounterId || ticket.counterId;
+        if (!counterId) return '';
+        return targetSession.counters.find(counter => counter.id === counterId)?.name || '';
+      }
+      function statusTranslationKey(status) {
+        return status === 'called' ? 'statusCalled' :
+          status === 'completed' ? 'statusCompleted' :
+          status === 'absent' ? 'statusAbsent' : 'statusWaiting';
+      }
+      function createHistoryEvent(labelKey, timestamp, detail) {
+        if (!Number.isFinite(timestamp)) return null;
+        const row = document.createElement('div');
+        row.className = 'history-event';
+        const time = document.createElement('time');
+        time.dateTime = new Date(timestamp).toISOString();
+        time.textContent = formatTime(timestamp);
+        const label = document.createElement('strong');
+        label.textContent = translate(labelKey);
+        row.append(time, label);
+        if (detail) {
+          const extra = document.createElement('span');
+          extra.textContent = detail;
+          row.append(extra);
+        }
+        return row;
+      }
+      function createHistoryItem(targetSession, ticket) {
+        const item = document.createElement('li');
+        item.className = 'history-item';
+        const number = document.createElement('div');
+        number.className = 'history-number';
+        number.textContent = ticket.displayNumber;
+        const timeline = document.createElement('div');
+        timeline.className = 'history-timeline';
+        const counterName = counterNameForTicket(targetSession, ticket);
+        [
+          createHistoryEvent('eventCreated', ticket.createdAt, ''),
+          createHistoryEvent('eventCalled', ticket.calledAt, counterName ? '· ' + counterName : ''),
+          createHistoryEvent('eventAbsent', ticket.absentAt, counterName ? '· ' + counterName : ''),
+          createHistoryEvent('eventCompleted', ticket.completedAt, counterName ? '· ' + counterName : '')
+        ].filter(Boolean).forEach(event => timeline.append(event));
+        const meta = document.createElement('div');
+        meta.className = 'history-meta';
+        const status = document.createElement('span');
+        status.className = 'history-status ' + ticket.status;
+        status.textContent = translate(statusTranslationKey(ticket.status));
+        const calls = document.createElement('span');
+        calls.textContent = translate('historyCallCount', { count: ticket.callCount || 0 });
+        meta.append(status, calls);
+        item.append(number, timeline, meta);
+        return item;
+      }
+      function renderHistory() {
+        const targetSession = historySession();
+        if (!targetSession) return;
+        document.querySelectorAll('[data-history-filter]').forEach(button => {
+          button.setAttribute('aria-pressed', String(button.dataset.historyFilter === historyFilter));
+        });
+        const allTickets = targetSession.tickets.slice().sort((a, b) => a.createdAt - b.createdAt || a.number - b.number);
+        const tickets = historyFilter === 'all' ? allTickets : allTickets.filter(ticket => ticket.status === historyFilter);
+        const list = $('#historyList');
+        list.replaceChildren(...tickets.map(ticket => createHistoryItem(targetSession, ticket)));
+        const empty = $('#historyEmpty');
+        empty.hidden = tickets.length > 0;
+        if (tickets.length === 0) {
+          empty.querySelector('strong').textContent = translate(allTickets.length ? 'historyNoMatchTitle' : 'historyEmptyTitle');
+          empty.querySelector('span').textContent = translate(allTickets.length ? 'historyNoMatchBody' : 'historyEmptyBody');
+        }
+        $('#historyBackButton').textContent = session ? translate('historyBack') : translate('summaryTitle');
+        $('#historyCsvButton').disabled = allTickets.length === 0;
+      }
+      function calculateAverageWait(targetSession) {
+        const waits = targetSession.tickets
+          .filter(ticket => Number.isFinite(ticket.calledAt) && Number.isFinite(ticket.createdAt) && ticket.calledAt >= ticket.createdAt)
+          .map(ticket => ticket.calledAt - ticket.createdAt);
+        if (!waits.length) return null;
+        return waits.reduce((sum, value) => sum + value, 0) / waits.length;
+      }
+      function formatDuration(milliseconds) {
+        if (!Number.isFinite(milliseconds)) return translate('averageWaitUnavailable');
+        const totalSeconds = Math.max(0, Math.round(milliseconds / 1000));
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return minutes > 0
+          ? translate('durationMinutesSeconds', { minutes, seconds })
+          : translate('durationSeconds', { seconds });
+      }
+      function renderSummary() {
+        if (!endedSession) return;
+        const completed = endedSession.tickets.filter(ticket => ticket.status === 'completed').length;
+        const absent = endedSession.tickets.filter(ticket => ticket.status === 'absent').length;
+        const waiting = endedSession.tickets.filter(ticket => ticket.status === 'waiting').length;
+        $('#summaryIssued').textContent = new Intl.NumberFormat(language).format(endedSession.usedNumbers.length);
+        $('#summaryCompleted').textContent = new Intl.NumberFormat(language).format(completed);
+        $('#summaryAbsent').textContent = new Intl.NumberFormat(language).format(absent);
+        $('#summaryWaiting').textContent = new Intl.NumberFormat(language).format(waiting);
+        $('#summaryStarted').textContent = formatTime(endedSession.startedAt);
+        $('#summaryEnded').textContent = Number.isFinite(endedSession.endedAt) ? formatTime(endedSession.endedAt) : '—';
+        $('#summaryAverageWait').textContent = formatDuration(calculateAverageWait(endedSession));
+        $('#summaryCsvButton').disabled = endedSession.tickets.length === 0;
+      }
+      function csvEscape(value) {
+        const text = value === null || value === undefined ? '' : String(value);
+        return /[",\r\n]/.test(text) ? '"' + text.replaceAll('"', '""') + '"' : text;
+      }
+      function csvTimestamp(timestamp) {
+        return Number.isFinite(timestamp) ? new Date(timestamp).toISOString() : '';
+      }
+      function csvFilename(targetSession) {
+        const timestamp = Number.isFinite(targetSession.endedAt) ? targetSession.endedAt : targetSession.startedAt;
+        const date = new Date(timestamp);
+        const yyyy = String(date.getFullYear()).padStart(4, '0');
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        return 'queue-board-' + yyyy + '-' + mm + '-' + dd + '.csv';
+      }
+      function saveHistoryCsv() {
+        const targetSession = historySession();
+        if (!targetSession || !targetSession.tickets.length) return;
+        const header = ['number', 'status', 'created_at', 'called_at', 'completed_at', 'counter', 'call_count'];
+        const rows = targetSession.tickets.slice().sort((a, b) => a.createdAt - b.createdAt || a.number - b.number).map(ticket => [
+          ticket.displayNumber,
+          ticket.status,
+          csvTimestamp(ticket.createdAt),
+          csvTimestamp(ticket.calledAt),
+          csvTimestamp(ticket.completedAt),
+          counterNameForTicket(targetSession, ticket),
+          ticket.callCount || 0
+        ]);
+        const csv = [header, ...rows].map(row => row.map(csvEscape).join(',')).join('\r\n');
+        try {
+          const blob = new Blob(['\uFEFF', csv], { type: 'text/csv;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = csvFilename(targetSession);
+          link.hidden = true;
+          document.body.append(link);
+          link.click();
+          link.remove();
+          window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+          announce(translate('csvSaved'), { tone: 'success' });
+        } catch {
+          announce(translate('csvSaveFailed'), { tone: 'warning' });
+        }
+      }
+      function openHistoryView() {
+        if (!historySession()) return;
+        historyVisible = true;
+        historyFilter = 'all';
+        render();
+        $('#historyTitle').focus?.();
+      }
+      function closeHistoryView() {
+        historyVisible = false;
+        render();
+      }
+      async function endSession() {
+        if (!session) return;
+        const waitingCount = session.tickets.filter(ticket => ticket.status === 'waiting').length;
+        const ok = await AppConfirm.ask({
+          title: translate('endSessionTitle'),
+          message: translate('endSessionBody', { count: waitingCount }),
+          confirmLabel: translate('endSessionConfirm'),
+          cancelLabel: translate('cancel'),
+          tone: 'danger'
+        });
+        if (!ok || !session) return;
+        clearTimeout(persistenceTimer);
+        persistenceTimer = 0;
+        persistenceSaveSerial += 1;
+        const snapshot = typeof structuredClone === 'function' ? structuredClone(session) : JSON.parse(JSON.stringify(session));
+        snapshot.endedAt = Date.now();
+        const saved = await enqueuePersistenceOperation(() => finalizeSessionPersistence(snapshot));
+        if (!saved) {
+          setSaveState('error');
+          announce(translate('historySaveFailed'), { tone: 'warning', duration: 7000 });
+          return;
+        }
+        sendDisplayEnded();
+        endedSession = normalizeRecoveredSession(snapshot);
+        session = null;
+        recoveryCandidate = null;
+        lastIssuedId = null;
+        historyVisible = false;
+        if (displayChannel) {
+          try { displayChannel.close(); } catch { }
+          displayChannel = null;
+        }
+        render();
+        announce(translate('sessionEnded'), { tone: 'success' });
+      }
+      function startNewAfterSummary() {
+        endedSession = null;
+        historyVisible = false;
+        historyFilter = 'all';
+        loadSetupSettings();
+        renderCounterSetupFields();
+        initializeSoundSupport();
+        render();
         $('#startNumber').focus();
       }
       function iconDelete() {
