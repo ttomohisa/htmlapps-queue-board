@@ -1339,6 +1339,171 @@
       .persistence-spinner { animation: none; }
     }
 
+
+    /* Queue Board v0.7.0 history / export */
+    .history-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .history-toolbar-actions,
+    .history-filters,
+    .summary-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .history-filters { margin-top: 16px; }
+    .history-filter {
+      min-height: 38px;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--muted);
+      font: inherit;
+      font-size: 11px;
+      font-weight: 850;
+      cursor: pointer;
+    }
+    .history-filter[aria-pressed="true"] {
+      color: var(--accent);
+      border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+      background: var(--accent-soft);
+    }
+    .history-list {
+      display: grid;
+      gap: 10px;
+      margin: 16px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .history-item {
+      display: grid;
+      grid-template-columns: minmax(84px, .34fr) minmax(0, 1.66fr) auto;
+      gap: 14px;
+      align-items: start;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--surface);
+    }
+    .history-number {
+      color: var(--accent);
+      font-size: 28px;
+      font-weight: 950;
+      line-height: 1;
+      letter-spacing: .035em;
+      font-variant-numeric: tabular-nums;
+    }
+    .history-timeline { display: grid; gap: 5px; min-width: 0; }
+    .history-event {
+      display: flex;
+      align-items: baseline;
+      gap: 9px;
+      min-width: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .history-event time {
+      min-width: 52px;
+      color: var(--text);
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+    .history-event strong { color: var(--text); font-weight: 800; }
+    .history-meta {
+      display: grid;
+      gap: 6px;
+      justify-items: end;
+      text-align: right;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .history-status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--surface-muted);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+    }
+    .history-status.called { color: var(--accent); background: var(--accent-soft); }
+    .history-status.completed { color: var(--accent); background: #e9f4ef; }
+    .history-status.absent { color: #8a5a0a; background: #fff6df; }
+    .history-empty {
+      margin-top: 16px;
+      padding: 30px 18px;
+      border: 1px dashed var(--line-strong);
+      border-radius: 13px;
+      text-align: center;
+      color: var(--muted);
+    }
+    .history-empty strong { display: block; color: var(--text); }
+    .history-empty span { display: block; margin-top: 6px; }
+    .summary-shell { display: grid; gap: 14px; }
+    .summary-shell[hidden],
+    .history-shell[hidden] { display: none; }
+    .summary-hero {
+      padding: clamp(20px, 3vw, 32px);
+      border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--line));
+      border-radius: 18px;
+      background: linear-gradient(180deg, var(--surface), color-mix(in srgb, var(--accent-soft) 35%, var(--surface)));
+    }
+    .summary-hero h2 { margin: 0; font-size: clamp(24px, 4vw, 36px); }
+    .summary-hero p { margin: 7px 0 0; color: var(--muted); }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .summary-card {
+      min-width: 0;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--surface);
+    }
+    .summary-card-label { display: block; color: var(--muted); font-size: 10px; font-weight: 850; }
+    .summary-card-value {
+      display: block;
+      margin-top: 5px;
+      color: var(--text);
+      font-size: clamp(20px, 3vw, 30px);
+      font-weight: 950;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+    .summary-times {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .summary-actions { margin-top: 4px; }
+    .end-session-button { border-color: color-mix(in srgb, var(--danger) 35%, var(--line)); }
+    @media (max-width: 760px) {
+      .history-item { grid-template-columns: 78px minmax(0, 1fr); }
+      .history-meta { grid-column: 1 / -1; display: flex; justify-content: space-between; justify-items: initial; text-align: left; }
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .summary-times { grid-template-columns: 1fr; }
+      .history-toolbar-actions, .summary-actions { width: 100%; }
+      .history-toolbar-actions .button, .summary-actions .button { flex: 1 1 auto; }
+    }
+    @media (max-width: 480px) {
+      .history-item { grid-template-columns: 1fr; }
+      .history-number { font-size: 32px; }
+      .history-meta { grid-column: auto; }
+      .summary-grid { grid-template-columns: 1fr; }
+      .history-filters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .history-filter { width: 100%; }
+    }
+
   </style>
 </head>
 <body>
@@ -1518,6 +1683,14 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
             <span data-i18n="openDisplay">表示画面を開く</span>
           </button>
+          <button class="button with-icon" id="openHistoryButton" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16"/><path d="M8 5v14"/></svg>
+            <span data-i18n="openHistory">履歴</span>
+          </button>
+          <button class="button danger with-icon end-session-button" id="endSessionButton" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h12v16H6z"/><path d="M10 12h8"/><path d="m15 9 3 3-3 3"/></svg>
+            <span data-i18n="endSession">受付を終了</span>
+          </button>
           <button class="button danger with-icon" id="resetButton" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4v6h6"/><path d="M5.5 15a7 7 0 1 0 1.7-7.2L4 10"/></svg>
             <span data-i18n="resetSession">受付をリセット</span>
@@ -1601,6 +1774,64 @@
       <div class="sr-only" id="liveStatus" aria-live="polite" aria-atomic="true"></div>
     </section>
 
+    <section class="queue-card history-shell" id="historyView" hidden aria-labelledby="historyTitle">
+      <div class="history-toolbar">
+        <div>
+          <p class="panel-kicker" data-i18n="historyKicker">Session履歴</p>
+          <h2 class="panel-title" id="historyTitle" data-i18n="historyTitle">履歴</h2>
+          <p data-i18n="historyBody">Ticketごとの受付・呼び出し・完了・不在を時系列で確認できます。</p>
+        </div>
+        <div class="history-toolbar-actions">
+          <button class="button" id="historyBackButton" type="button" data-i18n="historyBack">Operatorへ戻る</button>
+          <button class="button with-icon" id="historyCsvButton" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M5 20h14"/></svg>
+            <span data-i18n="saveCsv">CSVを保存</span>
+          </button>
+        </div>
+      </div>
+      <div class="history-filters" id="historyFilters" aria-label="History filters">
+        <button class="history-filter" type="button" data-history-filter="all" aria-pressed="true" data-i18n="filterAll">すべて</button>
+        <button class="history-filter" type="button" data-history-filter="waiting" aria-pressed="false" data-i18n="filterWaiting">待機中</button>
+        <button class="history-filter" type="button" data-history-filter="called" aria-pressed="false" data-i18n="filterCalled">呼び出し中</button>
+        <button class="history-filter" type="button" data-history-filter="completed" aria-pressed="false" data-i18n="filterCompleted">完了</button>
+        <button class="history-filter" type="button" data-history-filter="absent" aria-pressed="false" data-i18n="filterAbsent">不在</button>
+      </div>
+      <ul class="history-list" id="historyList"></ul>
+      <div class="history-empty" id="historyEmpty">
+        <strong data-i18n="historyEmptyTitle">まだ履歴はありません。</strong>
+        <span data-i18n="historyEmptyBody">番号を呼び出すと、ここに記録されます。</span>
+      </div>
+    </section>
+
+    <section class="summary-shell" id="summaryView" hidden aria-labelledby="summaryTitle">
+      <div class="summary-hero">
+        <p class="panel-kicker" data-i18n="summaryKicker">Session Summary</p>
+        <h2 id="summaryTitle" data-i18n="summaryTitle">本日の受付</h2>
+        <p data-i18n="summaryBody">受付を終了しました。履歴はこの端末内に保存されています。</p>
+      </div>
+      <div class="summary-grid">
+        <div class="summary-card"><span class="summary-card-label" data-i18n="summaryIssued">受付数</span><strong class="summary-card-value" id="summaryIssued">0</strong></div>
+        <div class="summary-card"><span class="summary-card-label" data-i18n="summaryCompleted">完了</span><strong class="summary-card-value" id="summaryCompleted">0</strong></div>
+        <div class="summary-card"><span class="summary-card-label" data-i18n="summaryAbsent">不在</span><strong class="summary-card-value" id="summaryAbsent">0</strong></div>
+        <div class="summary-card"><span class="summary-card-label" data-i18n="summaryWaiting">現在待機</span><strong class="summary-card-value" id="summaryWaiting">0</strong></div>
+      </div>
+      <div class="summary-times">
+        <div class="summary-card"><span class="summary-card-label" data-i18n="summaryStarted">受付開始</span><strong class="summary-card-value" id="summaryStarted">--:--</strong></div>
+        <div class="summary-card"><span class="summary-card-label" data-i18n="summaryEnded">受付終了</span><strong class="summary-card-value" id="summaryEnded">--:--</strong></div>
+        <div class="summary-card"><span class="summary-card-label" data-i18n="summaryAverageWait">平均待ち時間</span><strong class="summary-card-value" id="summaryAverageWait">—</strong></div>
+      </div>
+      <div class="queue-card">
+        <div class="summary-actions">
+          <button class="button primary large with-icon" id="summaryCsvButton" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M5 20h14"/></svg>
+            <span data-i18n="saveCsv">CSVを保存</span>
+          </button>
+          <button class="button" id="summaryHistoryButton" type="button" data-i18n="viewHistory">履歴を見る</button>
+          <button class="button" id="newSessionButton" type="button" data-i18n="startAnotherSession">新しい受付を開始</button>
+        </div>
+      </div>
+    </section>
+
     <section class="display-board" id="displayView" hidden aria-labelledby="displayBoardTitle">
       <div class="display-board-top">
         <h1 class="display-board-title" id="displayBoardTitle">お呼びしています</h1>
@@ -1680,22 +1911,22 @@
       </button>
     </div>
     <div class="dialog-body">
-      <!-- APP:HELP:BEGIN Queue Board v0.6.0 -->
+      <!-- APP:HELP:BEGIN Queue Board v0.7.0 -->
       <h3 data-i18n="helpBasicsTitle">基本操作</h3>
       <ol>
         <li data-i18n="helpStep1">開始番号と窓口数、必要なら各窓口名と表示画面設定を決めて受付を開始します。</li>
         <li data-i18n="helpStep2">「番号を発行」、または手動追加で待ち列へ番号を登録します。</li>
         <li data-i18n="helpStep3">「表示画面を開く」で待合向けDisplayを別ウィンドウに開きます。外部モニターへ移動して使えます。</li>
         <li data-i18n="helpStep4">空いている窓口の「次を呼ぶ」で、Displayへ番号と窓口がリアルタイム反映されます。</li>
-        <li data-i18n="helpStep5">呼び出し音を試聴・ON/OFFできます。Displayでは全画面表示と対応環境でのWake Lockを利用できます。</li>
+        <li data-i18n="helpStep5">履歴を確認・CSV保存し、受付終了後はSession Summaryから新しい受付を開始できます。</li>
       </ol>
       <h3 data-i18n="helpPrivacyTitle">プライバシー</h3>
       <p data-i18n="helpPrivacyBody">Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。</p>
-      <h3 data-i18n="helpNotesTitle">v0.6.0 の範囲</h3>
+      <h3 data-i18n="helpNotesTitle">v0.7.0 の範囲</h3>
       <ul>
         <li data-i18n="helpNoteDisplay">DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。別端末への送信は行いません。</li>
         <li data-i18n="helpNoteFeatures">Fullscreen / Wake LockはFeature Detectionを行い、非対応環境ではその機能だけを無効化します。</li>
-        <li data-i18n="helpNotePersistence">進行中SessionはIndexedDBへ自動保存します。再読み込み時は「再開 / 新しく始める」を選べます。</li>
+        <li data-i18n="helpNoteHistory">受付終了時は履歴を端末内へ保存し、CSV保存とSession Summaryを利用できます。</li>
       </ul>
       <p class="dialog-note" data-i18n="helpOffline">配布用HTMLは実行時の外部通信を必要とせず、Display同期もブラウザ内だけで行います。</p>
       <!-- APP:HELP:END -->
