@@ -2,6 +2,26 @@
 
 All notable changes to Queue Board are documented here.
 
+## [0.2.0] - 2026-10-02
+
+### Added
+
+- Manual Ticket number entry.
+- Duplicate-number validation across the current Session.
+- Absent state and a separate absent list.
+- Return-to-queue behavior that moves absent Tickets to the end of the waiting queue.
+- Recall action with call-count tracking.
+- Waiting / absent Ticket deletion with Undo.
+- Confirmed deletion for the active called Ticket.
+- Clear empty states and field-local validation errors.
+- Template-style “Fully local processing” / “完全ローカル処理” badge.
+
+### Changed
+
+- Automatic sequential issuance skips numbers already reserved through manual entry.
+- Queue rows now expose task-specific actions with SVG icons.
+- Help and README now describe the v0.2.0 flow.
+
 ## [0.1.0] - 2026-10-02
 
 ### Added
