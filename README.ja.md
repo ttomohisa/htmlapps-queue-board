@@ -1,125 +1,164 @@
 # Queue Board / 呼び出し番号
 
-小規模イベントや一時受付で、番号を発行して待ち列を作り、順番に呼び出すためのBrowser Kittyアプリです。
+[![GitHub Pages](https://github.com/ttomohisa/htmlapps-queue-board/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/ttomohisa/htmlapps-queue-board/actions/workflows/deploy-pages.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Single HTML](https://img.shields.io/badge/distribution-single%20HTML-0ea5e9)](queue-board.html)
 
-現在は **v0.9.0 — Mobile / UX / Accessibility RC** です。
+[English README](README.md)
+
+小規模イベント、一時受付、商品受け渡しなどで、番号を発行し、待ち列を管理して、順番に呼び出すためのローカル優先・単一HTMLアプリです。
+
+## 🚀 デモ
+
+### [GitHub PagesでQueue Boardを開く](https://ttomohisa.github.io/htmlapps-queue-board/)
+
+GitHub Pagesから最初のHTMLを読み込んだ後、Ticket番号、待ち列、窓口設定、履歴、Display状態はブラウザ内で処理されます。Sessionデータを外部APIや分析サービスへ送信しません。
+
+[![Queue Boardの画面](assets/screenshot.png)](https://ttomohisa.github.io/htmlapps-queue-board/)
 
 ## 主な機能
 
-- 1〜4窓口のQueue運用
-- 連番 / 手動Ticket追加
-- 呼び出し / 再呼び出し / 完了 / 不在 / 再待機
-- 待合向けDisplay
-- 呼び出しチャイム / Fullscreen / Wake Lock
-- 進行中Sessionの自動保存と再開
-- History / CSV / Session Summary
-- 番号札作成
-- 印刷プレビュー
-- ブラウザ印刷
-- スマートフォン用「操作 / 待ち列 / 履歴」下部ナビ
-- safe-areaを考慮したモバイルUI / ダイアログ
-- キーボードFocus / ariaの調整
-- 日本語 / 英語
-- 完全ローカル処理
+- **番号をすぐ発行** — 連番Ticketの発行に加え、既存の整理券番号を手動で待ち列へ追加できます。
+- **1〜4窓口で運用** — 各窓口から呼び出し・再呼び出し・完了・不在を操作し、同じ待機Ticketの二重取得を防ぎます。
+- **待合向けDisplay** — 同じブラウザの別ウィンドウへ大きな番号表示を開き、外部モニターへ移して使えます。
+- **現場の受付フローに対応** — 待機・不在一覧、不在から待ち列への復帰、Ticket削除、対応操作のUndoを備えます。
+- **進行中Sessionを自動保存** — ページを再読み込みしても、この端末に残っている受付を再開できます。
+- **履歴を確認してCSV保存** — Historyの状態フィルタ、Session Summary、UTF-8 BOM付きCSV出力に対応します。
+- **番号札も同じアプリで準備** — A4 / Letter、印刷プレビュー、ブラウザ印刷で簡易整理券を作成できます。
+- **PC / スマートフォン対応** — スマホでは「操作 / 待ち列 / 履歴」の下部ナビとsafe-area対応UIを使います。
+- **日本語 / 英語** — アプリUI、Help、READMEを日英で用意しています。
+- **実行時データを外へ送らない** — 外部API、分析、テレメトリー、実行時パッケージ依存はありません。
 
-## スマートフォン / UX
+## すぐに使う
 
-スマートフォンで受付中は、下部の **「操作 / 待ち列 / 履歴」** で画面を切り替えます。固定ナビは端末のsafe-areaを考慮し、トースト等もナビの上へ表示して内容を隠さないようにしています。
+### Webで使う
 
-長いタイトルや窓口名は折り返し、大量のTicket / Historyは対応ブラウザで描画負荷を抑える指定を使います。
+[GitHub Pagesのデモ](https://ttomohisa.github.io/htmlapps-queue-board/)を開くだけで利用できます。アカウント登録やインストールは不要です。
 
-## 番号札作成
+### 単一HTMLをダウンロードして使う
 
-ヘッダーのプリンターアイコンから、現在のSessionとは独立して番号札を作成できます。
+リポジトリの [queue-board.html](queue-board.html) をダウンロードし、対応ブラウザで開いてください。読みやすい単一HTML版は `file://` から直接利用できます。
 
-設定できる項目:
+### ビルドして使う
 
-- 開始番号
-- 終了番号
-- 桁数
+1. このリポジトリをダウンロードまたはクローンします。
+2. Windowsで `build-standalone.bat` を実行します。
+3. 読みやすい単一HTML版は `dist/index.html` に生成されます。
+4. より小さいgzip自己展開版は `dist/index.self-extract.html` に生成されます。
+
+Queue Boardは実行時の外部ライブラリを使用しないため、通常利用時にnpm、CDN、外部APIは必要ありません。
+
+## 使い方
+
+1. 開始番号と1〜4個の窓口を設定します。必要なら窓口名やDisplay設定も変更できます。
+2. 受付を開始し、「番号を発行」で連番Ticketを追加します。既存番号は手動追加できます。
+3. 空いている窓口で **「次を呼ぶ」** を押すと、待ち列の先頭Ticketをその窓口へ割り当てます。
+4. 必要に応じて **「もう一度呼ぶ」 / 「完了」 / 「不在」** を使います。不在Ticketは待ち列の末尾へ戻せます。
+5. **「表示画面を開く」** で、待合向けDisplayを同じブラウザの別ウィンドウへ開けます。
+6. **「履歴」** ではTicketごとの時系列を確認できます。受付終了後はSession Summaryを表示し、終了済みSessionを端末内へ保存します。
+7. 必要なら履歴をCSVとして保存します。
+
+### スマートフォン
+
+受付中のスマートフォンでは、下部の **「操作 / 待ち列 / 履歴」** で画面を切り替えます。PC画面を単純に縦積みするのではなく、主要操作と一覧を分けて表示します。
+
+![Queue Board スマートフォン画面](assets/screenshot-mobile.png)
+
+### 番号札を印刷する
+
+ヘッダーのプリンターボタンから番号札作成画面を開き、以下を設定できます。
+
+- 開始 / 終了番号
+- 1〜6桁の表示
 - タイトル
-- 用紙サイズ
-- 1ページあたりの枚数
-
-既定値は次のとおりです。
-
-- 開始番号: 001
-- 終了番号: 030
-- 桁数: 3
-- タイトル: 「受付番号」
-- 用紙サイズ: A4
-- 1ページあたり: 8枚
-
-用紙サイズは **A4 / Letter** に対応しています。1ページあたりの枚数は1〜20枚で指定できます。
-
-## 印刷プレビュー
-
-設定に応じてページ単位のプレビューを生成します。
-
-- 番号札のタイトルと番号を表示
-- 点線を切り取り目安として表示
-- ページごとに印刷改ページ
-- 用紙サイズに応じて印刷用 `@page` を切り替え
-- 印刷時はヘッダーや操作UIを除外
-
-「印刷する」を押すと、ブラウザ標準の印刷画面を開きます。
-
-プリンター固有の余白や拡大縮小設定はブラウザ / OS / プリンタードライバー側の設定に依存します。
-
-## 印刷の制限
-
-ブラウザ停止を避けるため、1回に生成できる番号札は **最大1000枚** です。
-
-- 番号は0〜999999
-- 桁数は1〜6
+- A4 / Letter
 - 1ページあたり1〜20枚
-- 用紙はA4 / Letter
-- PC向けのブラウザ印刷を主対象
-- 印刷結果はブラウザ・OS・プリンター設定によってわずかに異なる場合があります
 
-番号札作成はSessionと独立しているため、受付開始前・受付中・受付終了後のいずれでも利用できます。
+1回の印刷で作成できる番号札は **最大1000枚** です。実際の印刷余白や倍率は、ブラウザ、OS、プリンタードライバー、印刷ダイアログの設定によって変わる場合があります。
 
-## その他の機能
+## プライバシーと通信防止
 
-### History / CSV
+Queue Boardでは、Ticket番号、Session状態、履歴、設定、印刷用番号札をブラウザ内で処理します。
 
-Session内の履歴を5状態でフィルタし、UTF-8 BOM付きCSVとして保存できます。
+待合向けDisplayは同じアプリを別ウィンドウで開き、状態はブラウザ標準の `postMessage` / `BroadcastChannel` で同期します。Queue Boardのサーバーや別端末へ受付状態を送信する仕組みではありません。Web版でDisplayを開くと同じHTMLを再取得する場合がありますが、Session状態はそのリクエストへ含まれず、`#display=...` のフラグメントもブラウザ内だけで扱われます。
 
-### Session Summary
+生成HTMLのContent Security Policyは `connect-src 'none'` です。実行時の `fetch`、XHR、WebSocket、EventSource、`sendBeacon`、WebTransport、WebRTC、外部API、分析、テレメトリーは使用しません。
 
-受付終了時に発行数・完了・不在・待機・開始/終了時刻・平均待ち時間を表示します。
+GitHub Pages版では最初のHTMLを取得する通信は発生します。ネットワークを完全に切って使う場合は、`dist/index.html` または `queue-board.html` をローカルで開いてください。
 
-### 自動保存
+## 対応ブラウザ / 端末
 
-進行中SessionはIndexedDBを第一候補として保存し、利用できない場合はlocalStorageへフォールバックします。
+主対象:
 
-## プライバシー
+- 最新のChrome
+- 最新のEdge
 
-Ticket、Session履歴、印刷用番号札、設定、Display状態はブラウザ内で処理します。番号札の作成や印刷のためにデータを外部へ送信しません。
+可能な範囲で対応:
 
-待合向けDisplayは同じアプリを別ウィンドウで開き、受付状態はブラウザ内の `postMessage` / `BroadcastChannel` で同期します。サーバーや別端末へQueue状態を送信する仕組みではありません。Web上でDisplayを開く際は同じHTMLを再取得する場合がありますが、Session状態はそのリクエストへ含めず、`#display=...` のフラグメントもブラウザ内だけで扱われます。
+- Firefox
+- Safari
 
-外部API、分析、テレメトリー、実行時パッケージ依存はなく、Content Security Policyは `connect-src 'none'` です。
+PCとスマートフォン向けレイアウトを用意しています。FullscreenとScreen Wake Lockはブラウザ対応状況に依存しますが、利用できない場合でも受付・呼び出しの基本機能は使用できます。
 
-## 単一HTML
+## 制限事項
 
-ビルドにより以下を生成します。
+- Display同期は **同じブラウザ環境の別ウィンドウ / タブ** までです。v1.0.0では別端末への同期は行いません。
+- SMS、メール通知、オンライン予約、クラウド同期、顧客名・電話番号管理、決済、スタッフアカウント・権限管理はありません。
+- 進行中Sessionの復旧はブラウザの保存領域に依存します。サイトデータ削除、プライベートブラウズの制限、保存ポリシー、端末故障などでは復旧できない場合があります。
+- 複数店舗やサーバーで統合管理するQueue Management Systemではなく、その場の一時受付向けです。
+- 通常利用は1 Session **1000 Ticket程度** を想定しています。非常に大きな履歴は端末メモリを多く使用する場合があります。
+- 番号札は1回の印刷で **最大1000枚** です。
+- 印刷結果はブラウザ・OS・プリンター設定によって差が出る場合があります。
 
-- `dist/index.html`
-- `dist/index.self-extract.html`
-- `queue-board.html`
+## 単一HTML / オフライン
 
-番号札作成・印刷も同じ単一HTML内で動作します。
+ビルドすると以下を生成します。
 
-## 開発
+```text
+dist/index.html
+dist/index.self-extract.html
+queue-board.html
+```
+
+読みやすい単一HTML版と自己展開版のどちらも、アプリUI、JavaScript、SVGアイコン、翻訳、印刷CSS、チャイム生成に必要な処理を含みます。
+
+オフライン確認手順は [VERIFY_OFFLINE.md](VERIFY_OFFLINE.md) を参照してください。
+
+## 開発とビルド
+
+```text
+.
+├─ src/index.template.html       # アプリ本体テンプレート
+├─ app.config.json               # アプリ情報・リリース版数
+├─ assets/favicon.svg            # アプリアイコン / favicon の正
+├─ dependencies.json             # 実行時パッケージ一覧（Queue Boardは空）
+├─ build-standalone.bat          # Windows用ビルド入口
+├─ build-standalone.ps1          # 単一HTML生成
+├─ scripts/check-repository.ps1  # リポジトリ / リリース検証
+└─ dist/                         # 生成されるstandalone成果物
+```
+
+検証:
 
 ```powershell
 powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File .\scripts\check-powershell-syntax.ps1
-powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File .\scripts\check-repository.ps1
+pwsh -NoLogo -NoProfile -File .\scripts\check-repository.ps1
 ```
 
-正式仕様と v0.1.0〜v1.0.0 のロードマップは `APP_SPEC.md` を参照してください。
+`dist/index.html`、`dist/index.self-extract.html`、`queue-board.html` は生成物です。直接編集せず、`src/index.template.html` や設定・ビルド処理を変更してください。
 
-## License
+## 使用ライブラリ
 
-MIT License
+Queue Board v1.0.0は **実行時のサードパーティライブラリを内包していません**。IndexedDB / localStorage、Web Audio、Fullscreen、Screen Wake Lock、`postMessage`、`BroadcastChannel` などのブラウザAPIを直接使用します。
+
+リポジトリ上のNotice方針は [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) を確認してください。
+
+## コントリビューション
+
+バグ報告や機能提案はIssueからお願いします。開発への参加方法は [CONTRIBUTING.md](CONTRIBUTING.md) を参照してください。
+
+## ライセンス
+
+Copyright © 2026 ttomohisa
+
+このプロジェクトは [MIT License](LICENSE) で公開されています。

@@ -1,125 +1,164 @@
 # Queue Board
 
-Queue Board is a Browser Kitty app for temporary reception desks and small events. It issues numbered Tickets, manages a shared queue, shows a waiting-room Display, records History, and can prepare printable number tickets.
+[![GitHub Pages](https://github.com/ttomohisa/htmlapps-queue-board/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/ttomohisa/htmlapps-queue-board/actions/workflows/deploy-pages.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Single HTML](https://img.shields.io/badge/distribution-single%20HTML-0ea5e9)](queue-board.html)
 
-The project is currently at **v0.9.0 — Mobile / UX / Accessibility RC**.
+[日本語版 README](README.ja.md)
+
+A local-first, single-HTML queue-number app for temporary reception desks, small events, pickup counters, and other situations where you need to issue numbers and call people in order.
+
+## 🚀 Live demo
+
+### [Open Queue Board on GitHub Pages](https://ttomohisa.github.io/htmlapps-queue-board/)
+
+GitHub Pages delivers the initial HTML. After it loads, Ticket numbers, queue state, Counter settings, History, and Display state are processed in the browser. Queue Board does not send Session data to an external API or analytics service.
+
+[![Queue Board screenshot](assets/screenshot-en.png)](https://ttomohisa.github.io/htmlapps-queue-board/)
 
 ## Features
 
-- One to four Counter queue operation
-- Sequential / manual Ticket entry
-- Call / recall / complete / absent / return-to-waiting flow
-- Waiting-room Display
-- Built-in chime / Fullscreen / Wake Lock
-- Active-Session autosave and recovery
-- History / CSV / Session Summary
-- Number-ticket creation
-- Print preview
-- Browser printing
-- Smartphone Operate / Queue / History bottom navigation
-- Safe-area-aware mobile controls and dialogs
-- Keyboard focus / ARIA polish
-- Japanese / English UI
-- Fully local processing
+- **Issue queue numbers quickly** — Create sequential Tickets or add an existing number manually.
+- **Run one to four Counters** — Each Counter can call, recall, complete, or mark its current Ticket absent without taking the same waiting Ticket twice.
+- **Show a waiting-room Display** — Open a large Display in another window of the same browser and move it to an external monitor.
+- **Handle real reception flow** — Keep waiting and absent lists, return absent Tickets to the queue, delete queued Tickets, and undo supported deletions.
+- **Keep the Session recoverable** — The active Session is automatically saved on the device and can be resumed after a reload.
+- **Review and export the day** — Filter History, end the Session with a summary, and save UTF-8 BOM CSV.
+- **Prepare number tickets** — Generate printable number tickets with A4 / Letter layouts, a live preview, and browser printing.
+- **Use it on desktop or mobile** — Smartphone operation uses fixed Operate / Queue / History navigation with safe-area support.
+- **Use it in Japanese or English** — The application UI, Help, and release documentation are bilingual.
+- **Keep runtime data local** — No external API, analytics, telemetry, or runtime package dependency is used.
 
-## Mobile / UX
+## Quick start
 
-On smartphones, an active reception is split into three bottom-navigation views: **Operate / Queue / History**. The fixed navigation respects the device safe area, and transient messages are raised above it so controls and status text are not covered.
+### Use the web demo
 
-Long titles and Counter names wrap safely, touch targets are kept practical, and large Ticket / History lists use browser rendering containment where supported.
+Open the [GitHub Pages demo](https://ttomohisa.github.io/htmlapps-queue-board/). No account or installation is required.
 
-## Number-ticket creation
+### Use the standalone HTML
 
-Use the printer icon in the header to create number tickets independently from the current Session.
+Download [queue-board.html](queue-board.html) from this repository and open it in a supported browser. The readable standalone file can be used directly with `file://`.
 
-Settings:
+### Build the standalone files
 
-- Starting number
-- Ending number
-- Digits
-- Title
-- Paper size
-- Tickets per page
+1. Download or clone this repository.
+2. Run `build-standalone.bat` on Windows.
+3. Use `dist/index.html` for the readable single-file build.
+4. Use `dist/index.self-extract.html` when you want the smaller gzip self-extracting variant.
 
-Defaults:
+Queue Board has no runtime third-party package dependency, so normal application use does not require npm, a CDN, or an external API.
 
-- Starting number: 001
-- Ending number: 030
-- Digits: 3
-- Title: “Queue Number”
-- Paper size: A4
-- Tickets per page: 8
+## How to use
 
-Paper sizes: **A4 / Letter**. Tickets per page can be set from 1 to 20.
+1. Choose the starting number and one to four Counters. Counter names and Display settings are optional.
+2. Start reception and issue sequential Tickets, or add a number manually.
+3. At an available Counter, choose **Call next**. The first waiting Ticket is assigned to that Counter.
+4. Use **Call again**, **Complete**, or **Absent** as needed. Absent Tickets can be returned to the end of the waiting queue.
+5. Choose **Open display** to open the waiting-room Display in another window of the same browser.
+6. Use **History** to review Ticket timelines and filters. When reception ends, Queue Board saves the completed Session locally and shows a Session Summary.
+7. Save History as CSV when needed.
 
-## Print preview
+### Smartphone operation
 
-Queue Board generates a page-by-page preview from the selected settings.
+During an active Session, smartphones use bottom navigation for **Operate / Queue / History**. Primary operation stays separate from the waiting / absent lists so the desktop layout is not simply squeezed into a narrow screen.
 
-- Ticket title and number
-- Dashed cutting guides
-- Page break after each paper sheet
-- Dynamic print `@page` size
-- Application controls excluded from printed output
+![Queue Board mobile screenshot](assets/screenshot-mobile.png)
 
-Select **Print** to open the browser's standard print dialog.
+### Number-ticket printing
 
-Printer margins and scaling can still vary depending on the browser, operating system, and printer driver.
+The printer button in the header opens the ticket-printing screen. You can set:
 
-## Printing limitations
+- Starting / ending number
+- 1–6 display digits
+- Ticket title
+- A4 or Letter paper
+- 1–20 tickets per page
 
-To avoid freezing the browser, one print job can generate up to **1000 tickets**.
+A single print job can generate up to **1000 tickets**. Actual printed margins and scale can vary with the browser, operating system, printer driver, and print-dialog settings.
 
-- Number range: 0–999999
-- Digits: 1–6
-- Tickets per page: 1–20
-- Paper sizes: A4 / Letter
-- Desktop browser printing is the primary target
-- Printed dimensions can vary slightly with browser / OS / printer settings
+## Privacy and runtime network protection
 
-Ticket creation is independent of the active Session, so it can be used before, during, or after reception.
+Queue Board keeps Ticket numbers, Session state, History, settings, and printable ticket data in the browser.
 
-## Other features
+The waiting-room Display is another window of the same application. Live state is synchronized with browser-native `postMessage` and `BroadcastChannel`; it is not sent to a Queue Board server or another device. On the hosted version, opening the Display may request the same HTML document again, but Session state is not included in that request and the `#display=...` fragment remains browser-side.
 
-### History / CSV
+The generated HTML includes a Content Security Policy with `connect-src 'none'`. The app contains no runtime `fetch`, XHR, WebSocket, EventSource, `sendBeacon`, WebTransport, WebRTC, external API, analytics, or telemetry path.
 
-Filter Session History by five states and export it as UTF-8 BOM CSV.
+The hosted demo still needs an initial request to download the HTML. For use with the network completely disconnected, open `dist/index.html` or `queue-board.html` locally.
 
-### Session Summary
+## Supported browsers and devices
 
-Ending reception shows issued, completed, absent, waiting, start/end time, and average wait.
+Primary targets:
 
-### Persistence
+- Current Chrome
+- Current Edge
 
-The active Session uses IndexedDB as the primary local store with localStorage fallback.
+Supported where practical:
 
-## Privacy
+- Firefox
+- Safari
 
-Tickets, Session History, printable number tickets, settings, and Display state are processed in the browser. Printing does not send ticket data to an external service.
+Desktop and smartphone layouts are provided. Fullscreen and Screen Wake Lock depend on browser support; when unavailable, the queue itself continues to work.
 
-The waiting-room Display is another window of the same app. Queue state is synchronized with same-browser messaging (`postMessage` / `BroadcastChannel`), not a server or another device. When the hosted app opens that window, the browser may request the same HTML document again, but the Session state is not included in that request; the `#display=...` fragment stays in the browser.
+## Limitations
 
-The app uses no external API, analytics, telemetry, or runtime package dependency, and its Content Security Policy uses `connect-src 'none'`.
+- Display synchronization is limited to another window/tab in the **same browser profile**. Remote-device synchronization is not part of v1.0.0.
+- SMS, email notification, online reservation, cloud synchronization, customer names / phone numbers, payments, and staff-account permissions are not included.
+- Active Session recovery depends on browser storage. Clearing site data, private-browsing restrictions, storage policy, or device failure can remove locally saved state.
+- Queue Board is designed for temporary on-site operation rather than multi-store or server-coordinated queue management.
+- A normal Session is designed around approximately **1000 Tickets**. Very large History lists can increase browser memory use.
+- One number-ticket print job is limited to **1000 tickets**.
+- Printer output can vary by browser, OS, and printer settings.
 
-## Single HTML
+## Single HTML and offline use
 
-The build produces:
+The build generates:
 
-- `dist/index.html`
-- `dist/index.self-extract.html`
-- `queue-board.html`
+```text
+dist/index.html
+dist/index.self-extract.html
+queue-board.html
+```
 
-Number-ticket creation and printing are included in the same standalone HTML.
+The readable standalone HTML and self-extracting variant contain the application UI, JavaScript, SVG icon, translations, print CSS, and generated chime behavior needed at runtime.
 
-## Development
+See [VERIFY_OFFLINE.md](VERIFY_OFFLINE.md) for the offline verification procedure.
+
+## Development and build
+
+```text
+.
+├─ src/index.template.html       # Application source template
+├─ app.config.json               # App metadata and release version
+├─ assets/favicon.svg            # Canonical app icon / favicon
+├─ dependencies.json             # Runtime package list (empty for Queue Board)
+├─ build-standalone.bat          # Windows build entry point
+├─ build-standalone.ps1          # Standalone builder
+├─ scripts/check-repository.ps1  # Repository / release validation
+└─ dist/                         # Generated standalone artifacts
+```
+
+Run the repository checks with:
 
 ```powershell
 powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File .\scripts\check-powershell-syntax.ps1
-powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File .\scripts\check-repository.ps1
+pwsh -NoLogo -NoProfile -File .\scripts\check-repository.ps1
 ```
 
-See `APP_SPEC.md` for the formal specification and v0.1.0–v1.0.0 roadmap.
+Generated `dist/index.html`, `dist/index.self-extract.html`, and `queue-board.html` are build outputs and should not be edited by hand.
+
+## Dependencies
+
+Queue Board v1.0.0 bundles **no third-party runtime library**. It uses browser APIs directly, including IndexedDB / localStorage, Web Audio, Fullscreen, Screen Wake Lock, `postMessage`, and `BroadcastChannel`.
+
+See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for repository notice policy.
+
+## Contributing
+
+Bug reports and feature proposals are welcome through GitHub Issues. See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidance.
 
 ## License
 
-MIT License
+Copyright © 2026 ttomohisa
+
+Licensed under the [MIT License](LICENSE).
