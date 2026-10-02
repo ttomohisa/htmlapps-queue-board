@@ -1769,8 +1769,9 @@
       let lastIssuedId = null;
       let counterDraftNames = ['', '', '', ''];
       let counterDraftCustom = [false, false, false, false];
-      const displayMode = location.hash === '#display';
-      const displayChannelName = APP_CONFIG.slug + ':display:v1';
+      const displayMode = location.hash === '#display' || location.hash.startsWith('#display=');
+      const displaySessionKey = displayMode && location.hash.startsWith('#display=') ? decodeURIComponent(location.hash.slice('#display='.length)) : '';
+      const displayChannelBase = APP_CONFIG.slug + ':display:v1:';
       const displayWindowName = APP_CONFIG.slug + '-display';
       let displayWindow = null;
       let displayConnected = false;
@@ -2000,6 +2001,7 @@
           recentCallCount: Math.min(5, Math.max(0, Number($('#recentCallCount').value) || 0))
         };
         lastIssuedId = null;
+        setupDisplayChannel();
         render();
         announce(translate('sessionStarted', { count: counters.length }), { tone: 'success' });
         $('#issueButton').focus();
@@ -2450,7 +2452,7 @@
       }
       function openDisplayWindow() {
         if (!session) return;
-        const url = location.href.split('#')[0] + '#display';
+        const url = location.href.split('#')[0] + '#display=' + encodeURIComponent(session.id);
         const existing = safeDisplayWindow();
         if (existing) {
           try { existing.focus(); } catch { }
@@ -2472,9 +2474,14 @@
         announce(translate('displayOpened'));
       }
       function setupDisplayChannel() {
-        if (typeof BroadcastChannel !== 'function') return;
+        const channelKey = displayMode ? displaySessionKey : session?.id || '';
+        if (displayChannel) {
+          try { displayChannel.close(); } catch { }
+          displayChannel = null;
+        }
+        if (!channelKey || typeof BroadcastChannel !== 'function') return;
         try {
-          displayChannel = new BroadcastChannel(displayChannelName);
+          displayChannel = new BroadcastChannel(displayChannelBase + channelKey);
           displayChannel.addEventListener('message', event => handleDisplayTransportMessage(event.data, null, 'broadcast'));
         } catch {
           displayChannel = null;
