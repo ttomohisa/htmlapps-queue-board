@@ -1271,7 +1271,7 @@
     }
 
 
-    /* Queue Board v0.6.0 persistence / recovery */
+    /* Queue Board persistence / recovery */
     .persistence-gate {
       min-height: 180px;
       display: grid;
@@ -1539,7 +1539,7 @@
       </div>
     </section>
 
-    <!-- APP:BEGIN Queue Board v0.6.0 persistence recovery -->
+    <!-- APP:BEGIN Queue Board v0.7.0 history export -->
     <section class="queue-card persistence-gate" id="persistenceGate" aria-live="polite">
       <div class="persistence-gate-inner">
         <span class="persistence-spinner" aria-hidden="true"></span>
@@ -1778,7 +1778,7 @@
       <div class="history-toolbar">
         <div>
           <p class="panel-kicker" data-i18n="historyKicker">Session履歴</p>
-          <h2 class="panel-title" id="historyTitle" data-i18n="historyTitle">履歴</h2>
+          <h2 class="panel-title" id="historyTitle" tabindex="-1" data-i18n="historyTitle">履歴</h2>
           <p data-i18n="historyBody">Ticketごとの受付・呼び出し・完了・不在を時系列で確認できます。</p>
         </div>
         <div class="history-toolbar-actions">
@@ -2720,6 +2720,8 @@
         if (!recoveryCandidate) return;
         session = normalizeRecoveredSession(recoveryCandidate);
         if (!session) return;
+        endedSession = null;
+        historyVisible = false;
         recoveryCandidate = null;
         lastIssuedId = null;
         setupDisplayChannel();
@@ -3253,6 +3255,7 @@
         }
         sendDisplayEnded();
         session = null;
+        endedSession = null;
         lastIssuedId = null;
         recoveryCandidate = null;
         historyVisible = false;
@@ -3936,14 +3939,22 @@
           $('#recoveryView').hidden = true;
           $('#setupView').hidden = true;
           $('#operatorView').hidden = true;
+          $('#historyView').hidden = true;
+          $('#summaryView').hidden = true;
           return;
         }
         const active = Boolean(session);
         const recovering = Boolean(recoveryCandidate && !session);
+        const ended = Boolean(endedSession && !session);
+        const historyShown = Boolean(historyVisible && (session || endedSession));
         $('#recoveryView').hidden = !recovering;
-        $('#setupView').hidden = active || recovering;
-        $('#operatorView').hidden = !active;
+        $('#setupView').hidden = active || recovering || ended || historyShown;
+        $('#operatorView').hidden = !active || historyShown;
+        $('#historyView').hidden = !historyShown;
+        $('#summaryView').hidden = !ended || historyShown;
         if (recovering) renderRecoveryCandidate();
+        if (historyShown) renderHistory();
+        if (ended && !historyShown) renderSummary();
         if (!session) return;
 
         syncNextNumber();
@@ -4009,6 +4020,19 @@
       });
       $('#resumeSessionButton').addEventListener('click', resumeSavedSession);
       $('#discardSavedSessionButton').addEventListener('click', discardSavedSession);
+      $('#openHistoryButton').addEventListener('click', openHistoryView);
+      $('#endSessionButton').addEventListener('click', endSession);
+      $('#historyBackButton').addEventListener('click', closeHistoryView);
+      $('#historyCsvButton').addEventListener('click', saveHistoryCsv);
+      $('#summaryCsvButton').addEventListener('click', saveHistoryCsv);
+      $('#summaryHistoryButton').addEventListener('click', openHistoryView);
+      $('#newSessionButton').addEventListener('click', startNewAfterSummary);
+      $('#historyFilters').addEventListener('click', event => {
+        const button = event.target.closest('[data-history-filter]');
+        if (!button) return;
+        historyFilter = button.dataset.historyFilter || 'all';
+        renderHistory();
+      });
       $('#setupForm').addEventListener('submit', startSession);
       $('#startNumber').addEventListener('blur', normalizeStartNumber);
       $('#startNumber').addEventListener('input', () => { $('#startNumberError').textContent = ''; saveSetupSettings(); });
