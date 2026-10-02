@@ -161,7 +161,7 @@ async function capture(locale, viewport, filename, mobile = false) {
   await waitForSetup(page);
   await startDemoSession(page, locale);
   if (mobile) {
-    await page.locator('[data-mobile-tab="operate"]').click();
+    await page.locator('#mobileSessionNav [data-mobile-tab="operate"]').click();
   }
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: path.join(assetsDir, filename), fullPage: false });
