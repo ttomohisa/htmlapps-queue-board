@@ -1,128 +1,1596 @@
-# APP_SPEC.md
+# Queue Board / 呼び出し番号
+## 正式仕様書・開発計画
 
-This file is the product contract for the application created from this template. Replace the starter specification below before asking an LLM to build a new product.
+- Product: Browser Kitty
+- App name: Queue Board / 呼び出し番号
+- Target release: v1.0.0
+- Status: Planning
+- Document version: 1.0
+- Scope: v0.1.0–v1.0.0
 
-## 1. Product identity
+---
 
-- **Working name:** Single HTML App Starter
-- **One-sentence purpose:** Demonstrate the template's local-first, responsive, bilingual, single-file application foundation.
-- **Primary users:** Developers and LLM coding agents starting a new browser utility.
-- **Release artifacts:** `dist/index.html`, `dist/index.self-extract.html`, and a repository-root copy of the readable build named from `repository.name` with a leading `htmlapps-` removed
+# 1. 概要
 
-## 2. Problem and outcome
+Queue Board / 呼び出し番号は、小規模イベント、受付、物販、受け渡し、ワークショップなどで、その場だけ使える呼び出し番号システムです。
 
-The starter must make the repository's constraints visible and testable without pretending to be a finished end-user product. A user can enter text, see basic counts, copy it, save it, and persist it locally.
+利用者登録、クラウド契約、サーバー設定を必要とせず、ブラウザを開いてすぐに、
 
-A successful replacement app should state here:
+1. 番号を発行する
+2. 待ち列を管理する
+3. 順番に呼び出す
+4. 外部ディスプレイへ現在の呼び出し番号を大きく表示する
+5. 完了・不在を記録する
+6. 必要に応じて履歴をCSVへ保存する
 
-- What concrete problem it solves.
-- Who experiences the problem.
-- What result the user gets in one session.
-- Why a local single-HTML implementation is useful.
+までを完結させます。
 
-## 3. Core user flow
+本アプリは大規模なQueue Management Systemを目指しません。
 
-1. Open the page locally or through GitHub Pages.
-2. Enter or paste text.
-3. See character, word, and line counts update immediately.
-4. Edit the suggested output filename, then copy or download the text.
-5. Use Clear or Restore sample and undo the reversible change from the toast when needed.
-6. Reload and recover the locally saved text.
+「今日ここで、番号を配って、順番に呼ぶ」
 
-## 4. Functional requirements
+という一時的な現場用途に特化します。
 
-- Provide a responsive text area.
-- Calculate Unicode-aware character count.
-- Calculate approximate word and line counts.
-- Copy text with a compatibility fallback.
-- Download UTF-8 plain text with a user-editable output filename and a predictable `.txt` extension.
-- Save the current text in local storage when available.
-- Use the reusable `AppToast.show()` Undo pattern for reversible Clear / Restore sample operations. Reserve `AppConfirm.ask()` for irreversible or high-risk actions.
-- Switch Japanese and English without reloading.
-- Use a light-only interface; do not add a dark-mode or theme switcher.
-- Expose build version, generation timestamp, and embedded dependency count.
+---
 
-## 5. Data and privacy
+# 2. Browser Kittyとしての位置づけ
 
-- Input text remains in browser memory and local storage.
-- The app performs no runtime network request.
-- There is no server-side storage, login, analytics, telemetry, or tracking.
-- Download occurs only after a user action.
+本アプリは、ファイル変換やビューアではなく、ブラウザを一時的な業務設備として使うタイプのアプリです。
 
-## 6. Non-goals
+Browser Kittyの基本方針に従い、以下を重視します。
 
-- Collaborative editing.
-- Cloud synchronization.
-- Rich text formatting.
-- Server-side conversion.
-- Account management.
+- 登録不要
+- インストール不要
+- 原則として完全ローカル処理
+- ユーザーデータを外部へ送信しない
+- PC / スマートフォン双方で利用できる
+- 可能な限り単一HTMLとして利用できる
+- 実行時の外部ネットワーク依存を避ける
+- 一般ユーザー向けUIに不要な技術用語を出さない
+- 初見でも説明書なしで主要操作を完結できる
 
-## 7. UX and accessibility
+新規実装時は、作業開始時点の最新 `htmlapps-template` のGitHubリポジトリを確認し、その構成へ準拠します。
 
-- Mobile-first responsive layout from 320px upward.
-- All controls have visible labels or accessible names.
-- Keyboard focus is visible.
-- Motion respects `prefers-reduced-motion`.
-- Reversible changes provide a visible Undo action in the reusable toast.
-- Irreversible or high-risk destructive actions use the reusable confirmation component, centered on desktop and presented as a safe-area-aware bottom sheet on smartphones.
-- Status messages use an `aria-live` region.
-- If the finished app needs persistent smartphone access to 3-5 sections or workflow actions, reuse `components/mobile-bottom-bar.html` rather than inventing another fixed bottom bar. For long multi-section tools, prefer its mobile page-tab mode (`data-mobile-page-target`) so tapping a bottom tab shows only that group on smartphones while desktop still shows all sections. Keep unavailable actions disabled until their prerequisites exist.
+---
 
-## 8. Performance expectations
+# 3. 想定利用シーン
 
-- Initial UI should become interactive without network access.
-- Input updates should remain smooth for at least 100,000 characters on a typical desktop browser.
-- Avoid rebuilding large DOM sections on every keystroke.
+主な利用場面は以下です。
 
-## 9. Browser target
+| 利用場面 | 例 |
+|---|---|
+| 小規模イベント | 整理番号を発行して順番に呼び出す |
+| フード販売 | 注文番号を表示して商品受け渡し |
+| ポップアップショップ | 会計・商品受取待ち |
+| ワークショップ | 参加者の順番待ち |
+| 写真撮影会 | 次の参加者を呼び出す |
+| 修理・相談受付 | 受付番号による呼び出し |
+| 社内イベント | 機材利用や相談窓口の順番管理 |
+| 即売会 | 商品受け取り番号管理 |
+| 一時受付 | 名前を使わず番号だけで呼び出す |
 
-Current stable desktop and mobile versions of Chromium, Firefox, and Safari. Direct `file://` opening is required.
+---
 
-## 10. Acceptance criteria
+# 4. 対象ユーザー
 
-- `build-standalone.ps1` produces the readable HTML, a gzip self-extracting variant, and an exact repository-root copy named from `repository.name` with a leading `htmlapps-` removed (for example `htmlapps-tap-counter` → `tap-counter.html`).
-- Embedded asset bytes are Base64-encoded exactly once; the complete asset-bundle JSON is not wrapped in a second Base64 layer.
-- Assets configured with `gzip` / `auto` can be read through the async embedded-asset API, and the build writes `build-size-report.json`.
-- `scripts/verify-standalone.ps1` passes.
-- The self-extract loader is ASCII-only, inherits the embedded favicon from the readable HTML, and restores the source HTML byte-for-byte.
-- The generated HTML contains no unresolved build placeholder.
-- The generated HTML contains no external script, stylesheet, frame, module import, or CSS asset URL.
-- Runtime CSP includes `connect-src 'none'`.
-- The full core user flow works after opening either generated HTML directly.
-- No data leaves the page.
-- Japanese and English copy both fit at 360px width.
-- Clear happens immediately but offers Undo for long enough to recover the previous text.
-- The output filename can be edited before download; invalid filename characters are sanitized and an empty name falls back to the app slug.
+主対象は、専用の受付システムを導入するほどではないが、その日だけ番号呼び出しが必要な人です。
 
-## 11. Open decisions for a new app
+例:
 
-Replace these with explicit decisions before implementation:
+- イベント運営者
+- 小規模店舗スタッフ
+- 地域活動・学校行事の担当者
+- ワークショップ主催者
+- 社内イベント担当者
+- 一時的な受付を設置する担当者
 
-- Maximum accepted input size.
-- Supported input file types.
-- Export file formats, default filename, editable filename behavior, sanitization, and extension rules.
-- Persistence strategy and reset behavior.
-- Undo/redo scope.
-- Error and recovery behavior, including stale async-result invalidation when inputs can change during processing.
-- Explicit async phases (`empty`, `ready`, `loading-runtime` if needed, `processing`, `result`, `error`) for heavy processing apps.
-- Mobile relationship between previews and their directly related controls.
-- Smartphone navigation model: bottom-tab page switching, section-scrolling bottom bar, workflow-action bar, or no fixed bottom bar.
-- Media coordinate/orientation strategy when drawing overlays.
-- Required third-party libraries.
-- Whether the app intentionally needs peer-to-peer WebRTC. If so, decide whether the fully serverless same-LAN QR pairing component is appropriate, what DataChannels are required, and how paired-device data is described to users.
-- Whether bilingual UI is required.
+専門的なIT知識を前提としません。
 
-## In-app help
+---
 
-The upper-right header includes a compact help button. It opens a bilingual “使い方と注意事項” dialog containing:
+# 5. 解決する問題
 
-- the real user workflow,
-- privacy and local-processing behavior,
-- limitations and data-loss risks,
-- any browser or device constraints relevant to the app.
+紙の番号札や口頭呼び出しだけでは、次の問題があります。
 
-Acceptance criteria: help content is updated together with each user-facing behavior change, contains no leftover starter instructions, and remains fully scrollable at narrow smartphone widths / short viewport heights so the final item and close control are always reachable.
+- 次に何番を呼ぶか分からなくなる
+- 呼び出し済み番号が分からなくなる
+- 不在者をどう扱うか曖昧になる
+- 複数窓口で同じ番号を呼んでしまう
+- 待っている人から現在番号が見えない
+- イベント終了後に受付数や履歴が残らない
+- 専用の受付システムは設定や契約が重い
 
-## WebRTC readiness requirement
+Queue Boardでは、これらをブラウザだけで軽量に解決します。
 
-When an app uses peer-to-peer WebRTC DataChannels, define which reliable channel represents application readiness. Custom channel layouts must set `readyChannelLabel`; do not define application-ready from ICE/PeerConnection `connected` alone.
+---
+
+# 6. 非目標
+
+v1.0.0では以下を実装しません。
+
+| 非対象 | 理由 |
+|---|---|
+| SMS通知 | 外部サービス・通信が必要 |
+| メール通知 | 同上 |
+| オンライン予約 | スコープが大きくなる |
+| 顧客名・電話番号管理 | 個人情報管理を避ける |
+| ユーザーアカウント | Browser Kittyの方向性と合わない |
+| クラウド同期 | サーバー前提となる |
+| 複数店舗管理 | SaaS化につながる |
+| スタッフアカウント・権限 | 初期用途には不要 |
+| 決済 | 非対象 |
+| 高度なBI・分析 | 呼び出し機能から外れる |
+| 遠隔インターネット同期 | v1.0では扱わない |
+| WebRTCによる別端末同期 | 将来候補とする |
+
+---
+
+# 7. 基本概念
+
+## 7.1 Session
+
+1回の受付運用を「Session」とします。
+
+Sessionには以下を含みます。
+
+- 開始日時
+- 終了日時
+- 次回発行番号
+- 待機番号
+- 呼び出し中番号
+- 完了番号
+- 不在番号
+- 窓口設定
+- 表示設定
+- 履歴
+
+Session終了までは端末内へ自動保存します。
+
+---
+
+## 7.2 Ticket
+
+1つの受付番号をTicketとします。
+
+最低限のデータ:
+
+```text
+id
+number
+status
+createdAt
+calledAt
+completedAt
+counterId
+callCount
+```
+
+`number` は表示用番号です。
+
+内部IDと表示番号は分離します。
+
+---
+
+## 7.3 Ticket Status
+
+Ticketの状態は以下の4つです。
+
+```text
+waiting
+called
+completed
+absent
+```
+
+状態遷移:
+
+```text
+waiting
+  ↓
+called
+  ├─→ completed
+  ├─→ absent
+  └─→ waiting
+```
+
+不在番号は再度待ち列へ戻せます。
+
+---
+
+## 7.4 Counter
+
+呼び出しを行う窓口です。
+
+v1.0では1〜4窓口をサポートします。
+
+例:
+
+```text
+窓口1
+窓口2
+窓口3
+窓口4
+```
+
+各窓口は同時に1件のTicketを「呼び出し中」として保持できます。
+
+---
+
+# 8. 基本フロー
+
+## 8.1 初回開始
+
+```text
+アプリを開く
+↓
+初期設定
+↓
+受付を開始
+↓
+操作画面
+```
+
+初期設定の必須項目を最小限にします。
+
+初期値:
+
+| 設定 | 初期値 |
+|---|---|
+| 表示タイトル | お呼びしています |
+| 開始番号 | 001 |
+| 桁数 | 3 |
+| 窓口数 | 1 |
+| 呼び出し音 | ON |
+| 待ち人数表示 | ON |
+
+前回設定は端末内に保存して再利用できます。
+
+---
+
+## 8.2 番号発行
+
+操作画面で、
+
+```text
+[＋ 番号を発行]
+```
+
+を押すと次番号を発行します。
+
+例:
+
+```text
+037
+↓
+038
+↓
+039
+```
+
+発行したTicketは `waiting` になります。
+
+発行直後は大きな番号を表示し、スタッフが来場者へ見せられるようにします。
+
+---
+
+## 8.3 手動番号追加
+
+既存の紙整理券などを使用する場合に備え、番号を手動で待ち列へ追加できます。
+
+```text
+番号
+[ 125 ]
+
+[待ち列に追加]
+```
+
+同一Session内で同じ表示番号を重複登録しようとした場合は警告します。
+
+---
+
+## 8.4 呼び出し
+
+空いている窓口で、
+
+```text
+[次を呼ぶ]
+```
+
+を押すと、待ち列の先頭Ticketを取得します。
+
+処理:
+
+```text
+waiting
+↓
+called
+```
+
+同時に、
+
+- `calledAt`
+- `counterId`
+- `callCount`
+
+を更新します。
+
+複数窓口で同じTicketが取得されないよう、1回の操作を同期的に処理します。
+
+---
+
+## 8.5 再呼び出し
+
+呼び出し中Ticketには、
+
+```text
+[もう一度呼ぶ]
+```
+
+を用意します。
+
+Ticket番号は変えず、チャイムと表示更新だけを再実行します。
+
+`callCount` を増加させます。
+
+---
+
+## 8.6 完了
+
+対応終了時:
+
+```text
+[完了]
+```
+
+状態:
+
+```text
+called
+↓
+completed
+```
+
+窓口を空き状態に戻します。
+
+---
+
+## 8.7 不在
+
+呼んでも来なかった場合:
+
+```text
+[不在]
+```
+
+状態:
+
+```text
+called
+↓
+absent
+```
+
+不在一覧には、
+
+```text
+[待ち列へ戻す]
+```
+
+を用意します。
+
+戻した場合:
+
+```text
+absent
+↓
+waiting
+```
+
+原則として待ち列の末尾へ戻します。
+
+---
+
+# 9. 画面構成
+
+v1.0では以下の画面を持ちます。
+
+```text
+1. Start / Setup
+2. Operator
+3. Queue
+4. History
+5. Display
+6. Print Tickets
+7. Session Summary
+8. Help / Info
+```
+
+PCとスマートフォンで情報構造は共通としつつ、レイアウトは必要に応じて分けます。
+
+---
+
+# 10. Start / Setup
+
+目的:
+
+- すぐ受付を始める
+- 必要最低限の設定を行う
+
+表示:
+
+```text
+Queue Board
+
+その場で使える呼び出し番号
+
+開始番号
+[ 001 ]
+
+窓口
+[ 1 ▼ ]
+
+呼び出し音
+[ ON ]
+
+[受付を開始]
+```
+
+詳細設定は折りたたみます。
+
+詳細設定候補:
+
+- 桁数
+- 表示タイトル
+- 待ち人数表示
+- 最近呼んだ番号表示数
+
+---
+
+# 11. Operator画面
+
+PC版の中心画面です。
+
+構成例:
+
+```text
+待ち人数 8人
+
+窓口1
+現在: 025
+[もう一度呼ぶ]
+[完了]
+[不在]
+
+窓口2
+現在: 026
+[もう一度呼ぶ]
+[完了]
+[不在]
+
+次の番号
+027
+
+[窓口1で次を呼ぶ]
+[窓口2で次を呼ぶ]
+
+待機中
+027 028 029 030 031 ...
+
+[＋ 番号を発行]
+```
+
+最頻操作である「次を呼ぶ」は十分なタップ領域を確保します。
+
+---
+
+# 12. スマートフォンOperator UI
+
+PC版を単純縮小しません。
+
+主画面:
+
+```text
+待ち 8人
+
+次
+027
+
+[次を呼ぶ]
+
+呼び出し中
+窓口1 025
+窓口2 026
+```
+
+下部固定ナビゲーション:
+
+```text
+[操作] [待ち列] [履歴]
+```
+
+必要に応じて「発行」は主要アクションとして固定配置します。
+
+下部固定UIがコンテンツを隠さないようsafe-areaを考慮します。
+
+---
+
+# 13. Queue画面
+
+待機列を一覧表示します。
+
+例:
+
+```text
+027
+受付 10:32
+
+028
+受付 10:34
+
+029
+受付 10:35
+```
+
+機能:
+
+- 順番確認
+- Ticket削除
+- 不在番号の確認
+- 不在番号を待ち列へ戻す
+- 手動番号追加
+
+並べ替えはv1.0必須ではありません。
+
+「先頭へ移動」等の優先処理も初期版では実装しません。
+
+---
+
+# 14. Display画面
+
+待っている利用者が見る表示専用画面です。
+
+最重要画面の1つです。
+
+例:
+
+```text
+お呼びしています
+
+
+      027
+
+     窓口 2
+
+
+最近お呼びした番号
+
+024   025   026
+
+待ち人数 7
+```
+
+要件:
+
+- 番号を最大限大きく表示
+- 遠距離から読める
+- 不要な操作UIを表示しない
+- 全画面表示に対応
+- 番号変更時に視覚的な変化を出す
+- 呼び出し時にチャイムを鳴らせる
+- 待ち人数表示はON/OFF可能
+- 最近呼んだ番号は設定された件数のみ表示
+- 1〜4窓口表示に対応
+- 縦長・横長画面双方を考慮
+
+---
+
+# 15. Display Window同期
+
+PCでOperator画面から、
+
+```text
+[表示画面を開く]
+```
+
+を押すと表示専用ウィンドウを開きます。
+
+同一ブラウザ内でリアルタイムに以下を同期します。
+
+- 現在呼び出し中番号
+- 窓口
+- 最近呼び出した番号
+- 待ち人数
+- 表示タイトル
+- Session終了状態
+
+実装候補:
+
+- `window.open`
+- `postMessage`
+- `BroadcastChannel`
+
+単一HTMLを `file://` から開いた場合も含めて実動作を確認し、特定方式だけに依存しない設計を検討します。
+
+表示ウィンドウが閉じられた場合でもOperator操作は継続できる必要があります。
+
+---
+
+# 16. Fullscreen
+
+Display画面では全画面表示を提供します。
+
+```text
+[全画面表示]
+```
+
+ブラウザ制約上、ユーザー操作を起点として開始します。
+
+全画面終了後も表示状態を維持します。
+
+---
+
+# 17. Wake Lock
+
+対応ブラウザではDisplay画面に、
+
+```text
+画面を点灯したままにする
+```
+
+を提供します。
+
+非対応環境ではエラーにせず、その機能のみ利用不可として案内します。
+
+Wake Lockは補助機能であり、アプリの必須条件にはしません。
+
+---
+
+# 18. 呼び出し音
+
+v1.0ではチャイム音を実装します。
+
+要件:
+
+- ON/OFF可能
+- 開始前に試聴可能
+- 呼び出し時に再生
+- 再呼び出し時にも再生
+- 外部音声ファイルを実行時取得しない
+- 単一HTMLへ内包可能な形式とする
+
+ブラウザのAutoplay制限を考慮し、ユーザー操作後に利用可能となる設計にします。
+
+v1.0では番号の音声読み上げを必須としません。
+
+---
+
+# 19. 番号札印刷
+
+Queue Board内で簡易整理券を作成できます。
+
+設定:
+
+- 開始番号
+- 終了番号
+- 桁数
+- タイトル
+- 用紙サイズ
+- 1ページあたりの枚数
+
+例:
+
+```text
+受付番号
+
+001
+```
+
+ブラウザ印刷機能を使います。
+
+印刷用CSSを用意し、操作UIは印刷対象から除外します。
+
+番号札作成は現在のSessionと独立して利用できても構いません。
+
+---
+
+# 20. History画面
+
+Session内の履歴を時系列で表示します。
+
+例:
+
+```text
+001
+10:32 受付
+10:37 呼出
+10:41 完了
+
+002
+10:33 受付
+10:38 呼出
+10:40 不在
+```
+
+状態ごとのフィルタ:
+
+```text
+すべて
+待機中
+呼び出し中
+完了
+不在
+```
+
+高度な検索は不要です。
+
+---
+
+# 21. CSV出力
+
+Session履歴をCSVとして保存できます。
+
+最低限の列:
+
+```text
+number
+status
+created_at
+called_at
+completed_at
+counter
+call_count
+```
+
+不在等に応じて空欄を許容します。
+
+CSVエンコーディングは、主要な表計算ソフトで扱いやすい形式を選択します。
+
+ファイル名例:
+
+```text
+queue-board-2026-10-02.csv
+```
+
+---
+
+# 22. Session Summary
+
+受付終了時にSession概要を表示します。
+
+例:
+
+```text
+本日の受付
+
+受付数
+82
+
+完了
+76
+
+不在
+6
+
+受付開始
+10:00
+
+受付終了
+15:42
+```
+
+表示候補:
+
+- 発行数
+- 完了数
+- 不在数
+- 現在待機数
+- 開始時刻
+- 終了時刻
+- 平均待ち時間
+
+平均待ち時間は `createdAt → calledAt` から算出します。
+
+高度な統計は不要です。
+
+---
+
+# 23. Session終了
+
+Session終了は破壊的操作として確認します。
+
+確認例:
+
+```text
+受付を終了しますか？
+
+現在の待ち列は7件です。
+終了後も履歴は確認できます。
+```
+
+終了後に、
+
+```text
+[CSVを保存]
+[新しい受付を開始]
+```
+
+を表示します。
+
+新しい受付を開始する際は、前Sessionの未保存データを誤って失わないようにします。
+
+---
+
+# 24. 自動保存
+
+Session中の状態は端末内へ自動保存します。
+
+保存候補:
+
+- IndexedDB
+- localStorage
+
+Ticket履歴の増加を考慮し、Session本体はIndexedDBを第一候補とします。
+
+設定値のみlocalStorageへ保存しても構いません。
+
+ページ再読み込み後には、
+
+```text
+進行中の受付があります
+
+開始: 10:00
+待ち: 8人
+
+[受付を再開]
+[新しく始める]
+```
+
+と表示します。
+
+黙って新しいSessionを開始しません。
+
+---
+
+# 25. データ削除
+
+以下は確認を入れます。
+
+- Sessionを破棄
+- 履歴を削除
+- 進行中Sessionをリセット
+
+個別Ticket削除については、状況に応じてUndoを優先します。
+
+例:
+
+```text
+028を削除しました
+
+[元に戻す]
+```
+
+---
+
+# 26. 空状態
+
+Queue画面:
+
+```text
+待っている番号はありません。
+
+番号を発行すると、ここに表示されます。
+
+[番号を発行]
+```
+
+History画面:
+
+```text
+まだ履歴はありません。
+
+番号を呼び出すと、ここに記録されます。
+```
+
+---
+
+# 27. 完了状態
+
+Session終了後は処理結果を明確に表示します。
+
+単に「完了」とだけ表示しません。
+
+---
+
+# 28. エラー状態
+
+技術用語だけのエラーを表示しません。
+
+例:
+
+```text
+表示画面を開けませんでした。
+
+ブラウザでポップアップがブロックされている可能性があります。
+```
+
+詳細情報は必要に応じて折りたたみます。
+
+---
+
+# 29. プライバシー
+
+基本方針:
+
+- Ticket番号・履歴は端末内で処理
+- 顧客名を入力する仕様にしない
+- 電話番号を入力する仕様にしない
+- Sessionデータを外部へ送信しない
+- 外部APIを使用しない
+- analyticsをアプリ内部へ不要に追加しない
+- CDNランタイム依存を避ける
+
+「完全ローカル処理」と表示する場合は、リリース前に実際のランタイム通信を確認します。
+
+---
+
+# 30. CSP
+
+可能な限り厳格なCSPを使用します。
+
+必要な機能だけを許可します。
+
+確認対象:
+
+- inline assets
+- Blob URL
+- audio
+- Worker利用有無
+- popup/display window
+- file:// standalone behavior
+
+`https:` や `*` のような広すぎる許可を安易に追加しません。
+
+---
+
+# 31. 単一HTML
+
+v1.0では単一HTML版を正式成果物とします。
+
+可能な限り以下を内包します。
+
+- CSS
+- JavaScript
+- SVG
+- チャイム音
+- 翻訳
+- 印刷CSS
+
+単一HTML版でも以下が動くことを確認します。
+
+- 番号発行
+- 待ち列
+- Display window
+- 呼び出し音
+- CSV保存
+- 印刷
+- 自動保存
+
+---
+
+# 32. 日本語 / 英語
+
+日本語・英語に対応します。
+
+アプリ名:
+
+```text
+Queue Board
+呼び出し番号
+```
+
+翻訳は直訳ではなくUIとして自然な表現を優先します。
+
+---
+
+# 33. アクセシビリティ
+
+最低限以下へ対応します。
+
+- キーボード操作
+- Focus表示
+- 十分なコントラスト
+- 色だけに依存しない状態表示
+- aria-label
+- Enter / Spaceでボタン操作
+- Escapeでモーダルを閉じる
+- 44px程度を意識したタップ領域
+- Display画面で十分な文字サイズ
+
+音だけで呼び出し状態を伝えません。
+
+---
+
+# 34. キーボード操作
+
+誤操作を避けるため、v1.0では危険な単一キーショートカットを多用しません。
+
+候補:
+
+```text
+Space / Enter
+フォーカス中ボタンを実行
+
+Escape
+モーダルを閉じる
+```
+
+「Nキーで次を呼ぶ」等は、誤呼び出しの可能性があるため初期版では採用しません。
+
+---
+
+# 35. PC対応
+
+PCでは以下を重視します。
+
+- 複数窓口を同時に確認できる
+- Display windowを外部モニターへ移動しやすい
+- 操作画面と待ち列を同時に確認できる
+- 1280px程度の幅でも無理なく利用できる
+
+---
+
+# 36. スマートフォン対応
+
+最低限以下を確認します。
+
+- 横スクロールなし
+- 下部固定UIとコンテンツの重なりなし
+- 長いタイトルでもレイアウトが壊れない
+- モーダルが画面外へ出ない
+- タップ領域が小さすぎない
+- 主要操作が下部から行える
+- 縦向きで主要操作が完結する
+- Displayモードもスマートフォンで利用できる
+
+---
+
+# 37. ブラウザ対応
+
+主要対象:
+
+- Chrome
+- Edge
+
+可能な範囲で:
+
+- Safari
+- Firefox
+
+Fullscreen、Wake Lock等の補助APIはFeature Detectionを行います。
+
+非対応APIがあっても基本機能は使用可能にします。
+
+---
+
+# 38. 性能要件
+
+通常利用として最低限以下を想定します。
+
+- 1 Session 1,000 Ticket
+- 数時間の連続運用
+- 1〜4窓口
+- Display window長時間表示
+
+Ticket数が増えても全履歴DOMを常時大量描画しない設計を検討します。
+
+---
+
+# 39. データモデル案
+
+```ts
+type TicketStatus =
+  | "waiting"
+  | "called"
+  | "completed"
+  | "absent";
+
+type Ticket = {
+  id: string;
+  number: number;
+  displayNumber: string;
+  status: TicketStatus;
+  createdAt: number;
+  calledAt: number | null;
+  completedAt: number | null;
+  counterId: string | null;
+  callCount: number;
+};
+
+type Counter = {
+  id: string;
+  name: string;
+  currentTicketId: string | null;
+};
+
+type QueueSession = {
+  id: string;
+  startedAt: number;
+  endedAt: number | null;
+  nextNumber: number;
+  digits: number;
+  title: string;
+  counters: Counter[];
+  tickets: Ticket[];
+  soundEnabled: boolean;
+  showWaitingCount: boolean;
+};
+```
+
+これは初期案です。
+
+実装時に現在のテンプレートやコード構成に合わせて変更可能です。
+
+---
+
+# 40. UI状態
+
+最低限以下を明確に分けます。
+
+```text
+初期状態
+受付開始前
+受付中
+待ち列0
+呼び出し中
+不在あり
+Display未接続
+Display接続中
+Session終了
+保存成功
+保存失敗
+エラー
+```
+
+---
+
+# 41. 主要受入条件
+
+v1.0.0は最低限以下を満たした場合に正式リリース候補とします。
+
+| 項目 | 条件 |
+|---|---|
+| 番号発行 | 連番で発行できる |
+| 手動番号 | 任意番号を追加できる |
+| 待ち列 | 正しい順番を維持する |
+| 呼び出し | 同じTicketを複数窓口で同時取得しない |
+| 完了 | 呼び出し中から完了へ変更できる |
+| 不在 | 不在へ変更し再待機できる |
+| 複数窓口 | 1〜4窓口で動作する |
+| Display | 別ウィンドウへリアルタイム反映される |
+| 音 | 呼び出し時にチャイムを鳴らせる |
+| 全画面 | Displayを全画面化できる |
+| 自動保存 | 再読込後にSessionを復元できる |
+| CSV | 履歴を書き出せる |
+| 印刷 | 番号札を印刷できる |
+| モバイル | スマートフォンで主要操作可能 |
+| JA/EN | 日本語・英語双方が利用可能 |
+| Privacy | ユーザーデータの外部送信なし |
+| Standalone | 単一HTML版で主要機能が動作 |
+| README | 最新仕様と一致 |
+| Screenshot | 日本語・英語版を用意 |
+| favicon | アプリ内アイコンと整合 |
+
+---
+
+# 42. v1.0以降の候補
+
+v1.0では実装しませんが、将来候補として以下を残します。
+
+```text
+別端末Display
+  スタッフスマホ
+      ↓
+    QRペアリング
+      ↓
+  タブレット / TV
+```
+
+方式候補:
+
+- WebRTC
+- LAN内接続
+- QRによる接続情報交換
+
+ただし、Wi-Fi端末分離、ICE、再接続、同期競合、複数端末等の複雑性が増すため、v1.0とは分離します。
+
+その他の将来候補:
+
+- 音声読み上げ
+- 優先呼び出し
+- 複数待ち列
+- カスタムチャイム
+- テーマ
+- 番号札QR
+- 一時的な来場者セルフ受付
+
+これらは必要性を確認してから検討します。
+
+---
+
+# 43. 開発計画
+
+## v0.1.0 — Core Queue
+
+目的:
+
+呼び出し番号システムの最小コアを成立させる。
+
+実装:
+
+- 最新 `htmlapps-template` を確認して初期構築
+- 日本語 / 英語の基本構造
+- Session開始
+- 連番Ticket発行
+- waiting一覧
+- 1窓口
+- 次を呼ぶ
+- completed
+- 基本的な状態管理
+- リセット
+- Browser Kittyブランドカラー `#16624F`
+- favicon / アプリアイコンの初期版
+
+完了条件:
+
+```text
+番号を発行
+↓
+順番に呼ぶ
+↓
+完了
+```
+
+が一通り動く。
+
+---
+
+## v0.2.0 — Queue Operations
+
+目的:
+
+実運用に必要な待ち列操作を追加する。
+
+実装:
+
+- 手動番号追加
+- absent
+- 不在一覧
+- 待ち列へ戻す
+- 再呼び出し
+- Ticket削除
+- 重複番号チェック
+- Undoを適用できる操作の検討・実装
+- 空状態
+- エラー状態
+
+完了条件:
+
+不在者を含む現実的な受付フローが成立する。
+
+---
+
+## v0.3.0 — Multi Counter
+
+目的:
+
+複数窓口対応。
+
+実装:
+
+- 1〜4窓口
+- Counter設定
+- 各窓口の呼び出し中Ticket
+- 窓口ごとの次を呼ぶ
+- 同一Ticketの二重取得防止
+- Counter名表示
+- PC用Operatorレイアウト改善
+
+完了条件:
+
+複数スタッフが1画面を使って順番に処理できる。
+
+---
+
+## v0.4.0 — Display Board
+
+目的:
+
+待合向け表示画面を成立させる。
+
+実装:
+
+- Display専用画面
+- `window.open`
+- Operator → Display同期
+- 現在番号
+- 窓口表示
+- 最近呼んだ番号
+- 待ち人数
+- Displayタイトル
+- 番号変更アニメーション
+- Display再接続・再オープン
+- Display終了状態
+
+完了条件:
+
+PCの別ウィンドウを外部モニターへ移して実用可能。
+
+---
+
+## v0.5.0 — Sound / Fullscreen / Wake
+
+目的:
+
+実会場でのDisplay体験を完成させる。
+
+実装:
+
+- 内蔵チャイム
+- 呼び出し音ON/OFF
+- 音の試聴
+- 再呼び出し音
+- Fullscreen
+- Wake Lock
+- Feature Detection
+- 補助API非対応時の案内
+- Displayの縦横レイアウト確認
+
+完了条件:
+
+離れた場所から番号を視認し、音で呼び出しに気付ける。
+
+---
+
+## v0.6.0 — Persistence / Recovery
+
+目的:
+
+長時間運用と誤リロードへの耐性を持たせる。
+
+実装:
+
+- 自動保存
+- IndexedDB等の永続化
+- 進行中Session検出
+- Session再開
+- 新規Session開始時確認
+- 設定値保存
+- 保存失敗時エラー
+- ブラウザ再読み込み回帰試験
+
+完了条件:
+
+誤って再読み込みしても受付を継続できる。
+
+---
+
+## v0.7.0 — History / Export
+
+目的:
+
+受付終了後の記録を扱えるようにする。
+
+実装:
+
+- History画面
+- 状態フィルタ
+- 時刻表示
+- callCount
+- CSV出力
+- Session Summary
+- 平均待ち時間
+- Session終了フロー
+- 新規受付開始フロー
+
+完了条件:
+
+その日の受付を終了し、履歴を保存できる。
+
+---
+
+## v0.8.0 — Ticket Printing
+
+目的:
+
+番号札準備からQueue Board内で完結させる。
+
+実装:
+
+- 番号札作成
+- 開始 / 終了番号
+- 桁数
+- タイトル
+- 印刷プレビュー
+- 印刷CSS
+- A4想定レイアウト
+- PC / 主要ブラウザ印刷確認
+
+完了条件:
+
+紙整理券を別ソフトなしで準備できる。
+
+---
+
+## v0.9.0 — Mobile / UX / Accessibility RC
+
+目的:
+
+正式リリース前のUI/UX仕上げ。
+
+実装:
+
+- スマートフォン専用Operatorレイアウト
+- 下部固定ナビゲーション
+- safe-area対応
+- PCレスポンシブ確認
+- 長いタイトル
+- 大量Ticket
+- モーダル
+- Focus
+- aria-label
+- キーボード操作
+- コントラスト
+- 空状態 / 完了状態 / エラー状態の最終調整
+- Help / Info
+- Privacy説明
+- 対応形式・制約説明
+- JA / EN文言レビュー
+
+回帰対象:
+
+- 発行
+- 手動追加
+- 呼び出し
+- 再呼び出し
+- 完了
+- 不在
+- 復帰
+- 複数窓口
+- Display
+- Sound
+- Fullscreen
+- Wake Lock
+- 自動保存
+- CSV
+- 印刷
+- PC
+- スマートフォン
+
+完了条件:
+
+v1.0候補として主要機能とUXが固定できる。
+
+---
+
+## v1.0.0 — Release
+
+目的:
+
+正式リリース。
+
+実施:
+
+- 作業時点のリポジトリ全体確認
+- versionをv1.0.0へ統一
+- standalone HTML生成・実動作確認
+- 外部通信確認
+- CSP確認
+- file://確認
+- runtime network dependency確認
+- Chrome確認
+- Edge確認
+- Safari / Firefox可能範囲確認
+- PC確認
+- スマートフォン確認
+- 日本語確認
+- 英語確認
+- Display長時間確認
+- 1,000 Ticket程度の負荷確認
+- README更新
+- LICENSE確認
+- favicon確認
+- screenshot.png
+- screenshot-en.png
+- 必要ならスマートフォン用スクリーンショット
+- CI全確認
+- 未解決placeholder確認
+- リリース版成果物確認
+
+v1.0.0で提供する機能:
+
+| 機能 | 対応 |
+|---|---|
+| 番号発行 | Yes |
+| 手動番号追加 | Yes |
+| 待ち列 | Yes |
+| 次を呼ぶ | Yes |
+| 再呼び出し | Yes |
+| 完了 | Yes |
+| 不在 | Yes |
+| 不在から復帰 | Yes |
+| 1〜4窓口 | Yes |
+| Display Window | Yes |
+| Fullscreen | Yes |
+| チャイム | Yes |
+| Wake Lock | 対応環境のみ |
+| 自動保存 | Yes |
+| Session復旧 | Yes |
+| 履歴 | Yes |
+| CSV | Yes |
+| 番号札印刷 | Yes |
+| Session Summary | Yes |
+| 日本語 / 英語 | Yes |
+| スマートフォンUI | Yes |
+| 単一HTML | Yes |
+| 完全ローカル処理 | 検証後に表示 |
+| SMS | No |
+| クラウド同期 | No |
+| 顧客情報 | No |
+| WebRTC別端末同期 | No |
+
+---
+
+# 44. 開発時の優先順位
+
+実装順序は常に以下を優先します。
+
+```text
+動く
+↓
+分かる
+↓
+使いやすい
+↓
+きれい
+↓
+高機能
+```
+
+各バージョンで予定外の追加機能が出た場合、
+
+- ないと本来の用途が達成できない → 現バージョンへ
+- 大きくUXを改善する → v1.0前に検討
+- 便利だが不要 → v1.x以降
+
+に分類します。
+
+---
+
+# 45. 開発チャット開始時の指示
+
+別チャットで実装を開始する場合、この仕様書を渡したうえで以下を最初に行います。
+
+```text
+1. 最新の htmlapps-template GitHubリポジトリを確認する
+2. 現在のテンプレート構成を把握する
+3. Queue Board用の新規Publicリポジトリを作る前提で構成を決める
+4. v0.1.0の範囲だけを実装する
+5. 仕様書にない理由で機能を先行追加しない
+6. 各段階でPC / スマートフォン / JA / ENを確認する
+7. 単一HTMLと外部通信を継続的に確認する
+8. v1.0.0まで段階的に進める
+9. Pull Request作成は可
+10. マージはユーザー本人が行う
+```
+
+---
+
+# 46. 最終プロダクト定義
+
+Queue Board / 呼び出し番号は、
+
+> 小規模イベントや一時受付で、番号を発行し、順番に呼び、現在番号を大きな画面へ表示するための、登録不要・インストール不要のローカル呼び出し番号ツール。
+
+と定義します。
+
+v1.0.0では、この用途を迷わず、安定して、PCとスマートフォンの双方で完結できることを最優先とします。
