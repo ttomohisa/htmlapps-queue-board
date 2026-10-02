@@ -1412,7 +1412,7 @@
     </section>
 
 
-    <section class="queue-card setup-card" id="setupView" aria-labelledby="setupTitle">
+    <section class="queue-card setup-card" id="setupView" hidden aria-labelledby="setupTitle">
       <h2 id="setupTitle" data-i18n="setupTitle">受付を始める</h2>
       <p data-i18n="setupBody">開始番号と窓口を設定します。窓口は1〜4個まで使えます。</p>
       <form id="setupForm" novalidate>
@@ -1884,6 +1884,7 @@
           saveStatusSaved: '保存済み',
           saveStatusError: '保存失敗',
           saveFailed: '受付状態を端末へ保存できませんでした。ブラウザのストレージ設定や空き容量を確認してください。',
+          settingsSaveFailed: '設定を端末へ保存できませんでした。ブラウザのストレージ設定や空き容量を確認してください。',
           loadFailed: '保存済みの受付を読み込めませんでした。新しい受付は開始できますが、自動保存が利用できない可能性があります。',
           sessionRunning: '受付中', startedAt: '開始', resetSession: '受付をリセット',
           counterSummary: '{count}窓口',
@@ -2010,6 +2011,7 @@
           saveStatusSaved: 'Saved',
           saveStatusError: 'Save failed',
           saveFailed: 'The reception state could not be saved on this device. Check browser storage settings or available space.',
+          settingsSaveFailed: 'Settings could not be saved on this device. Check browser storage settings or available space.',
           loadFailed: 'The saved reception could not be loaded. You can start a new reception, but autosave may be unavailable.',
           sessionRunning: 'Reception in progress', startedAt: 'Started', resetSession: 'Reset reception',
           counterSummary: '{count} counters',
@@ -2097,6 +2099,7 @@
       let persistenceTimer = 0;
       let saveState = 'saved';
       let saveFailureNotified = false;
+      let settingsFailureNotified = false;
 
       function readStorage(key) {
         try { return localStorage.getItem(key); } catch { return null; }
@@ -2197,8 +2200,17 @@
         };
       }
       function saveSetupSettings() {
-        if (displayMode) return;
-        writeStorage(settingsStorageKey, JSON.stringify(collectSetupSettings()));
+        if (displayMode) return true;
+        const ok = writeStorage(settingsStorageKey, JSON.stringify(collectSetupSettings()));
+        if (ok) {
+          settingsFailureNotified = false;
+          return true;
+        }
+        if (!settingsFailureNotified) {
+          settingsFailureNotified = true;
+          announce(translate('settingsSaveFailed'), { tone: 'warning', duration: 6500 });
+        }
+        return false;
       }
       function loadSetupSettings() {
         if (displayMode) return;
@@ -2593,6 +2605,7 @@
         if (value === null) return;
         $('#startNumber').value = formatTicketNumber(value);
         $('#startNumberError').textContent = '';
+        saveSetupSettings();
       }
       function startSession(event) {
         event.preventDefault();
