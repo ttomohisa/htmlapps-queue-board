@@ -1,77 +1,103 @@
 # Queue Board
 
-Queue Board is a Browser Kitty app for temporary reception desks and small events. It issues numbered Tickets, keeps a shared waiting queue, and calls people in order.
+Queue Board is a Browser Kitty app for temporary reception desks and small events. It issues numbered Tickets, keeps a shared queue, and calls people in order.
 
-The project is currently at **v0.6.0 — Persistence / Recovery**.
+The project is currently at **v0.7.0 — History / Export**.
 
 ## Features
 
-- Start a Session with a chosen starting number
-- Configure one to four Counters with custom names
-- Issue sequential or manual Tickets
-- Prevent duplicate numbers within the same Session
-- Let each Counter call from the same shared queue
-- Recall, complete, mark absent, or delete independently
-- Return absent Tickets to the end of the queue
-- Open a waiting-room Display in a separate window
-- Built-in chime, Fullscreen, and Wake Lock
-- Autosave the in-progress Session
-- Resume a Session after a page reload
-- Discard a saved Session and start new with confirmation
-- Save starting-number, Counter, sound, and Display settings
-- Show Saving / Saved / Save failed state
+- One to four Counter queue operation
+- Sequential / manual Ticket entry
+- Call / recall / complete / absent / return-to-waiting flow
+- Waiting-room Display
+- Built-in chime / Fullscreen / Wake Lock
+- Active-Session autosave and recovery
+- History screen
+- Status filters: All / Waiting / Calling / Completed / Absent
+- Issued / called / absent / completed timestamps per Ticket
+- callCount display
+- CSV export
+- Session Summary
+- Average wait time
+- Confirmed Session-ending flow
+- Local archive for ended Sessions
+- Start-new-reception flow
 - Japanese / English UI
 - Fully local processing
 
-## Autosave and recovery
+## History
 
-The in-progress Session is saved locally on the device.
+Open **History** from the Operator screen to review Tickets in the current Session.
 
-**IndexedDB is the primary Session store.** If IndexedDB is unavailable, Queue Board falls back to localStorage. Lightweight setup values such as starting number, Counter count and names, call sound, and Display settings are stored in localStorage.
+Each Ticket shows the timestamps that are available for:
 
-After a reload, if an in-progress Session exists, Queue Board does not silently open a blank setup screen. It presents:
+- Issued
+- Called
+- Absent
+- Completed
 
-- Resume reception
-- Start new
+History can be filtered by current status and also shows call count and the most recent Counter associated with the Ticket.
 
-Starting new requires confirmation before the saved Session is discarded.
+## CSV
 
-Ticket changes are saved after a short debounce. Queue Board also attempts a save when the page moves into the background. Save and delete operations are serialized so a delayed save cannot recreate a Session immediately after reset.
+CSV can be saved from History or Session Summary.
 
-## Reused settings
+The file contains these seven columns:
 
-The following settings are stored locally and reused for the next reception:
+```text
+number
+status
+created_at
+called_at
+completed_at
+counter
+call_count
+```
 
-- Starting number
-- Counter count
-- Counter names
-- Call sound ON/OFF
-- Display title
-- Recent-call count
-- Waiting-count visibility
+CSV is generated as UTF-8 with BOM, with filenames in the form `queue-board-YYYY-MM-DD.csv`.
 
-Resetting the active Session does not reset these setup preferences.
+## Session Summary
 
-## Save errors
+**End reception** is a confirmed operation. Queue Board first saves the ended Session history locally and only ends the active Session after that save succeeds.
 
-If Session or settings storage fails, Queue Board exposes a Save failed state and shows an explanatory toast. Core queue operation can continue, but recovery after reload cannot be guaranteed.
+Summary shows:
 
-## v0.6.0 limitations
+- Issued count
+- Completed count
+- Absent count
+- Still-waiting count
+- Started time
+- Ended time
+- Average wait
+
+Average wait is calculated from `createdAt → calledAt`, as defined by the specification.
+
+After ending reception, the user can:
+
+- Save CSV
+- View History
+- Start a new reception
+
+Starting a new reception does not delete the archived ended Session.
+
+## Persistence
+
+The active Session is autosaved with IndexedDB as the primary store and localStorage as fallback.
+
+Ended Sessions are also archived locally. After reload, when no active Session exists, Queue Board can restore the latest ended Session Summary.
+
+## v0.7.0 limitations
 
 - Up to four Counters
-- Display is limited to another window in the same browser
-- No Session history screen
-- No CSV export
-- No Session Summary
-- No ticket printing
+- No cross-Session archive browser yet
+- No ticket printing yet
+- Final Mobile / Accessibility release-candidate refinement is not yet complete
 
-History, CSV, and the formal Session-ending flow are planned for the next milestone.
+Ticket printing is planned for v0.8.0 and Mobile / UX / Accessibility RC work for v0.9.0.
 
 ## Privacy
 
-Ticket numbers, Counter settings, Display settings, and Session state are processed in the browser. Persistence uses only local device storage such as IndexedDB / localStorage.
-
-The app uses no external API, analytics, or telemetry, and its Content Security Policy blocks runtime external connections.
+Tickets, Session history, settings, and Display state are processed in the browser. The app uses no external API, analytics, or telemetry, and its Content Security Policy blocks runtime external connections.
 
 ## Single HTML
 

@@ -2,6 +2,29 @@
 
 All notable changes to Queue Board are documented here.
 
+## [0.7.0] - 2026-10-02
+
+### Added
+
+- Dedicated History view for the current or just-ended Session.
+- Status filters for all / waiting / called / completed / absent.
+- Ticket timeline with issued, called, absent, and completed timestamps.
+- callCount and last-Counter display in History.
+- `absentAt` and `lastCounterId` Ticket history fields.
+- UTF-8 BOM CSV export with the required seven columns.
+- Session Summary with issued, completed, absent, waiting, start/end time, and average wait.
+- Average-wait calculation from `createdAt → calledAt`.
+- Confirmed Session-ending flow.
+- Local archive of ended Sessions.
+- Reload restoration of the latest ended Session Summary.
+- Start-new-reception flow that preserves the archived previous Session.
+
+### Changed
+
+- Ending reception now saves history before clearing the active Session.
+- Active Session persistence and history finalization share serialized local-storage operations.
+- README and Help now describe History, CSV, Session Summary, and Session-ending behavior.
+
 ## [0.6.0] - 2026-10-02
 
 ### Added

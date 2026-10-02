@@ -1271,7 +1271,7 @@
     }
 
 
-    /* Queue Board v0.6.0 persistence / recovery */
+    /* Queue Board persistence / recovery */
     .persistence-gate {
       min-height: 180px;
       display: grid;
@@ -1339,6 +1339,171 @@
       .persistence-spinner { animation: none; }
     }
 
+
+    /* Queue Board v0.7.0 history / export */
+    .history-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .history-toolbar-actions,
+    .history-filters,
+    .summary-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .history-filters { margin-top: 16px; }
+    .history-filter {
+      min-height: 38px;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--muted);
+      font: inherit;
+      font-size: 11px;
+      font-weight: 850;
+      cursor: pointer;
+    }
+    .history-filter[aria-pressed="true"] {
+      color: var(--accent);
+      border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+      background: var(--accent-soft);
+    }
+    .history-list {
+      display: grid;
+      gap: 10px;
+      margin: 16px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .history-item {
+      display: grid;
+      grid-template-columns: minmax(84px, .34fr) minmax(0, 1.66fr) auto;
+      gap: 14px;
+      align-items: start;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--surface);
+    }
+    .history-number {
+      color: var(--accent);
+      font-size: 28px;
+      font-weight: 950;
+      line-height: 1;
+      letter-spacing: .035em;
+      font-variant-numeric: tabular-nums;
+    }
+    .history-timeline { display: grid; gap: 5px; min-width: 0; }
+    .history-event {
+      display: flex;
+      align-items: baseline;
+      gap: 9px;
+      min-width: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .history-event time {
+      min-width: 52px;
+      color: var(--text);
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+    .history-event strong { color: var(--text); font-weight: 800; }
+    .history-meta {
+      display: grid;
+      gap: 6px;
+      justify-items: end;
+      text-align: right;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .history-status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--surface-muted);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+    }
+    .history-status.called { color: var(--accent); background: var(--accent-soft); }
+    .history-status.completed { color: var(--accent); background: #e9f4ef; }
+    .history-status.absent { color: #8a5a0a; background: #fff6df; }
+    .history-empty {
+      margin-top: 16px;
+      padding: 30px 18px;
+      border: 1px dashed var(--line-strong);
+      border-radius: 13px;
+      text-align: center;
+      color: var(--muted);
+    }
+    .history-empty strong { display: block; color: var(--text); }
+    .history-empty span { display: block; margin-top: 6px; }
+    .summary-shell { display: grid; gap: 14px; }
+    .summary-shell[hidden],
+    .history-shell[hidden] { display: none; }
+    .summary-hero {
+      padding: clamp(20px, 3vw, 32px);
+      border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--line));
+      border-radius: 18px;
+      background: linear-gradient(180deg, var(--surface), color-mix(in srgb, var(--accent-soft) 35%, var(--surface)));
+    }
+    .summary-hero h2 { margin: 0; font-size: clamp(24px, 4vw, 36px); }
+    .summary-hero p { margin: 7px 0 0; color: var(--muted); }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .summary-card {
+      min-width: 0;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--surface);
+    }
+    .summary-card-label { display: block; color: var(--muted); font-size: 10px; font-weight: 850; }
+    .summary-card-value {
+      display: block;
+      margin-top: 5px;
+      color: var(--text);
+      font-size: clamp(20px, 3vw, 30px);
+      font-weight: 950;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+    .summary-times {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .summary-actions { margin-top: 4px; }
+    .end-session-button { border-color: color-mix(in srgb, var(--danger) 35%, var(--line)); }
+    @media (max-width: 760px) {
+      .history-item { grid-template-columns: 78px minmax(0, 1fr); }
+      .history-meta { grid-column: 1 / -1; display: flex; justify-content: space-between; justify-items: initial; text-align: left; }
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .summary-times { grid-template-columns: 1fr; }
+      .history-toolbar-actions, .summary-actions { width: 100%; }
+      .history-toolbar-actions .button, .summary-actions .button { flex: 1 1 auto; }
+    }
+    @media (max-width: 480px) {
+      .history-item { grid-template-columns: 1fr; }
+      .history-number { font-size: 32px; }
+      .history-meta { grid-column: auto; }
+      .summary-grid { grid-template-columns: 1fr; }
+      .history-filters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .history-filter { width: 100%; }
+    }
+
   </style>
 </head>
 <body>
@@ -1374,7 +1539,7 @@
       </div>
     </section>
 
-    <!-- APP:BEGIN Queue Board v0.6.0 persistence recovery -->
+    <!-- APP:BEGIN Queue Board v0.7.0 history export -->
     <section class="queue-card persistence-gate" id="persistenceGate" aria-live="polite">
       <div class="persistence-gate-inner">
         <span class="persistence-spinner" aria-hidden="true"></span>
@@ -1518,6 +1683,14 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
             <span data-i18n="openDisplay">表示画面を開く</span>
           </button>
+          <button class="button with-icon" id="openHistoryButton" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16"/><path d="M8 5v14"/></svg>
+            <span data-i18n="openHistory">履歴</span>
+          </button>
+          <button class="button danger with-icon end-session-button" id="endSessionButton" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h12v16H6z"/><path d="M10 12h8"/><path d="m15 9 3 3-3 3"/></svg>
+            <span data-i18n="endSession">受付を終了</span>
+          </button>
           <button class="button danger with-icon" id="resetButton" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4v6h6"/><path d="M5.5 15a7 7 0 1 0 1.7-7.2L4 10"/></svg>
             <span data-i18n="resetSession">受付をリセット</span>
@@ -1601,6 +1774,64 @@
       <div class="sr-only" id="liveStatus" aria-live="polite" aria-atomic="true"></div>
     </section>
 
+    <section class="queue-card history-shell" id="historyView" hidden aria-labelledby="historyTitle">
+      <div class="history-toolbar">
+        <div>
+          <p class="panel-kicker" data-i18n="historyKicker">Session履歴</p>
+          <h2 class="panel-title" id="historyTitle" tabindex="-1" data-i18n="historyTitle">履歴</h2>
+          <p data-i18n="historyBody">Ticketごとの受付・呼び出し・完了・不在を時系列で確認できます。</p>
+        </div>
+        <div class="history-toolbar-actions">
+          <button class="button" id="historyBackButton" type="button" data-i18n="historyBack">Operatorへ戻る</button>
+          <button class="button with-icon" id="historyCsvButton" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M5 20h14"/></svg>
+            <span data-i18n="saveCsv">CSVを保存</span>
+          </button>
+        </div>
+      </div>
+      <div class="history-filters" id="historyFilters" data-i18n-aria-label="historyFiltersLabel" aria-label="履歴の状態フィルタ">
+        <button class="history-filter" type="button" data-history-filter="all" aria-pressed="true" data-i18n="filterAll">すべて</button>
+        <button class="history-filter" type="button" data-history-filter="waiting" aria-pressed="false" data-i18n="filterWaiting">待機中</button>
+        <button class="history-filter" type="button" data-history-filter="called" aria-pressed="false" data-i18n="filterCalled">呼び出し中</button>
+        <button class="history-filter" type="button" data-history-filter="completed" aria-pressed="false" data-i18n="filterCompleted">完了</button>
+        <button class="history-filter" type="button" data-history-filter="absent" aria-pressed="false" data-i18n="filterAbsent">不在</button>
+      </div>
+      <ul class="history-list" id="historyList"></ul>
+      <div class="history-empty" id="historyEmpty">
+        <strong data-i18n="historyEmptyTitle">まだ履歴はありません。</strong>
+        <span data-i18n="historyEmptyBody">番号を呼び出すと、ここに記録されます。</span>
+      </div>
+    </section>
+
+    <section class="summary-shell" id="summaryView" hidden aria-labelledby="summaryTitle">
+      <div class="summary-hero">
+        <p class="panel-kicker" data-i18n="summaryKicker">Session Summary</p>
+        <h2 id="summaryTitle" data-i18n="summaryTitle">本日の受付</h2>
+        <p data-i18n="summaryBody">受付を終了しました。履歴はこの端末内に保存されています。</p>
+      </div>
+      <div class="summary-grid">
+        <div class="summary-card"><span class="summary-card-label" data-i18n="summaryIssued">受付数</span><strong class="summary-card-value" id="summaryIssued">0</strong></div>
+        <div class="summary-card"><span class="summary-card-label" data-i18n="summaryCompleted">完了</span><strong class="summary-card-value" id="summaryCompleted">0</strong></div>
+        <div class="summary-card"><span class="summary-card-label" data-i18n="summaryAbsent">不在</span><strong class="summary-card-value" id="summaryAbsent">0</strong></div>
+        <div class="summary-card"><span class="summary-card-label" data-i18n="summaryWaiting">現在待機</span><strong class="summary-card-value" id="summaryWaiting">0</strong></div>
+      </div>
+      <div class="summary-times">
+        <div class="summary-card"><span class="summary-card-label" data-i18n="summaryStarted">受付開始</span><strong class="summary-card-value" id="summaryStarted">--:--</strong></div>
+        <div class="summary-card"><span class="summary-card-label" data-i18n="summaryEnded">受付終了</span><strong class="summary-card-value" id="summaryEnded">--:--</strong></div>
+        <div class="summary-card"><span class="summary-card-label" data-i18n="summaryAverageWait">平均待ち時間</span><strong class="summary-card-value" id="summaryAverageWait">—</strong></div>
+      </div>
+      <div class="queue-card">
+        <div class="summary-actions">
+          <button class="button primary large with-icon" id="summaryCsvButton" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M5 20h14"/></svg>
+            <span data-i18n="saveCsv">CSVを保存</span>
+          </button>
+          <button class="button" id="summaryHistoryButton" type="button" data-i18n="viewHistory">履歴を見る</button>
+          <button class="button" id="newSessionButton" type="button" data-i18n="startAnotherSession">新しい受付を開始</button>
+        </div>
+      </div>
+    </section>
+
     <section class="display-board" id="displayView" hidden aria-labelledby="displayBoardTitle">
       <div class="display-board-top">
         <h1 class="display-board-title" id="displayBoardTitle">お呼びしています</h1>
@@ -1680,22 +1911,22 @@
       </button>
     </div>
     <div class="dialog-body">
-      <!-- APP:HELP:BEGIN Queue Board v0.6.0 -->
+      <!-- APP:HELP:BEGIN Queue Board v0.7.0 -->
       <h3 data-i18n="helpBasicsTitle">基本操作</h3>
       <ol>
         <li data-i18n="helpStep1">開始番号と窓口数、必要なら各窓口名と表示画面設定を決めて受付を開始します。</li>
         <li data-i18n="helpStep2">「番号を発行」、または手動追加で待ち列へ番号を登録します。</li>
         <li data-i18n="helpStep3">「表示画面を開く」で待合向けDisplayを別ウィンドウに開きます。外部モニターへ移動して使えます。</li>
         <li data-i18n="helpStep4">空いている窓口の「次を呼ぶ」で、Displayへ番号と窓口がリアルタイム反映されます。</li>
-        <li data-i18n="helpStep5">呼び出し音を試聴・ON/OFFできます。Displayでは全画面表示と対応環境でのWake Lockを利用できます。</li>
+        <li data-i18n="helpStep5">履歴を確認・CSV保存し、受付終了後はSession Summaryから新しい受付を開始できます。</li>
       </ol>
       <h3 data-i18n="helpPrivacyTitle">プライバシー</h3>
       <p data-i18n="helpPrivacyBody">Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。</p>
-      <h3 data-i18n="helpNotesTitle">v0.6.0 の範囲</h3>
+      <h3 data-i18n="helpNotesTitle">v0.7.0 の範囲</h3>
       <ul>
         <li data-i18n="helpNoteDisplay">DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。別端末への送信は行いません。</li>
         <li data-i18n="helpNoteFeatures">Fullscreen / Wake LockはFeature Detectionを行い、非対応環境ではその機能だけを無効化します。</li>
-        <li data-i18n="helpNotePersistence">進行中SessionはIndexedDBへ自動保存します。再読み込み時は「再開 / 新しく始める」を選べます。</li>
+        <li data-i18n="helpNoteHistory">受付終了時は履歴を端末内へ保存し、CSV保存とSession Summaryを利用できます。</li>
       </ul>
       <p class="dialog-note" data-i18n="helpOffline">配布用HTMLは実行時の外部通信を必要とせず、Display同期もブラウザ内だけで行います。</p>
       <!-- APP:HELP:END -->
@@ -1905,13 +2136,13 @@
           helpStep2: '「番号を発行」、または手動追加で待ち列へ番号を登録します。',
           helpStep3: '「表示画面を開く」で待合向けDisplayを別ウィンドウに開きます。外部モニターへ移動して使えます。',
           helpStep4: '空いている窓口の「次を呼ぶ」で、Displayへ番号と窓口がリアルタイム反映されます。',
-          helpStep5: '呼び出し音を試聴・ON/OFFできます。Displayでは全画面表示と対応環境でのWake Lockを利用できます。',
+          helpStep5: '履歴を確認・CSV保存し、受付終了後はSession Summaryから新しい受付を開始できます。',
           helpPrivacyTitle: 'プライバシー',
           helpPrivacyBody: 'Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。',
-          helpNotesTitle: 'v0.6.0 の範囲',
+          helpNotesTitle: 'v0.7.0 の範囲',
           helpNoteDisplay: 'DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。別端末への送信は行いません。',
           helpNoteFeatures: 'Fullscreen / Wake LockはFeature Detectionを行い、非対応環境ではその機能だけを無効化します。',
-          helpNotePersistence: '進行中SessionはIndexedDBを第一候補として端末内へ自動保存します。再読み込み時は「再開 / 新しく始める」を選べます。',
+          helpNoteHistory: '受付終了時は履歴を端末内へ保存し、CSV保存とSession Summaryを利用できます。',
 
           helpOffline: '配布用HTMLは実行時の外部通信を必要とせず、Display同期もブラウザ内だけで行います。',
           footer: '番号を発行して順番に呼び出すローカルツール',
@@ -1936,6 +2167,56 @@
           ticketRestored: '番号 {number} を元に戻しました。',
           undo: '元に戻す', undoUnavailable: '状態が変わったため元に戻せません。',
           noWaiting: '待っている番号はありません。', counterBusy: '{counter} は現在対応中です。',
+          openHistory: '履歴',
+          endSession: '受付を終了',
+          historyKicker: 'Session履歴',
+          historyTitle: '履歴',
+          historyBody: 'Ticketごとの受付・呼び出し・完了・不在を時系列で確認できます。',
+          historyBack: 'Operatorへ戻る',
+          historyBackSummary: 'サマリーへ戻る',
+          historyFiltersLabel: '履歴の状態フィルタ',
+          saveCsv: 'CSVを保存',
+          filterAll: 'すべて',
+          filterWaiting: '待機中',
+          filterCalled: '呼び出し中',
+          filterCompleted: '完了',
+          filterAbsent: '不在',
+          historyEmptyTitle: 'まだ履歴はありません。',
+          historyEmptyBody: '番号を呼び出すと、ここに記録されます。',
+          historyNoMatchTitle: '該当する履歴はありません。',
+          historyNoMatchBody: '別の状態を選ぶと表示される場合があります。',
+          statusWaiting: '待機中',
+          statusCalled: '呼び出し中',
+          statusCompleted: '完了',
+          statusAbsent: '不在',
+          eventCreated: '受付',
+          eventCalled: '呼出',
+          eventCompleted: '完了',
+          eventAbsent: '不在',
+          historyCounter: '窓口',
+          historyCallCount: '呼出回数 {count}',
+          summaryKicker: 'Session Summary',
+          summaryTitle: '本日の受付',
+          summaryBody: '受付を終了しました。履歴はこの端末内に保存されています。',
+          summaryIssued: '受付数',
+          summaryCompleted: '完了',
+          summaryAbsent: '不在',
+          summaryWaiting: '現在待機',
+          summaryStarted: '受付開始',
+          summaryEnded: '受付終了',
+          summaryAverageWait: '平均待ち時間',
+          averageWaitUnavailable: '—',
+          durationMinutesSeconds: '{minutes}分 {seconds}秒',
+          durationSeconds: '{seconds}秒',
+          viewHistory: '履歴を見る',
+          startAnotherSession: '新しい受付を開始',
+          endSessionTitle: '受付を終了しますか？',
+          endSessionBody: '現在の待ち列は{count}件です。終了後も履歴は確認できます。',
+          endSessionConfirm: '受付を終了',
+          sessionEnded: '受付を終了し、履歴を保存しました。',
+          historySaveFailed: '履歴を端末へ保存できなかったため、受付を終了しませんでした。ストレージ設定や空き容量を確認してください。',
+          csvSaved: 'CSVを保存しました。',
+          csvSaveFailed: 'CSVを保存できませんでした。',
           sessionReset: '受付をリセットしました。'
         },
         en: {
@@ -2032,13 +2313,13 @@
           helpStep2: 'Use Issue number or manual entry to add a ticket to the waiting queue.',
           helpStep3: 'Use Open display to launch the waiting-room Display in a separate window that can be moved to an external monitor.',
           helpStep4: 'Use Call next at any available counter and the number and Counter will update on the Display in real time.',
-          helpStep5: 'Preview or toggle the call sound. On Display, use Fullscreen and Wake Lock when supported.',
+          helpStep5: 'Review History, save CSV, and start a new reception from Session Summary after ending the current Session.',
           helpPrivacyTitle: 'Privacy',
           helpPrivacyBody: 'Ticket numbers, Counter settings, Display settings, and queue state are processed inside the same browser. The app uses no external API, analytics, or telemetry and does not send session data outside.',
-          helpNotesTitle: 'v0.6.0 scope',
+          helpNotesTitle: 'v0.7.0 scope',
           helpNoteDisplay: 'The Display syncs in a separate window of the same browser. It does not transmit data to another device.',
           helpNoteFeatures: 'Fullscreen and Wake Lock use feature detection. Unsupported environments disable only that optional feature.',
-          helpNotePersistence: 'The in-progress Session is saved locally with IndexedDB as the primary store. After reload, choose Resume or Start new.',
+          helpNoteHistory: 'Ending reception saves the Session history locally and enables CSV export and Session Summary.',
 
           helpOffline: 'The distributable HTML needs no runtime external network access, and Display synchronization stays inside the browser.',
           footer: 'Local tool for issuing numbers and calling them in order',
@@ -2063,6 +2344,56 @@
           ticketRestored: 'Restored number {number}.',
           undo: 'Undo', undoUnavailable: 'The state changed, so this can no longer be undone.',
           noWaiting: 'No tickets are waiting.', counterBusy: '{counter} is currently in service.',
+          openHistory: 'History',
+          endSession: 'End reception',
+          historyKicker: 'Session history',
+          historyTitle: 'History',
+          historyBody: 'Review reception, call, completion, and absent events for each Ticket.',
+          historyBack: 'Back to Operator',
+          historyBackSummary: 'Back to summary',
+          historyFiltersLabel: 'History status filters',
+          saveCsv: 'Save CSV',
+          filterAll: 'All',
+          filterWaiting: 'Waiting',
+          filterCalled: 'Calling',
+          filterCompleted: 'Completed',
+          filterAbsent: 'Absent',
+          historyEmptyTitle: 'No history yet.',
+          historyEmptyBody: 'Called numbers will be recorded here.',
+          historyNoMatchTitle: 'No matching history.',
+          historyNoMatchBody: 'Choose another status to see other Tickets.',
+          statusWaiting: 'Waiting',
+          statusCalled: 'Calling',
+          statusCompleted: 'Completed',
+          statusAbsent: 'Absent',
+          eventCreated: 'Issued',
+          eventCalled: 'Called',
+          eventCompleted: 'Completed',
+          eventAbsent: 'Absent',
+          historyCounter: 'Counter',
+          historyCallCount: '{count} calls',
+          summaryKicker: 'Session Summary',
+          summaryTitle: "Today's reception",
+          summaryBody: 'Reception ended. The history is saved locally on this device.',
+          summaryIssued: 'Issued',
+          summaryCompleted: 'Completed',
+          summaryAbsent: 'Absent',
+          summaryWaiting: 'Still waiting',
+          summaryStarted: 'Started',
+          summaryEnded: 'Ended',
+          summaryAverageWait: 'Average wait',
+          averageWaitUnavailable: '—',
+          durationMinutesSeconds: '{minutes}m {seconds}s',
+          durationSeconds: '{seconds}s',
+          viewHistory: 'View history',
+          startAnotherSession: 'Start new reception',
+          endSessionTitle: 'End reception?',
+          endSessionBody: '{count} Tickets are still waiting. History remains available after ending reception.',
+          endSessionConfirm: 'End reception',
+          sessionEnded: 'Reception ended and history saved.',
+          historySaveFailed: 'Reception was not ended because the history could not be saved locally. Check storage settings or available space.',
+          csvSaved: 'CSV saved.',
+          csvSaveFailed: 'CSV could not be saved.',
           sessionReset: 'Reception reset.'
         }
       };
@@ -2071,6 +2402,7 @@
       const storageKey = APP_CONFIG.slug + ':language';
       const settingsStorageKey = APP_CONFIG.slug + ':settings:v1';
       const fallbackSessionStorageKey = APP_CONFIG.slug + ':active-session:v1';
+      const fallbackHistoryStorageKey = APP_CONFIG.slug + ':latest-history:v1';
       const persistenceDbName = APP_CONFIG.slug + '-db';
       const persistenceStoreName = 'sessions';
       const persistenceRecordKey = 'active';
@@ -2095,6 +2427,9 @@
       let displayFeatureRuntimeMessage = '';
       let persistenceReady = displayMode;
       let recoveryCandidate = null;
+      let endedSession = null;
+      let historyVisible = false;
+      let historyFilter = 'all';
       let persistenceDbPromise = null;
       let persistenceTimer = 0;
       let saveState = 'saved';
@@ -2183,6 +2518,54 @@
         const fallbackDeleted = removeStorage(fallbackSessionStorageKey);
         return indexedDbAvailable ? indexedDbDeleted && fallbackDeleted : fallbackDeleted;
       }
+      async function readLatestArchivedSessionRecord() {
+        try {
+          const db = await openPersistenceDb();
+          const records = await new Promise((resolve, reject) => {
+            const tx = db.transaction(persistenceStoreName, 'readonly');
+            const request = tx.objectStore(persistenceStoreName).getAll();
+            request.onsuccess = () => resolve(Array.isArray(request.result) ? request.result : []);
+            request.onerror = () => reject(request.error || new Error('IndexedDB history read failed'));
+          });
+          const histories = records
+            .filter(record => record && record.kind === 'history' && record.session)
+            .sort((a, b) => Number(b.endedAt || b.savedAt || 0) - Number(a.endedAt || a.savedAt || 0));
+          if (histories[0]) return histories[0];
+        } catch { }
+        const fallback = readStorage(fallbackHistoryStorageKey);
+        if (!fallback) return null;
+        try { return JSON.parse(fallback); } catch { return null; }
+      }
+      async function finalizeSessionPersistence(sessionSnapshot) {
+        const record = {
+          key: 'history:' + String(sessionSnapshot.endedAt || Date.now()) + ':' + sessionSnapshot.id,
+          kind: 'history',
+          schemaVersion: 1,
+          savedAt: Date.now(),
+          endedAt: sessionSnapshot.endedAt || Date.now(),
+          session: typeof structuredClone === 'function' ? structuredClone(sessionSnapshot) : JSON.parse(JSON.stringify(sessionSnapshot))
+        };
+        let indexedDbAvailable = false;
+        let indexedDbSaved = false;
+        try {
+          const db = await openPersistenceDb();
+          indexedDbAvailable = true;
+          await new Promise((resolve, reject) => {
+            const tx = db.transaction(persistenceStoreName, 'readwrite');
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error || new Error('IndexedDB history write failed'));
+            tx.onabort = () => reject(tx.error || new Error('IndexedDB history write aborted'));
+            const store = tx.objectStore(persistenceStoreName);
+            store.put(record);
+            store.delete(persistenceRecordKey);
+          });
+          indexedDbSaved = true;
+        } catch { }
+        const fallbackHistorySaved = writeStorage(fallbackHistoryStorageKey, JSON.stringify(record));
+        const fallbackActiveCleared = removeStorage(fallbackSessionStorageKey) || readStorage(fallbackSessionStorageKey) === null;
+        if (indexedDbSaved) return fallbackActiveCleared;
+        return fallbackHistorySaved && fallbackActiveCleared;
+      }
       function enqueuePersistenceOperation(task) {
         const operation = persistenceOperation.catch(() => undefined).then(task);
         persistenceOperation = operation.catch(() => undefined);
@@ -2254,7 +2637,9 @@
         const tickets = candidate.tickets.filter(ticket => ticket && typeof ticket.id === 'string' && Number.isFinite(ticket.number)).map(ticket => ({
           ...ticket,
           displayNumber: typeof ticket.displayNumber === 'string' ? ticket.displayNumber : formatTicketNumber(ticket.number),
+          absentAt: Number.isFinite(ticket.absentAt) ? ticket.absentAt : null,
           counterId: typeof ticket.counterId === 'string' ? ticket.counterId : null,
+          lastCounterId: typeof ticket.lastCounterId === 'string' ? ticket.lastCounterId : (typeof ticket.counterId === 'string' ? ticket.counterId : null),
           callCount: Number.isFinite(ticket.callCount) ? ticket.callCount : 0
         }));
         return {
@@ -2328,6 +2713,10 @@
           recoveryCandidate = normalizeRecoveredSession(record.session);
           if (!recoveryCandidate && record.session) announce(translate('loadFailed'), { tone: 'warning', duration: 6500 });
         }
+        if (!recoveryCandidate) {
+          const historyRecord = await readLatestArchivedSessionRecord();
+          if (historyRecord?.schemaVersion === 1 && historyRecord.session) endedSession = normalizeRecoveredSession(historyRecord.session);
+        }
         persistenceReady = true;
         render();
       }
@@ -2335,6 +2724,8 @@
         if (!recoveryCandidate) return;
         session = normalizeRecoveredSession(recoveryCandidate);
         if (!session) return;
+        endedSession = null;
+        historyVisible = false;
         recoveryCandidate = null;
         lastIssuedId = null;
         setupDisplayChannel();
@@ -2577,7 +2968,9 @@
           createdAt: Date.now(),
           calledAt: null,
           completedAt: null,
+          absentAt: null,
           counterId: null,
+          lastCounterId: null,
           callCount: 0
         };
         session.usedNumbers.push(number);
@@ -2638,6 +3031,8 @@
           counterDraftCustom[index] = name !== defaultCounterName(index);
           return { id: 'counter-' + (index + 1), name, currentTicketId: null };
         });
+        endedSession = null;
+        historyVisible = false;
         session = {
           id: makeId(),
           startedAt: Date.now(),
@@ -2725,6 +3120,7 @@
         ticket.calledAt = ticket.calledAt || Date.now();
         ticket.lastCalledAt = Date.now();
         ticket.counterId = counter.id;
+        ticket.lastCounterId = counter.id;
         ticket.callCount += 1;
         counter.currentTicketId = ticket.id;
         void playChime('call');
@@ -2758,6 +3154,8 @@
         const ticket = currentTicket(counterId);
         if (!counter || !ticket) return;
         ticket.status = 'absent';
+        ticket.absentAt = Date.now();
+        ticket.lastCounterId = counter.id;
         ticket.counterId = null;
         counter.currentTicketId = null;
         render();
@@ -2861,8 +3259,10 @@
         }
         sendDisplayEnded();
         session = null;
+        endedSession = null;
         lastIssuedId = null;
         recoveryCandidate = null;
+        historyVisible = false;
         $('#manualNumber').value = '';
         $('#manualNumberError').textContent = '';
         loadSetupSettings();
@@ -2870,6 +3270,212 @@
         initializeSoundSupport();
         render();
         announce(translate('sessionReset'));
+        $('#startNumber').focus();
+      }
+      function historySession() {
+        return session || endedSession || null;
+      }
+      function counterNameForTicket(targetSession, ticket) {
+        const counterId = ticket.lastCounterId || ticket.counterId;
+        if (!counterId) return '';
+        return targetSession.counters.find(counter => counter.id === counterId)?.name || '';
+      }
+      function statusTranslationKey(status) {
+        return status === 'called' ? 'statusCalled' :
+          status === 'completed' ? 'statusCompleted' :
+          status === 'absent' ? 'statusAbsent' : 'statusWaiting';
+      }
+      function createHistoryEvent(labelKey, timestamp, detail) {
+        if (!Number.isFinite(timestamp)) return null;
+        const row = document.createElement('div');
+        row.className = 'history-event';
+        const time = document.createElement('time');
+        time.dateTime = new Date(timestamp).toISOString();
+        time.textContent = formatTime(timestamp);
+        const label = document.createElement('strong');
+        label.textContent = translate(labelKey);
+        row.append(time, label);
+        if (detail) {
+          const extra = document.createElement('span');
+          extra.textContent = detail;
+          row.append(extra);
+        }
+        return row;
+      }
+      function createHistoryItem(targetSession, ticket) {
+        const item = document.createElement('li');
+        item.className = 'history-item';
+        const number = document.createElement('div');
+        number.className = 'history-number';
+        number.textContent = ticket.displayNumber;
+        const timeline = document.createElement('div');
+        timeline.className = 'history-timeline';
+        const counterName = counterNameForTicket(targetSession, ticket);
+        [
+          createHistoryEvent('eventCreated', ticket.createdAt, ''),
+          createHistoryEvent('eventCalled', ticket.calledAt, counterName ? '· ' + counterName : ''),
+          createHistoryEvent('eventAbsent', ticket.absentAt, counterName ? '· ' + counterName : ''),
+          createHistoryEvent('eventCompleted', ticket.completedAt, counterName ? '· ' + counterName : '')
+        ].filter(Boolean).forEach(event => timeline.append(event));
+        const meta = document.createElement('div');
+        meta.className = 'history-meta';
+        const status = document.createElement('span');
+        status.className = 'history-status ' + ticket.status;
+        status.textContent = translate(statusTranslationKey(ticket.status));
+        const calls = document.createElement('span');
+        calls.textContent = translate('historyCallCount', { count: ticket.callCount || 0 });
+        meta.append(status, calls);
+        item.append(number, timeline, meta);
+        return item;
+      }
+      function renderHistory() {
+        const targetSession = historySession();
+        if (!targetSession) return;
+        document.querySelectorAll('[data-history-filter]').forEach(button => {
+          button.setAttribute('aria-pressed', String(button.dataset.historyFilter === historyFilter));
+        });
+        const allTickets = targetSession.tickets.slice().sort((a, b) => a.createdAt - b.createdAt || a.number - b.number);
+        const tickets = historyFilter === 'all' ? allTickets : allTickets.filter(ticket => ticket.status === historyFilter);
+        const list = $('#historyList');
+        list.replaceChildren(...tickets.map(ticket => createHistoryItem(targetSession, ticket)));
+        const empty = $('#historyEmpty');
+        empty.hidden = tickets.length > 0;
+        if (tickets.length === 0) {
+          empty.querySelector('strong').textContent = translate(allTickets.length ? 'historyNoMatchTitle' : 'historyEmptyTitle');
+          empty.querySelector('span').textContent = translate(allTickets.length ? 'historyNoMatchBody' : 'historyEmptyBody');
+        }
+        $('#historyBackButton').textContent = session ? translate('historyBack') : translate('historyBackSummary');
+        $('#historyCsvButton').disabled = allTickets.length === 0;
+      }
+      function calculateAverageWait(targetSession) {
+        const waits = targetSession.tickets
+          .filter(ticket => Number.isFinite(ticket.calledAt) && Number.isFinite(ticket.createdAt) && ticket.calledAt >= ticket.createdAt)
+          .map(ticket => ticket.calledAt - ticket.createdAt);
+        if (!waits.length) return null;
+        return waits.reduce((sum, value) => sum + value, 0) / waits.length;
+      }
+      function formatDuration(milliseconds) {
+        if (!Number.isFinite(milliseconds)) return translate('averageWaitUnavailable');
+        const totalSeconds = Math.max(0, Math.round(milliseconds / 1000));
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return minutes > 0
+          ? translate('durationMinutesSeconds', { minutes, seconds })
+          : translate('durationSeconds', { seconds });
+      }
+      function renderSummary() {
+        if (!endedSession) return;
+        const completed = endedSession.tickets.filter(ticket => ticket.status === 'completed').length;
+        const absent = endedSession.tickets.filter(ticket => ticket.status === 'absent').length;
+        const waiting = endedSession.tickets.filter(ticket => ticket.status === 'waiting').length;
+        $('#summaryIssued').textContent = new Intl.NumberFormat(language).format(endedSession.usedNumbers.length);
+        $('#summaryCompleted').textContent = new Intl.NumberFormat(language).format(completed);
+        $('#summaryAbsent').textContent = new Intl.NumberFormat(language).format(absent);
+        $('#summaryWaiting').textContent = new Intl.NumberFormat(language).format(waiting);
+        $('#summaryStarted').textContent = formatTime(endedSession.startedAt);
+        $('#summaryEnded').textContent = Number.isFinite(endedSession.endedAt) ? formatTime(endedSession.endedAt) : '—';
+        $('#summaryAverageWait').textContent = formatDuration(calculateAverageWait(endedSession));
+        $('#summaryCsvButton').disabled = endedSession.tickets.length === 0;
+      }
+      function csvEscape(value) {
+        const text = value === null || value === undefined ? '' : String(value);
+        return /[",\r\n]/.test(text) ? '"' + text.replaceAll('"', '""') + '"' : text;
+      }
+      function csvTimestamp(timestamp) {
+        return Number.isFinite(timestamp) ? new Date(timestamp).toISOString() : '';
+      }
+      function csvFilename(targetSession) {
+        const timestamp = Number.isFinite(targetSession.endedAt) ? targetSession.endedAt : targetSession.startedAt;
+        const date = new Date(timestamp);
+        const yyyy = String(date.getFullYear()).padStart(4, '0');
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        return 'queue-board-' + yyyy + '-' + mm + '-' + dd + '.csv';
+      }
+      function saveHistoryCsv() {
+        const targetSession = historySession();
+        if (!targetSession || !targetSession.tickets.length) return;
+        const header = ['number', 'status', 'created_at', 'called_at', 'completed_at', 'counter', 'call_count'];
+        const rows = targetSession.tickets.slice().sort((a, b) => a.createdAt - b.createdAt || a.number - b.number).map(ticket => [
+          ticket.displayNumber,
+          ticket.status,
+          csvTimestamp(ticket.createdAt),
+          csvTimestamp(ticket.calledAt),
+          csvTimestamp(ticket.completedAt),
+          counterNameForTicket(targetSession, ticket),
+          ticket.callCount || 0
+        ]);
+        const csv = [header, ...rows].map(row => row.map(csvEscape).join(',')).join('\r\n');
+        try {
+          const blob = new Blob(['\uFEFF', csv], { type: 'text/csv;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = csvFilename(targetSession);
+          link.hidden = true;
+          document.body.append(link);
+          link.click();
+          link.remove();
+          window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+          announce(translate('csvSaved'), { tone: 'success' });
+        } catch {
+          announce(translate('csvSaveFailed'), { tone: 'warning' });
+        }
+      }
+      function openHistoryView() {
+        if (!historySession()) return;
+        historyVisible = true;
+        historyFilter = 'all';
+        render();
+        $('#historyTitle').focus?.();
+      }
+      function closeHistoryView() {
+        historyVisible = false;
+        render();
+      }
+      async function endSession() {
+        if (!session) return;
+        const waitingCount = session.tickets.filter(ticket => ticket.status === 'waiting').length;
+        const ok = await AppConfirm.ask({
+          title: translate('endSessionTitle'),
+          message: translate('endSessionBody', { count: waitingCount }),
+          confirmLabel: translate('endSessionConfirm'),
+          cancelLabel: translate('cancel'),
+          tone: 'danger'
+        });
+        if (!ok || !session) return;
+        clearTimeout(persistenceTimer);
+        persistenceTimer = 0;
+        persistenceSaveSerial += 1;
+        const snapshot = typeof structuredClone === 'function' ? structuredClone(session) : JSON.parse(JSON.stringify(session));
+        snapshot.endedAt = Date.now();
+        const saved = await enqueuePersistenceOperation(() => finalizeSessionPersistence(snapshot));
+        if (!saved) {
+          setSaveState('error');
+          announce(translate('historySaveFailed'), { tone: 'warning', duration: 7000 });
+          return;
+        }
+        sendDisplayEnded();
+        endedSession = normalizeRecoveredSession(snapshot);
+        session = null;
+        recoveryCandidate = null;
+        lastIssuedId = null;
+        historyVisible = false;
+        if (displayChannel) {
+          try { displayChannel.close(); } catch { }
+          displayChannel = null;
+        }
+        render();
+        announce(translate('sessionEnded'), { tone: 'success' });
+      }
+      function startNewAfterSummary() {
+        endedSession = null;
+        historyVisible = false;
+        historyFilter = 'all';
+        loadSetupSettings();
+        renderCounterSetupFields();
+        initializeSoundSupport();
+        render();
         $('#startNumber').focus();
       }
       function iconDelete() {
@@ -3022,7 +3628,7 @@
           .sort((a, b) => (b.lastCalledAt || b.calledAt || 0) - (a.lastCalledAt || a.calledAt || 0))
           .slice(0, session.recentCallCount)
           .map(ticket => {
-            const counter = session.counters.find(item => item.id === ticket.counterId);
+            const counter = session.counters.find(item => item.id === (ticket.lastCounterId || ticket.counterId));
             return {
               ticketId: ticket.id,
               number: ticket.displayNumber,
@@ -3337,14 +3943,22 @@
           $('#recoveryView').hidden = true;
           $('#setupView').hidden = true;
           $('#operatorView').hidden = true;
+          $('#historyView').hidden = true;
+          $('#summaryView').hidden = true;
           return;
         }
         const active = Boolean(session);
         const recovering = Boolean(recoveryCandidate && !session);
+        const ended = Boolean(endedSession && !session);
+        const historyShown = Boolean(historyVisible && (session || endedSession));
         $('#recoveryView').hidden = !recovering;
-        $('#setupView').hidden = active || recovering;
-        $('#operatorView').hidden = !active;
+        $('#setupView').hidden = active || recovering || ended || historyShown;
+        $('#operatorView').hidden = !active || historyShown;
+        $('#historyView').hidden = !historyShown;
+        $('#summaryView').hidden = !ended || historyShown;
         if (recovering) renderRecoveryCandidate();
+        if (historyShown) renderHistory();
+        if (ended && !historyShown) renderSummary();
         if (!session) return;
 
         syncNextNumber();
@@ -3410,6 +4024,19 @@
       });
       $('#resumeSessionButton').addEventListener('click', resumeSavedSession);
       $('#discardSavedSessionButton').addEventListener('click', discardSavedSession);
+      $('#openHistoryButton').addEventListener('click', openHistoryView);
+      $('#endSessionButton').addEventListener('click', endSession);
+      $('#historyBackButton').addEventListener('click', closeHistoryView);
+      $('#historyCsvButton').addEventListener('click', saveHistoryCsv);
+      $('#summaryCsvButton').addEventListener('click', saveHistoryCsv);
+      $('#summaryHistoryButton').addEventListener('click', openHistoryView);
+      $('#newSessionButton').addEventListener('click', startNewAfterSummary);
+      $('#historyFilters').addEventListener('click', event => {
+        const button = event.target.closest('[data-history-filter]');
+        if (!button) return;
+        historyFilter = button.dataset.historyFilter || 'all';
+        renderHistory();
+      });
       $('#setupForm').addEventListener('submit', startSession);
       $('#startNumber').addEventListener('blur', normalizeStartNumber);
       $('#startNumber').addEventListener('input', () => { $('#startNumberError').textContent = ''; saveSetupSettings(); });
