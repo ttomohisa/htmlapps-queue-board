@@ -2,10 +2,12 @@ import { chromium, firefox, webkit } from 'playwright';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import fs from 'node:fs/promises';
+import http from 'node:http';
 
 const workspace = process.env.GITHUB_WORKSPACE || process.cwd();
-const appPath = path.join(workspace, 'dist', 'index.html');
-const selfExtractPath = path.join(workspace, 'dist', 'index.self-extract.html');
+const distDir = path.join(workspace, 'dist');
+const appPath = path.join(distDir, 'index.html');
+const selfExtractPath = path.join(distDir, 'index.self-extract.html');
 const assetsDir = path.join(workspace, 'assets');
 await fs.mkdir(assetsDir, { recursive: true });
 
@@ -15,12 +17,39 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+const server = http.createServer(async (request, response) => {
+  try {
+    const requestUrl = new URL(request.url || '/', 'http://127.0.0.1');
+    const relative = requestUrl.pathname === '/' ? 'index.html' : requestUrl.pathname.replace(/^\/+/, '');
+    const target = path.join(distDir, relative);
+    if (!target.startsWith(distDir)) {
+      response.writeHead(403);
+      response.end('Forbidden');
+      return;
+    }
+    const bytes = await fs.readFile(target);
+    const type = target.endsWith('.html') ? 'text/html; charset=utf-8' : 'application/octet-stream';
+    response.writeHead(200, { 'Content-Type': type, 'Cache-Control': 'no-store' });
+    response.end(bytes);
+  } catch {
+    response.writeHead(404);
+    response.end('Not found');
+  }
+});
+await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+const address = server.address();
+if (!address || typeof address === 'string') throw new Error('Failed to start local release server.');
+const serverOrigin = `http://127.0.0.1:${address.port}`;
+const appUrl = serverOrigin + '/index.html';
+
 async function waitForSetup(page) {
   await page.waitForFunction(() => {
     const gate = document.querySelector('#persistenceGate');
     const setup = document.querySelector('#setupView');
     return Boolean(gate?.hidden && setup && !setup.hidden);
   });
+  const version = await page.locator('#versionBadge').textContent();
+  assert(version?.trim() === 'v1.0.0', `Unexpected version badge: ${version}`);
 }
 
 async function startDemoSession(page, locale) {
@@ -60,7 +89,7 @@ async function smokeDisplay(page) {
   await page.locator('#openDisplayButton').click();
   const display = await popupPromise;
   await display.waitForLoadState('domcontentloaded');
-  await display.waitForFunction(() => document.querySelectorAll('.display-call-number').length > 0);
+  await display.waitForFunction(() => document.querySelectorAll('.display-call-number').length > 0, null, { timeout: 15000 });
   const numbers = await display.locator('.display-call-number').allTextContents();
   assert(numbers.some(value => value.trim() === '103'), 'Display did not receive current Ticket 103.');
   await display.close();
@@ -72,47 +101,63 @@ async function smokePrintLimit(page) {
   await page.locator('#printEndNumber').fill('1000');
   await page.locator('#printPerPage').fill('20');
   await page.locator('#refreshPrintPreviewButton').click();
-  await page.waitForFunction(() => document.querySelectorAll('.print-ticket').length === 1000);
+  await page.waitForFunction(() => document.querySelectorAll('.print-ticket').length === 1000, null, { timeout: 30000 });
   const count = await page.locator('.print-ticket').count();
   assert(count === 1000, 'Expected 1000 printable tickets.');
   await page.locator('#closePrintViewButton').click();
+}
+
+async function smokeDirectFile(browserType, name, filePath, label) {
+  const browser = await browserType.launch({ headless: true });
+  const context = await browser.newContext({ locale: 'en-US', viewport: { width: 900, height: 700 }, reducedMotion: 'reduce' });
+  const page = await context.newPage();
+  const externalRequests = [];
+  const pageErrors = [];
+  context.on('request', request => {
+    if (/^https?:/i.test(request.url())) externalRequests.push(request.url());
+  });
+  page.on('pageerror', error => pageErrors.push(String(error)));
+  await page.goto(pathToFileURL(filePath).href);
+  await waitForSetup(page);
+  assert(externalRequests.length === 0, `${name} ${label}: unexpected HTTP(S) requests: ${externalRequests.join(', ')}`);
+  assert(pageErrors.length === 0, `${name} ${label}: page errors: ${pageErrors.join(' | ')}`);
+  await context.close();
+  await browser.close();
 }
 
 async function runBrowserSmoke(browserType, name) {
   const browser = await browserType.launch({ headless: true });
   const context = await browser.newContext({ locale: 'en-US', viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
   const page = await context.newPage();
-  const externalRequests = [];
+  const unexpectedRequests = [];
   const pageErrors = [];
-  page.on('request', request => {
-    if (/^https?:/i.test(request.url())) externalRequests.push(request.url());
+  context.on('request', request => {
+    const url = request.url();
+    if (/^https?:/i.test(url) && !url.startsWith(serverOrigin + '/')) unexpectedRequests.push(url);
   });
+  context.on('page', target => target.on('pageerror', error => pageErrors.push(String(error))));
   page.on('pageerror', error => pageErrors.push(String(error)));
-  await page.goto(pathToFileURL(appPath).href);
+
+  await page.goto(appUrl);
   await waitForSetup(page);
   await startDemoSession(page, 'en-US');
   await smokeDisplay(page);
   await smokePrintLimit(page);
-  assert(externalRequests.length === 0, `${name}: unexpected external requests: ${externalRequests.join(', ')}`);
+
+  assert(unexpectedRequests.length === 0, `${name}: unexpected external requests: ${unexpectedRequests.join(', ')}`);
   assert(pageErrors.length === 0, `${name}: page errors: ${pageErrors.join(' | ')}`);
   await context.close();
-
-  const selfContext = await browser.newContext({ locale: 'en-US', viewport: { width: 900, height: 700 }, reducedMotion: 'reduce' });
-  const selfPage = await selfContext.newPage();
-  const selfErrors = [];
-  selfPage.on('pageerror', error => selfErrors.push(String(error)));
-  await selfPage.goto(pathToFileURL(selfExtractPath).href);
-  await waitForSetup(selfPage);
-  assert(selfErrors.length === 0, `${name}: self-extract errors: ${selfErrors.join(' | ')}`);
-  await selfContext.close();
   await browser.close();
+
+  await smokeDirectFile(browserType, name, appPath, 'readable file://');
+  await smokeDirectFile(browserType, name, selfExtractPath, 'self-extract file://');
 }
 
 async function capture(locale, viewport, filename, mobile = false) {
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({ locale, viewport, reducedMotion: 'reduce', deviceScaleFactor: 1 });
   const page = await context.newPage();
-  await page.goto(pathToFileURL(appPath).href);
+  await page.goto(appUrl);
   await waitForSetup(page);
   await startDemoSession(page, locale);
   if (mobile) {
@@ -124,12 +169,16 @@ async function capture(locale, viewport, filename, mobile = false) {
   await browser.close();
 }
 
-for (const [name, browserType] of Object.entries(browsers)) {
-  await runBrowserSmoke(browserType, name);
+try {
+  for (const [name, browserType] of Object.entries(browsers)) {
+    await runBrowserSmoke(browserType, name);
+  }
+
+  await capture('ja-JP', { width: 1360, height: 900 }, 'screenshot.png');
+  await capture('en-US', { width: 1360, height: 900 }, 'screenshot-en.png');
+  await capture('ja-JP', { width: 390, height: 844 }, 'screenshot-mobile.png', true);
+
+  console.log('Release browser smoke tests and screenshots completed.');
+} finally {
+  await new Promise(resolve => server.close(resolve));
 }
-
-await capture('ja-JP', { width: 1360, height: 900 }, 'screenshot.png');
-await capture('en-US', { width: 1360, height: 900 }, 'screenshot-en.png');
-await capture('ja-JP', { width: 390, height: 844 }, 'screenshot-mobile.png', true);
-
-console.log('Release browser smoke tests and screenshots completed.');
