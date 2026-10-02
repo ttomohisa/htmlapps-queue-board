@@ -1789,7 +1789,7 @@
           </button>
         </div>
       </div>
-      <div class="history-filters" id="historyFilters" aria-label="History filters">
+      <div class="history-filters" id="historyFilters" data-i18n-aria-label="historyFiltersLabel" aria-label="履歴の状態フィルタ">
         <button class="history-filter" type="button" data-history-filter="all" aria-pressed="true" data-i18n="filterAll">すべて</button>
         <button class="history-filter" type="button" data-history-filter="waiting" aria-pressed="false" data-i18n="filterWaiting">待機中</button>
         <button class="history-filter" type="button" data-history-filter="called" aria-pressed="false" data-i18n="filterCalled">呼び出し中</button>
@@ -2173,6 +2173,8 @@
           historyTitle: '履歴',
           historyBody: 'Ticketごとの受付・呼び出し・完了・不在を時系列で確認できます。',
           historyBack: 'Operatorへ戻る',
+          historyBackSummary: 'サマリーへ戻る',
+          historyFiltersLabel: '履歴の状態フィルタ',
           saveCsv: 'CSVを保存',
           filterAll: 'すべて',
           filterWaiting: '待機中',
@@ -2348,6 +2350,8 @@
           historyTitle: 'History',
           historyBody: 'Review reception, call, completion, and absent events for each Ticket.',
           historyBack: 'Back to Operator',
+          historyBackSummary: 'Back to summary',
+          historyFiltersLabel: 'History status filters',
           saveCsv: 'Save CSV',
           filterAll: 'All',
           filterWaiting: 'Waiting',
@@ -2559,7 +2563,7 @@
         } catch { }
         const fallbackHistorySaved = writeStorage(fallbackHistoryStorageKey, JSON.stringify(record));
         const fallbackActiveCleared = removeStorage(fallbackSessionStorageKey) || readStorage(fallbackSessionStorageKey) === null;
-        if (indexedDbAvailable) return indexedDbSaved && fallbackActiveCleared;
+        if (indexedDbSaved) return fallbackActiveCleared;
         return fallbackHistorySaved && fallbackActiveCleared;
       }
       function enqueuePersistenceOperation(task) {
@@ -3340,7 +3344,7 @@
           empty.querySelector('strong').textContent = translate(allTickets.length ? 'historyNoMatchTitle' : 'historyEmptyTitle');
           empty.querySelector('span').textContent = translate(allTickets.length ? 'historyNoMatchBody' : 'historyEmptyBody');
         }
-        $('#historyBackButton').textContent = session ? translate('historyBack') : translate('summaryTitle');
+        $('#historyBackButton').textContent = session ? translate('historyBack') : translate('historyBackSummary');
         $('#historyCsvButton').disabled = allTickets.length === 0;
       }
       function calculateAverageWait(targetSession) {
