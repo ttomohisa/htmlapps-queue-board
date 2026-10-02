@@ -2,6 +2,27 @@
 
 All notable changes to Queue Board are documented here.
 
+## [0.9.0] - 2026-10-03
+
+### Added
+
+- Smartphone bottom navigation with Operate / Queue / History views during an active Session.
+- Safe-area-aware fixed mobile navigation with 54px-class touch targets.
+- Mobile navigation state synchronized with the existing History view.
+- Explicit Help notes for browser support, local-storage recovery risks, and smartphone navigation.
+- Repository checks that reject outbound runtime network APIs for Queue Board source.
+
+### Changed
+
+- Smartphone Operator view now separates primary operation from waiting / absent queues instead of stacking the full desktop workflow.
+- Session actions use a compact two-column mobile grid.
+- Toast placement moves above the fixed bottom navigation.
+- Help and README clarify that Display synchronization uses same-browser messaging and does not send Session state to a server or another device.
+- Long headings and labels wrap more safely.
+- Ticket and History rows use rendering containment where supported to reduce large-list rendering cost.
+- History cards receive consistent internal spacing.
+- Focus-visible coverage now includes selects and links.
+
 ## [0.8.0] - 2026-10-02
 
 ### Added
