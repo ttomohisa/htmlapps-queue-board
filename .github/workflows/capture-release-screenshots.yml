@@ -52,11 +52,11 @@ jobs:
       - name: Commit release screenshots
         shell: pwsh
         run: |
-          git add assets/screenshot.png assets/screenshot-en.png assets/screenshot-mobile.png
+          git add assets/screenshot.png assets/screenshot-en.png assets/screenshot-mobile.png queue-board.html
           if (-not (git diff --cached --quiet)) {
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git commit -m "docs: capture Queue Board v1.0.0 screenshots"
+            git commit -m "chore: add Queue Board v1.0.0 release artifacts"
             git push origin HEAD:release/v1.0.0
           } else {
             Write-Host "Screenshots are unchanged."
