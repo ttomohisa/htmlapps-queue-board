@@ -2257,7 +2257,7 @@
           key: persistenceRecordKey,
           schemaVersion: 1,
           savedAt: Date.now(),
-          session: structuredClone ? structuredClone(session) : JSON.parse(JSON.stringify(session))
+          session: typeof structuredClone === 'function' ? structuredClone(session) : JSON.parse(JSON.stringify(session))
         };
         const ok = await writePersistedSessionRecord(record);
         if (ok) {
@@ -2313,6 +2313,7 @@
         if (!session) return;
         recoveryCandidate = null;
         lastIssuedId = null;
+        saveSetupSettings();
         setupDisplayChannel();
         render();
         schedulePersistSession();
@@ -2328,7 +2329,11 @@
           tone: 'danger'
         });
         if (!ok) return;
-        await deletePersistedSessionRecord();
+        const deleted = await deletePersistedSessionRecord();
+        if (!deleted) {
+          announce(translate('saveFailed'), { tone: 'warning', duration: 6500 });
+          return;
+        }
         recoveryCandidate = null;
         render();
         announce(translate('savedSessionDiscarded'));
@@ -2577,6 +2582,7 @@
           input.addEventListener('input', () => {
             counterDraftNames[index] = input.value;
             counterDraftCustom[index] = input.value.trim() !== '' && input.value !== defaultCounterName(index);
+            saveSetupSettings();
           });
           label.append(labelText, input);
           host.append(label);
@@ -2816,6 +2822,12 @@
           tone: 'danger'
         });
         if (!ok) return;
+        const deleted = await deletePersistedSessionRecord();
+        if (!deleted) {
+          setSaveState('error');
+          announce(translate('saveFailed'), { tone: 'warning', duration: 6500 });
+          return;
+        }
         sendDisplayEnded();
         session = null;
         lastIssuedId = null;
@@ -3295,9 +3307,19 @@
       }
       function render() {
         if (displayMode) return;
+        $('#persistenceGate').hidden = persistenceReady;
+        if (!persistenceReady) {
+          $('#recoveryView').hidden = true;
+          $('#setupView').hidden = true;
+          $('#operatorView').hidden = true;
+          return;
+        }
         const active = Boolean(session);
-        $('#setupView').hidden = active;
+        const recovering = Boolean(recoveryCandidate && !session);
+        $('#recoveryView').hidden = !recovering;
+        $('#setupView').hidden = active || recovering;
         $('#operatorView').hidden = !active;
+        if (recovering) renderRecoveryCandidate();
         if (!session) return;
 
         syncNextNumber();
@@ -3323,6 +3345,7 @@
         renderCounters(waiting);
         renderTicketLists(waiting, absent);
         syncDisplayState();
+        schedulePersistSession();
       }
       function applyLanguage() {
         document.documentElement.lang = language;
@@ -3339,8 +3362,11 @@
           if (!displayTitleCustom) $('#displayTitleInput').value = defaultDisplayTitle();
         }
         if (displayMode && lastDisplaySnapshot) renderDisplaySnapshot(lastDisplaySnapshot);
-        if (!displayMode) initializeSoundSupport();
-        else updateDisplayFeatureControls();
+        if (!displayMode) {
+          initializeSoundSupport();
+          if (recoveryCandidate) renderRecoveryCandidate();
+          if (session) setSaveState(saveState);
+        } else updateDisplayFeatureControls();
         render();
       }
 
@@ -3357,10 +3383,12 @@
         const outside = event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom;
         if (outside) helpDialog.close();
       });
+      $('#resumeSessionButton').addEventListener('click', resumeSavedSession);
+      $('#discardSavedSessionButton').addEventListener('click', discardSavedSession);
       $('#setupForm').addEventListener('submit', startSession);
       $('#startNumber').addEventListener('blur', normalizeStartNumber);
-      $('#startNumber').addEventListener('input', () => { $('#startNumberError').textContent = ''; });
-      $('#counterCount').addEventListener('change', renderCounterSetupFields);
+      $('#startNumber').addEventListener('input', () => { $('#startNumberError').textContent = ''; saveSetupSettings(); });
+      $('#counterCount').addEventListener('change', () => { renderCounterSetupFields(); saveSetupSettings(); });
       $('#issueButton').addEventListener('click', issueTicket);
       $('#manualAddForm').addEventListener('submit', addManualTicket);
       $('#manualNumber').addEventListener('input', () => { $('#manualNumberError').textContent = ''; });
@@ -3377,16 +3405,23 @@
         }
       });
       $('#previewChimeButton').addEventListener('click', previewChime);
+      $('#soundEnabled').addEventListener('change', saveSetupSettings);
       $('#toggleSoundButton').addEventListener('click', toggleSessionSound);
       $('#openDisplayButton').addEventListener('click', openDisplayWindow);
       $('#fullscreenButton').addEventListener('click', toggleFullscreen);
       $('#wakeLockButton').addEventListener('click', toggleWakeLock);
       document.addEventListener('fullscreenchange', updateDisplayFeatureControls);
       document.addEventListener('visibilitychange', () => {
-        if (!displayMode || !wakeLockRequested || document.visibilityState !== 'visible') return;
-        if (!wakeLockSentinel || wakeLockSentinel.released) void acquireWakeLock();
+        if (displayMode) {
+          if (!wakeLockRequested || document.visibilityState !== 'visible') return;
+          if (!wakeLockSentinel || wakeLockSentinel.released) void acquireWakeLock();
+          return;
+        }
+        if (session && document.visibilityState === 'hidden') void persistSessionNow();
       });
-      $('#displayTitleInput').addEventListener('input', () => { displayTitleCustom = true; });
+      $('#displayTitleInput').addEventListener('input', () => { displayTitleCustom = true; saveSetupSettings(); });
+      $('#recentCallCount').addEventListener('change', saveSetupSettings);
+      $('#showWaitingCount').addEventListener('change', saveSetupSettings);
       window.addEventListener('message', event => {
         const allowedOrigin = location.protocol === 'file:' || event.origin === location.origin;
         if (!allowedOrigin) return;
@@ -3399,7 +3434,10 @@
           if (wakeLockSentinel && !wakeLockSentinel.released) {
             try { wakeLockSentinel.release(); } catch { }
           }
-        } else if (session) sendDisplayEnded();
+        } else if (session) {
+          void persistSessionNow();
+          sendDisplayEnded();
+        }
         if (displayChannel) {
           try { displayChannel.close(); } catch { }
         }
@@ -3419,6 +3457,7 @@
       applyLanguage();
       initializeSoundSupport();
       initializeDisplayMode();
+      if (!displayMode) void initializePersistence();
     })();
   </script>
 </body>
