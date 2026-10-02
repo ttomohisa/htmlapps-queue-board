@@ -642,8 +642,8 @@
           <img id="appBrandIcon" src="__APP_ICON_DATA_URI__" alt="">
         </div>
         <div class="brand-copy">
-          <p class="brand-name"><span id="brandName">Single HTML App Starter</span><span class="version-badge" id="versionBadge">v1.1.0</span></p>
-          <p class="brand-meta" data-i18n="brandMeta">Single file · Local-first · GitHub Pages</p>
+          <p class="brand-name"><span id="brandName">呼び出し番号</span><span class="version-badge" id="versionBadge">v0.1.0</span></p>
+          <p class="brand-meta" data-i18n="brandMeta">番号を発行して、順番に呼び出す</p>
         </div>
       </div>
       <div class="header-actions">
@@ -1068,7 +1068,7 @@
         return new Intl.DateTimeFormat(language === 'ja' ? 'ja-JP' : 'en-US', { hour: '2-digit', minute: '2-digit' }).format(new Date(timestamp));
       }
       function makeId() {
-        if (crypto && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
         return String(Date.now()) + '-' + Math.random().toString(16).slice(2);
       }
 
