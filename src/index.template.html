@@ -897,7 +897,7 @@
     }
 
 
-    /* Queue Board v0.4.0 display board */
+    /* Queue Board display board */
     .session-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
     .display-status {
       display: inline-flex;
@@ -1305,7 +1305,7 @@
       </div>
     </section>
 
-    <!-- APP:BEGIN Queue Board v0.4.0 display board -->
+    <!-- APP:BEGIN Queue Board v0.5.0 sound fullscreen wake -->
     <section class="queue-card setup-card" id="setupView" aria-labelledby="setupTitle">
       <h2 id="setupTitle" data-i18n="setupTitle">受付を始める</h2>
       <p data-i18n="setupBody">開始番号と窓口を設定します。窓口は1〜4個まで使えます。</p>
@@ -1720,6 +1720,26 @@
           recentCallCountLabel: '最近呼んだ番号',
           recentNone: '表示しない',
           showWaitingCountLabel: '待ち人数を表示',
+          soundSettingTitle: '呼び出し音',
+          soundSettingNote: '呼び出し・再呼び出し時に内蔵チャイムを鳴らします。',
+          soundEnabledLabel: 'ON',
+          previewChime: '試聴',
+          soundOn: '呼び出し音 ON',
+          soundOff: '呼び出し音 OFF',
+          soundEnabledMessage: '呼び出し音をONにしました。',
+          soundDisabledMessage: '呼び出し音をOFFにしました。',
+          chimePreviewed: 'チャイムを試聴しました。',
+          audioUnsupported: 'このブラウザでは呼び出し音を利用できません。番号表示などの基本機能はそのまま使えます。',
+          enterFullscreen: '全画面表示',
+          exitFullscreen: '全画面を終了',
+          keepAwake: '画面を点灯したままにする',
+          releaseWake: '画面点灯を解除',
+          fullscreenUnsupported: 'このブラウザでは全画面表示を利用できません。',
+          wakeUnsupported: 'このブラウザでは画面点灯維持を利用できません。',
+          fullscreenFailed: '全画面表示を開始できませんでした。',
+          wakeLockFailed: '画面を点灯したままにできませんでした。',
+          wakeLockEnabled: '画面点灯維持をONにしました。',
+          wakeLockDisabled: '画面点灯維持を解除しました。',
           displayDisconnected: '表示画面 未接続',
           displayConnected: '表示画面 接続中',
           openDisplay: '表示画面を開く',
@@ -1755,12 +1775,12 @@
           helpStep2: '「番号を発行」、または手動追加で待ち列へ番号を登録します。',
           helpStep3: '「表示画面を開く」で待合向けDisplayを別ウィンドウに開きます。外部モニターへ移動して使えます。',
           helpStep4: '空いている窓口の「次を呼ぶ」で、Displayへ番号と窓口がリアルタイム反映されます。',
-          helpStep5: 'Displayを閉じてもOperatorは継続できます。再度「表示画面を開く」で現在状態へ再接続します。',
+          helpStep5: '呼び出し音を試聴・ON/OFFできます。Displayでは全画面表示と対応環境でのWake Lockを利用できます。',
           helpPrivacyTitle: 'プライバシー',
           helpPrivacyBody: 'Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。',
-          helpNotesTitle: 'v0.4.0 の範囲',
+          helpNotesTitle: 'v0.5.0 の範囲',
           helpNoteDisplay: 'DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。別端末への送信は行いません。',
-          helpNoteNoSound: 'チャイム、全画面表示、Wake Lockは次のマイルストーンで追加します。',
+          helpNoteFeatures: 'Fullscreen / Wake LockはFeature Detectionを行い、非対応環境ではその機能だけを無効化します。',
           helpNoteNoRecovery: '自動保存とSession復旧はまだありません。再読み込み・タブを閉じる・リセットで現在の受付状態は失われます。',
 
           helpOffline: '配布用HTMLは実行時の外部通信を必要とせず、Display同期もブラウザ内だけで行います。',
@@ -1807,6 +1827,26 @@
           recentCallCountLabel: 'Recent calls',
           recentNone: 'Do not show',
           showWaitingCountLabel: 'Show waiting count',
+          soundSettingTitle: 'Call sound',
+          soundSettingNote: 'Play the built-in chime for calls and recalls.',
+          soundEnabledLabel: 'ON',
+          previewChime: 'Preview',
+          soundOn: 'Call sound ON',
+          soundOff: 'Call sound OFF',
+          soundEnabledMessage: 'Call sound turned on.',
+          soundDisabledMessage: 'Call sound turned off.',
+          chimePreviewed: 'Chime preview played.',
+          audioUnsupported: 'Call sound is not available in this browser. Core number display features remain available.',
+          enterFullscreen: 'Fullscreen',
+          exitFullscreen: 'Exit fullscreen',
+          keepAwake: 'Keep screen awake',
+          releaseWake: 'Allow screen sleep',
+          fullscreenUnsupported: 'Fullscreen is not available in this browser.',
+          wakeUnsupported: 'Screen Wake Lock is not available in this browser.',
+          fullscreenFailed: 'Fullscreen could not be started.',
+          wakeLockFailed: 'The screen could not be kept awake.',
+          wakeLockEnabled: 'Screen Wake Lock enabled.',
+          wakeLockDisabled: 'Screen Wake Lock released.',
           displayDisconnected: 'Display disconnected',
           displayConnected: 'Display connected',
           openDisplay: 'Open display',
@@ -1842,12 +1882,12 @@
           helpStep2: 'Use Issue number or manual entry to add a ticket to the waiting queue.',
           helpStep3: 'Use Open display to launch the waiting-room Display in a separate window that can be moved to an external monitor.',
           helpStep4: 'Use Call next at any available counter and the number and Counter will update on the Display in real time.',
-          helpStep5: 'Closing the Display does not stop the Operator. Open it again to reconnect to the current state.',
+          helpStep5: 'Preview or toggle the call sound. On Display, use Fullscreen and Wake Lock when supported.',
           helpPrivacyTitle: 'Privacy',
           helpPrivacyBody: 'Ticket numbers, Counter settings, Display settings, and queue state are processed inside the same browser. The app uses no external API, analytics, or telemetry and does not send session data outside.',
-          helpNotesTitle: 'v0.4.0 scope',
+          helpNotesTitle: 'v0.5.0 scope',
           helpNoteDisplay: 'The Display syncs in a separate window of the same browser. It does not transmit data to another device.',
-          helpNoteNoSound: 'Chime, fullscreen, and Wake Lock are planned for the next milestone.',
+          helpNoteFeatures: 'Fullscreen and Wake Lock use feature detection. Unsupported environments disable only that optional feature.',
           helpNoteNoRecovery: 'Autosave and session recovery are not implemented yet. Reloading, closing the tab, or resetting loses the current queue.',
 
           helpOffline: 'The distributable HTML needs no runtime external network access, and Display synchronization stays inside the browser.',
@@ -1894,6 +1934,9 @@
       let lastDisplaySnapshot = null;
       let lastDisplaySignature = '';
       let displayTitleCustom = false;
+      let audioContext = null;
+      let wakeLockSentinel = null;
+      let wakeLockRequested = false;
 
       function readStorage(key) {
         try { return localStorage.getItem(key); } catch { return null; }
@@ -1925,6 +1968,59 @@
       }
       function defaultDisplayTitle() {
         return language === 'ja' ? 'お呼びしています' : 'Now calling';
+      }
+      function audioContextConstructor() {
+        return window.AudioContext || window.webkitAudioContext || null;
+      }
+      async function ensureAudioContext() {
+        const AudioContextClass = audioContextConstructor();
+        if (!AudioContextClass) return null;
+        if (!audioContext) audioContext = new AudioContextClass();
+        if (audioContext.state === 'suspended') {
+          try { await audioContext.resume(); } catch { }
+        }
+        return audioContext;
+      }
+      function scheduleChimeTone(context, frequency, startTime, duration, volume) {
+        const oscillator = context.createOscillator();
+        const gain = context.createGain();
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(frequency, startTime);
+        gain.gain.setValueAtTime(0.0001, startTime);
+        gain.gain.exponentialRampToValueAtTime(volume, startTime + 0.018);
+        gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+        oscillator.connect(gain);
+        gain.connect(context.destination);
+        oscillator.start(startTime);
+        oscillator.stop(startTime + duration + 0.025);
+      }
+      async function playChime(kind = 'call', force = false) {
+        if (!force && session && !session.soundEnabled) return false;
+        const context = await ensureAudioContext();
+        if (!context) {
+          if (force) announce(translate('audioUnsupported'), { tone: 'warning', duration: 5200 });
+          return false;
+        }
+        const now = context.currentTime + 0.015;
+        if (kind === 'recall') {
+          scheduleChimeTone(context, 880, now, 0.16, 0.14);
+          scheduleChimeTone(context, 659.25, now + 0.20, 0.20, 0.12);
+        } else {
+          scheduleChimeTone(context, 659.25, now, 0.18, 0.13);
+          scheduleChimeTone(context, 880, now + 0.18, 0.18, 0.14);
+          scheduleChimeTone(context, 1046.5, now + 0.36, 0.28, 0.13);
+        }
+        return true;
+      }
+      async function previewChime() {
+        const played = await playChime('call', true);
+        if (played) announce(translate('chimePreviewed'), { tone: 'success' });
+      }
+      function toggleSessionSound() {
+        if (!session) return;
+        session.soundEnabled = !session.soundEnabled;
+        render();
+        announce(translate(session.soundEnabled ? 'soundEnabledMessage' : 'soundDisabledMessage'));
       }
 
       const AppConfirm = (() => {
@@ -2111,7 +2207,7 @@
           counters,
           tickets: [],
           usedNumbers: [],
-          soundEnabled: false,
+          soundEnabled: $('#soundEnabled').checked,
           showWaitingCount: $('#showWaitingCount').checked,
           recentCallCount: Math.min(5, Math.max(0, Number($('#recentCallCount').value) || 0))
         };
@@ -2189,6 +2285,7 @@
         ticket.counterId = counter.id;
         ticket.callCount += 1;
         counter.currentTicketId = ticket.id;
+        void playChime('call');
         render();
         flashCounterNumber(counter.id);
         announce(translate('ticketCalled', { counter: counter.name, number: ticket.displayNumber }), { tone: 'success' });
@@ -2199,6 +2296,7 @@
         if (!counter || !ticket) return;
         ticket.callCount += 1;
         ticket.lastCalledAt = Date.now();
+        void playChime('recall');
         render();
         flashCounterNumber(counter.id);
         announce(translate('ticketRecalled', { counter: counter.name, number: ticket.displayNumber }));
@@ -2319,6 +2417,7 @@
         $('#startNumber').value = '001';
         $('#counterCount').value = '1';
         $('#displayTitleInput').value = defaultDisplayTitle();
+        $('#soundEnabled').checked = true;
         $('#showWaitingCount').checked = true;
         $('#recentCallCount').value = '3';
         $('#manualNumber').value = '';
@@ -2644,6 +2743,77 @@
           try { displayChannel.postMessage(message); } catch { }
         }
       }
+      function fullscreenSupported() {
+        return Boolean(document.documentElement.requestFullscreen && document.exitFullscreen);
+      }
+      function wakeLockSupported() {
+        return Boolean(navigator.wakeLock && typeof navigator.wakeLock.request === 'function');
+      }
+      function updateDisplayFeatureControls() {
+        if (!displayMode) return;
+        const fullscreenButton = $('#fullscreenButton');
+        const wakeButton = $('#wakeLockButton');
+        const note = $('#displayFeatureNote');
+        const fullscreenActive = Boolean(document.fullscreenElement);
+        fullscreenButton.disabled = !fullscreenSupported();
+        fullscreenButton.setAttribute('aria-pressed', String(fullscreenActive));
+        $('#fullscreenButtonText').textContent = translate(fullscreenActive ? 'exitFullscreen' : 'enterFullscreen');
+        const wakeActive = Boolean(wakeLockSentinel && !wakeLockSentinel.released);
+        wakeButton.disabled = !wakeLockSupported();
+        wakeButton.setAttribute('aria-pressed', String(wakeActive));
+        $('#wakeLockButtonText').textContent = translate(wakeActive ? 'releaseWake' : 'keepAwake');
+        const notes = [];
+        if (!fullscreenSupported()) notes.push(translate('fullscreenUnsupported'));
+        if (!wakeLockSupported()) notes.push(translate('wakeUnsupported'));
+        note.textContent = notes.join(' ');
+      }
+      async function toggleFullscreen() {
+        if (!displayMode || !fullscreenSupported()) {
+          updateDisplayFeatureControls();
+          return;
+        }
+        try {
+          if (document.fullscreenElement) await document.exitFullscreen();
+          else await document.documentElement.requestFullscreen();
+        } catch {
+          $('#displayFeatureNote').textContent = translate('fullscreenFailed');
+        }
+        updateDisplayFeatureControls();
+      }
+      async function acquireWakeLock() {
+        if (!displayMode || !wakeLockSupported() || document.visibilityState !== 'visible') return false;
+        try {
+          const sentinel = await navigator.wakeLock.request('screen');
+          wakeLockSentinel = sentinel;
+          sentinel.addEventListener('release', () => {
+            if (wakeLockSentinel === sentinel) wakeLockSentinel = null;
+            updateDisplayFeatureControls();
+          });
+          updateDisplayFeatureControls();
+          return true;
+        } catch {
+          wakeLockSentinel = null;
+          $('#displayFeatureNote').textContent = translate('wakeLockFailed');
+          updateDisplayFeatureControls();
+          return false;
+        }
+      }
+      async function toggleWakeLock() {
+        if (!displayMode || !wakeLockSupported()) {
+          updateDisplayFeatureControls();
+          return;
+        }
+        if (wakeLockSentinel && !wakeLockSentinel.released) {
+          wakeLockRequested = false;
+          try { await wakeLockSentinel.release(); } catch { }
+          wakeLockSentinel = null;
+          updateDisplayFeatureControls();
+          return;
+        }
+        wakeLockRequested = true;
+        const acquired = await acquireWakeLock();
+        if (!acquired) wakeLockRequested = false;
+      }
       function renderDisplaySnapshot(snapshot) {
         if (!displayMode || !snapshot) return;
         lastDisplaySnapshot = snapshot;
@@ -2709,6 +2879,7 @@
         $('#displayBoardTitle').textContent = defaultDisplayTitle();
         $('#displayBoardSyncText').textContent = translate('displayWaitingConnection');
         document.title = defaultDisplayTitle() + ' | ' + (language === 'ja' ? APP_CONFIG.nameJa : APP_CONFIG.name);
+        updateDisplayFeatureControls();
         notifyDisplayReady();
       }
       function render() {
@@ -2733,6 +2904,8 @@
         $('#issuedCount').textContent = new Intl.NumberFormat(language).format(session.usedNumbers.length);
         $('#nextNumber').textContent = session.nextNumber === null ? '—' : formatTicketNumber(session.nextNumber);
         $('#issueButton').disabled = session.nextNumber === null;
+        $('#toggleSoundButton').setAttribute('aria-pressed', String(session.soundEnabled));
+        $('#toggleSoundButtonText').textContent = translate(session.soundEnabled ? 'soundOn' : 'soundOff');
         $('#lastIssuedPanel').hidden = !lastIssued;
         if (lastIssued) $('#lastIssuedNumber').textContent = lastIssued.displayNumber;
         renderCounters(waiting);
@@ -2789,7 +2962,16 @@
           case 'delete': deleteCurrentTicket(counterId); break;
         }
       });
+      $('#previewChimeButton').addEventListener('click', previewChime);
+      $('#toggleSoundButton').addEventListener('click', toggleSessionSound);
       $('#openDisplayButton').addEventListener('click', openDisplayWindow);
+      $('#fullscreenButton').addEventListener('click', toggleFullscreen);
+      $('#wakeLockButton').addEventListener('click', toggleWakeLock);
+      document.addEventListener('fullscreenchange', updateDisplayFeatureControls);
+      document.addEventListener('visibilitychange', () => {
+        if (!displayMode || !wakeLockRequested || document.visibilityState !== 'visible') return;
+        if (!wakeLockSentinel || wakeLockSentinel.released) void acquireWakeLock();
+      });
       $('#displayTitleInput').addEventListener('input', () => { displayTitleCustom = true; });
       window.addEventListener('message', event => {
         const allowedOrigin = location.protocol === 'file:' || event.origin === location.origin;
@@ -2797,8 +2979,13 @@
         handleDisplayTransportMessage(event.data, event.source, 'window');
       });
       window.addEventListener('pagehide', () => {
-        if (displayMode) notifyDisplayClosing();
-        else if (session) sendDisplayEnded();
+        if (displayMode) {
+          notifyDisplayClosing();
+          wakeLockRequested = false;
+          if (wakeLockSentinel && !wakeLockSentinel.released) {
+            try { wakeLockSentinel.release(); } catch { }
+          }
+        } else if (session) sendDisplayEnded();
         if (displayChannel) {
           try { displayChannel.close(); } catch { }
         }
