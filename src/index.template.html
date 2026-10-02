@@ -1937,6 +1937,7 @@
       let audioContext = null;
       let wakeLockSentinel = null;
       let wakeLockRequested = false;
+      let displayFeatureRuntimeMessage = '';
 
       function readStorage(key) {
         try { return localStorage.getItem(key); } catch { return null; }
@@ -2018,9 +2019,27 @@
       }
       function toggleSessionSound() {
         if (!session) return;
+        if (!audioContextConstructor()) {
+          announce(translate('audioUnsupported'), { tone: 'warning', duration: 5200 });
+          return;
+        }
         session.soundEnabled = !session.soundEnabled;
         render();
         announce(translate(session.soundEnabled ? 'soundEnabledMessage' : 'soundDisabledMessage'));
+      }
+      function initializeSoundSupport() {
+        const supported = Boolean(audioContextConstructor());
+        const checkbox = $('#soundEnabled');
+        const previewButton = $('#previewChimeButton');
+        const note = $('#soundSupportNote');
+        checkbox.disabled = !supported;
+        previewButton.disabled = !supported;
+        if (!supported) {
+          checkbox.checked = false;
+          note.textContent = translate('audioUnsupported');
+        } else {
+          note.textContent = translate('soundSettingNote');
+        }
       }
 
       const AppConfirm = (() => {
@@ -2765,6 +2784,7 @@
         const notes = [];
         if (!fullscreenSupported()) notes.push(translate('fullscreenUnsupported'));
         if (!wakeLockSupported()) notes.push(translate('wakeUnsupported'));
+        if (displayFeatureRuntimeMessage) notes.push(displayFeatureRuntimeMessage);
         note.textContent = notes.join(' ');
       }
       async function toggleFullscreen() {
@@ -2775,8 +2795,9 @@
         try {
           if (document.fullscreenElement) await document.exitFullscreen();
           else await document.documentElement.requestFullscreen();
+          displayFeatureRuntimeMessage = '';
         } catch {
-          $('#displayFeatureNote').textContent = translate('fullscreenFailed');
+          displayFeatureRuntimeMessage = translate('fullscreenFailed');
         }
         updateDisplayFeatureControls();
       }
@@ -2789,11 +2810,12 @@
             if (wakeLockSentinel === sentinel) wakeLockSentinel = null;
             updateDisplayFeatureControls();
           });
+          displayFeatureRuntimeMessage = '';
           updateDisplayFeatureControls();
           return true;
         } catch {
           wakeLockSentinel = null;
-          $('#displayFeatureNote').textContent = translate('wakeLockFailed');
+          displayFeatureRuntimeMessage = translate('wakeLockFailed');
           updateDisplayFeatureControls();
           return false;
         }
@@ -2927,6 +2949,8 @@
           if (!displayTitleCustom) $('#displayTitleInput').value = defaultDisplayTitle();
         }
         if (displayMode && lastDisplaySnapshot) renderDisplaySnapshot(lastDisplaySnapshot);
+        if (!displayMode) initializeSoundSupport();
+        else updateDisplayFeatureControls();
         render();
       }
 
@@ -3003,6 +3027,7 @@
       setupDisplayChannel();
       renderCounterSetupFields();
       applyLanguage();
+      initializeSoundSupport();
       initializeDisplayMode();
     })();
   </script>
