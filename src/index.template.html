@@ -722,7 +722,7 @@
     }
 
 
-    /* Queue Board v0.3.0 multi counter */
+    /* Queue Board multi counter */
     .counter-setup {
       margin: 20px 0 0;
       padding: 18px;
@@ -1600,6 +1600,25 @@
           counterCountLabel: '窓口数',
           counterCountHelp: '同じ画面で最大4窓口まで操作できます。',
           counterNameLabel: '窓口 {number} の名前',
+          displaySettings: '表示画面の設定',
+          displayTitleLabel: '表示タイトル',
+          recentCallCountLabel: '最近呼んだ番号',
+          recentNone: '表示しない',
+          showWaitingCountLabel: '待ち人数を表示',
+          displayDisconnected: '表示画面 未接続',
+          displayConnected: '表示画面 接続中',
+          openDisplay: '表示画面を開く',
+          displayOpenFailed: '表示画面を開けませんでした。ブラウザでポップアップがブロックされている可能性があります。',
+          displayOpened: '表示画面を開きました。',
+          displayReconnected: '表示画面へ再接続しました。',
+          displayWaitingConnection: '接続待ち',
+          displayLive: 'Operatorと同期中',
+          displayIdleTitle: '呼び出しをお待ちください',
+          displayIdleBody: '番号が呼ばれると、ここに大きく表示されます。',
+          recentCallsTitle: '最近お呼びした番号',
+          displayWaitingLabel: '待ち人数',
+          displayEndedTitle: '表示を終了しました',
+          displayEndedBody: 'Operator画面から再び表示画面を開くと再接続できます。',
           startSession: '受付を開始',
           setupNote: 'この開発段階では受付状態を自動保存しません。ページを再読み込みすると現在のSessionは失われます。',
           sessionRunning: '受付中', startedAt: '開始', resetSession: '受付をリセット',
@@ -1617,18 +1636,19 @@
           absentEmptyTitle: '不在の番号はありません。', absentEmptyBody: '呼び出し中の番号を「不在」にすると、ここへ移動します。',
           returnToWaiting: '待ち列へ戻す', acceptedAt: '受付', calls: '呼出',
           helpBasicsTitle: '基本操作',
-          helpStep1: '開始番号と窓口数、必要なら各窓口名を設定して受付を開始します。',
+          helpStep1: '開始番号と窓口数、必要なら各窓口名と表示画面設定を決めて受付を開始します。',
           helpStep2: '「番号を発行」、または手動追加で待ち列へ番号を登録します。',
-          helpStep3: '空いている窓口の「次を呼ぶ」で、待ち列の先頭番号をその窓口へ割り当てます。',
-          helpStep4: '窓口ごとに再呼び出し、完了、不在、削除を操作できます。',
-          helpStep5: '不在番号は待ち列の末尾へ戻せます。待機中・不在の削除は直後ならUndoできます。',
+          helpStep3: '「表示画面を開く」で待合向けDisplayを別ウィンドウに開きます。外部モニターへ移動して使えます。',
+          helpStep4: '空いている窓口の「次を呼ぶ」で、Displayへ番号と窓口がリアルタイム反映されます。',
+          helpStep5: 'Displayを閉じてもOperatorは継続できます。再度「表示画面を開く」で現在状態へ再接続します。',
           helpPrivacyTitle: 'プライバシー',
-          helpPrivacyBody: 'Ticket番号、窓口設定、操作状態はこのページ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。',
-          helpNotesTitle: 'v0.3.0 の範囲',
-          helpNoteCounters: '1〜4窓口を1画面で操作できます。各窓口は同じ待ち列から別々のTicketを取得します。',
+          helpPrivacyBody: 'Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。',
+          helpNotesTitle: 'v0.4.0 の範囲',
+          helpNoteDisplay: 'DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。別端末への送信は行いません。',
+          helpNoteNoSound: 'チャイム、全画面表示、Wake Lockは次のマイルストーンで追加します。',
           helpNoteNoRecovery: '自動保存とSession復旧はまだありません。再読み込み・タブを閉じる・リセットで現在の受付状態は失われます。',
-          helpNoteLater: 'Display、CSV、印刷はv0.3.0には含みません。',
-          helpOffline: '配布用HTMLは実行時の外部通信を必要とせず、入力した番号や窓口設定を外部へ送信しません。',
+
+          helpOffline: '配布用HTMLは実行時の外部通信を必要とせず、Display同期もブラウザ内だけで行います。',
           footer: '番号を発行して順番に呼び出すローカルツール',
           confirmTitle: '確認', confirmAction: '実行する', cancel: 'キャンセル',
           resetTitle: '受付をリセットしますか？', resetBody: '現在の受付番号と状態を破棄して、開始画面へ戻ります。', resetConfirm: 'リセット',
@@ -1667,6 +1687,25 @@
           counterCountLabel: 'Number of counters',
           counterCountHelp: 'Operate up to four counters from the same screen.',
           counterNameLabel: 'Counter {number} name',
+          displaySettings: 'Display settings',
+          displayTitleLabel: 'Display title',
+          recentCallCountLabel: 'Recent calls',
+          recentNone: 'Do not show',
+          showWaitingCountLabel: 'Show waiting count',
+          displayDisconnected: 'Display disconnected',
+          displayConnected: 'Display connected',
+          openDisplay: 'Open display',
+          displayOpenFailed: 'The display window could not be opened. Your browser may be blocking pop-ups.',
+          displayOpened: 'Display window opened.',
+          displayReconnected: 'Display reconnected.',
+          displayWaitingConnection: 'Waiting for connection',
+          displayLive: 'Synced with Operator',
+          displayIdleTitle: 'Please wait to be called',
+          displayIdleBody: 'Called numbers will appear here in large type.',
+          recentCallsTitle: 'Recently called',
+          displayWaitingLabel: 'Waiting',
+          displayEndedTitle: 'Display ended',
+          displayEndedBody: 'Open the display again from the Operator screen to reconnect.',
           startSession: 'Start reception',
           setupNote: 'This development version does not save an active session yet. Reloading the page loses the current session.',
           sessionRunning: 'Reception in progress', startedAt: 'Started', resetSession: 'Reset reception',
@@ -1684,18 +1723,19 @@
           absentEmptyTitle: 'No absent numbers.', absentEmptyBody: 'Mark an active ticket Absent to move it here.',
           returnToWaiting: 'Return to queue', acceptedAt: 'Issued', calls: 'Calls',
           helpBasicsTitle: 'Basics',
-          helpStep1: 'Set the starting number, counter count, and optional counter names, then start reception.',
+          helpStep1: 'Set the starting number, counter count, optional counter names, and Display settings, then start reception.',
           helpStep2: 'Use Issue number or manual entry to add a ticket to the waiting queue.',
-          helpStep3: 'Use Call next at any available counter to assign the first waiting ticket to that counter.',
-          helpStep4: 'Recall, complete, mark absent, or delete independently at each counter.',
-          helpStep5: 'Absent tickets can return to the end of the queue. Waiting and absent deletions can be undone immediately.',
+          helpStep3: 'Use Open display to launch the waiting-room Display in a separate window that can be moved to an external monitor.',
+          helpStep4: 'Use Call next at any available counter and the number and Counter will update on the Display in real time.',
+          helpStep5: 'Closing the Display does not stop the Operator. Open it again to reconnect to the current state.',
           helpPrivacyTitle: 'Privacy',
-          helpPrivacyBody: 'Ticket numbers, counter settings, and queue state are processed inside this page. The app uses no external API, analytics, or telemetry and does not send session data outside.',
-          helpNotesTitle: 'v0.3.0 scope',
-          helpNoteCounters: 'Operate one to four counters on one screen. Each counter takes a different Ticket from the same waiting queue.',
+          helpPrivacyBody: 'Ticket numbers, Counter settings, Display settings, and queue state are processed inside the same browser. The app uses no external API, analytics, or telemetry and does not send session data outside.',
+          helpNotesTitle: 'v0.4.0 scope',
+          helpNoteDisplay: 'The Display syncs in a separate window of the same browser. It does not transmit data to another device.',
+          helpNoteNoSound: 'Chime, fullscreen, and Wake Lock are planned for the next milestone.',
           helpNoteNoRecovery: 'Autosave and session recovery are not implemented yet. Reloading, closing the tab, or resetting loses the current queue.',
-          helpNoteLater: 'Display, CSV export, and printing are not part of v0.3.0.',
-          helpOffline: 'The distributable HTML needs no runtime external network access and does not send entered numbers or counter settings outside.',
+
+          helpOffline: 'The distributable HTML needs no runtime external network access, and Display synchronization stays inside the browser.',
           footer: 'Local tool for issuing numbers and calling them in order',
           confirmTitle: 'Confirm', confirmAction: 'Continue', cancel: 'Cancel',
           resetTitle: 'Reset reception?', resetBody: 'Discard the current ticket numbers and state, then return to the start screen.', resetConfirm: 'Reset',
@@ -1729,6 +1769,15 @@
       let lastIssuedId = null;
       let counterDraftNames = ['', '', '', ''];
       let counterDraftCustom = [false, false, false, false];
+      const displayMode = location.hash === '#display';
+      const displayChannelName = APP_CONFIG.slug + ':display:v1';
+      const displayWindowName = APP_CONFIG.slug + '-display';
+      let displayWindow = null;
+      let displayConnected = false;
+      let displayChannel = null;
+      let lastDisplaySnapshot = null;
+      let lastDisplaySignature = '';
+      let displayTitleCustom = false;
 
       function readStorage(key) {
         try { return localStorage.getItem(key); } catch { return null; }
@@ -1757,6 +1806,9 @@
       }
       function defaultCounterName(index) {
         return language === 'ja' ? '窓口 ' + (index + 1) : 'Counter ' + (index + 1);
+      }
+      function defaultDisplayTitle() {
+        return language === 'ja' ? 'お呼びしています' : 'Now calling';
       }
 
       const AppConfirm = (() => {
@@ -1939,12 +1991,13 @@
           endedAt: null,
           nextNumber: startNumber,
           digits: 3,
-          title: language === 'ja' ? 'お呼びしています' : 'Now calling',
+          title: $('#displayTitleInput').value.trim() || defaultDisplayTitle(),
           counters,
           tickets: [],
           usedNumbers: [],
           soundEnabled: false,
-          showWaitingCount: true
+          showWaitingCount: $('#showWaitingCount').checked,
+          recentCallCount: Math.min(5, Math.max(0, Number($('#recentCallCount').value) || 0))
         };
         lastIssuedId = null;
         render();
@@ -2140,12 +2193,17 @@
           tone: 'danger'
         });
         if (!ok) return;
+        sendDisplayEnded();
         session = null;
         lastIssuedId = null;
         counterDraftNames = ['', '', '', ''];
         counterDraftCustom = [false, false, false, false];
+        displayTitleCustom = false;
         $('#startNumber').value = '001';
         $('#counterCount').value = '1';
+        $('#displayTitleInput').value = defaultDisplayTitle();
+        $('#showWaitingCount').checked = true;
+        $('#recentCallCount').value = '3';
         $('#manualNumber').value = '';
         $('#manualNumberError').textContent = '';
         renderCounterSetupFields();
@@ -2283,7 +2341,256 @@
         void element.offsetWidth;
         element.classList.add('pulse');
       }
+      function createDisplaySnapshot() {
+        if (!session) return null;
+        const waiting = session.tickets.filter(ticket => ticket.status === 'waiting');
+        const current = session.counters.map(counter => {
+          const ticket = currentTicket(counter.id);
+          return ticket ? {
+            counterId: counter.id,
+            counterName: counter.name,
+            ticketId: ticket.id,
+            number: ticket.displayNumber,
+            callCount: ticket.callCount,
+            lastCalledAt: ticket.lastCalledAt || ticket.calledAt || 0
+          } : null;
+        }).filter(Boolean);
+        const activeIds = new Set(current.map(item => item.ticketId));
+        const recent = session.tickets
+          .filter(ticket => (ticket.lastCalledAt || ticket.calledAt) && !activeIds.has(ticket.id))
+          .sort((a, b) => (b.lastCalledAt || b.calledAt || 0) - (a.lastCalledAt || a.calledAt || 0))
+          .slice(0, session.recentCallCount)
+          .map(ticket => {
+            const counter = session.counters.find(item => item.id === ticket.counterId);
+            return {
+              ticketId: ticket.id,
+              number: ticket.displayNumber,
+              counterName: counter?.name || '',
+              calledAt: ticket.lastCalledAt || ticket.calledAt || 0
+            };
+          });
+        return {
+          schemaVersion: 1,
+          sessionId: session.id,
+          language,
+          ended: false,
+          title: session.title,
+          waitingCount: waiting.length,
+          showWaitingCount: session.showWaitingCount,
+          recentCallCount: session.recentCallCount,
+          current,
+          recent
+        };
+      }
+      function safeDisplayWindow() {
+        if (!displayWindow || displayWindow.closed) {
+          displayWindow = null;
+          return null;
+        }
+        try {
+          const currentUrl = displayWindow.location.href.split('#')[0];
+          const expectedUrl = location.href.split('#')[0];
+          if (currentUrl !== expectedUrl) {
+            displayWindow = null;
+            displayConnected = false;
+            return null;
+          }
+        } catch {
+          displayWindow = null;
+          displayConnected = false;
+          return null;
+        }
+        return displayWindow;
+      }
+      function postDisplayMessage(message) {
+        const target = safeDisplayWindow();
+        if (target) {
+          const targetOrigin = location.protocol === 'file:' ? '*' : location.origin;
+          try { target.postMessage(message, targetOrigin); } catch { }
+        }
+        if (displayChannel) {
+          try { displayChannel.postMessage(message); } catch { }
+        }
+      }
+      function syncDisplayState(force = false) {
+        if (displayMode || !session) return;
+        const snapshot = createDisplaySnapshot();
+        if (!snapshot) return;
+        const signature = JSON.stringify(snapshot);
+        if (!force && signature === lastDisplaySignature) {
+          renderOperatorDisplayStatus();
+          return;
+        }
+        lastDisplaySignature = signature;
+        lastDisplaySnapshot = snapshot;
+        postDisplayMessage({ type: 'queue-board-state', snapshot });
+        renderOperatorDisplayStatus();
+      }
+      function sendDisplayEnded() {
+        if (displayMode) return;
+        const snapshot = session ? createDisplaySnapshot() : lastDisplaySnapshot;
+        postDisplayMessage({
+          type: 'queue-board-state',
+          snapshot: {
+            ...(snapshot || { schemaVersion: 1, language, title: defaultDisplayTitle(), current: [], recent: [], waitingCount: 0, showWaitingCount: true }),
+            language,
+            ended: true
+          }
+        });
+        lastDisplaySignature = '';
+      }
+      function renderOperatorDisplayStatus() {
+        if (displayMode) return;
+        const status = $('#operatorDisplayStatus');
+        const text = $('#operatorDisplayStatusText');
+        if (!status || !text) return;
+        const connected = Boolean(displayConnected && safeDisplayWindow());
+        status.classList.toggle('connected', connected);
+        text.textContent = translate(connected ? 'displayConnected' : 'displayDisconnected');
+      }
+      function openDisplayWindow() {
+        if (!session) return;
+        const url = location.href.split('#')[0] + '#display';
+        const existing = safeDisplayWindow();
+        if (existing) {
+          try { existing.focus(); } catch { }
+          syncDisplayState(true);
+          announce(translate('displayReconnected'), { tone: 'success' });
+          return;
+        }
+        const opened = window.open(url, displayWindowName);
+        if (!opened) {
+          displayWindow = null;
+          displayConnected = false;
+          renderOperatorDisplayStatus();
+          announce(translate('displayOpenFailed'), { tone: 'warning', duration: 5200 });
+          return;
+        }
+        displayWindow = opened;
+        displayConnected = false;
+        renderOperatorDisplayStatus();
+        announce(translate('displayOpened'));
+      }
+      function setupDisplayChannel() {
+        if (typeof BroadcastChannel !== 'function') return;
+        try {
+          displayChannel = new BroadcastChannel(displayChannelName);
+          displayChannel.addEventListener('message', event => handleDisplayTransportMessage(event.data, null, 'broadcast'));
+        } catch {
+          displayChannel = null;
+        }
+      }
+      function handleDisplayTransportMessage(data, source, transport) {
+        if (!data || typeof data !== 'object') return;
+        if (data.type === 'queue-board-display-ready' && !displayMode) {
+          if (transport === 'window' && displayWindow && source !== displayWindow) return;
+          displayConnected = true;
+          renderOperatorDisplayStatus();
+          syncDisplayState(true);
+          return;
+        }
+        if (data.type === 'queue-board-display-closing' && !displayMode) {
+          if (transport === 'window' && displayWindow && source !== displayWindow) return;
+          displayConnected = false;
+          renderOperatorDisplayStatus();
+          return;
+        }
+        if (data.type === 'queue-board-state' && displayMode && data.snapshot) {
+          if (transport === 'window' && window.opener && source !== window.opener) return;
+          renderDisplaySnapshot(data.snapshot);
+        }
+      }
+      function notifyDisplayReady() {
+        if (!displayMode) return;
+        const message = { type: 'queue-board-display-ready' };
+        if (window.opener && !window.opener.closed) {
+          const targetOrigin = location.protocol === 'file:' ? '*' : location.origin;
+          try { window.opener.postMessage(message, targetOrigin); } catch { }
+        }
+        if (displayChannel) {
+          try { displayChannel.postMessage(message); } catch { }
+        }
+      }
+      function notifyDisplayClosing() {
+        if (!displayMode) return;
+        const message = { type: 'queue-board-display-closing' };
+        if (window.opener && !window.opener.closed) {
+          const targetOrigin = location.protocol === 'file:' ? '*' : location.origin;
+          try { window.opener.postMessage(message, targetOrigin); } catch { }
+        }
+        if (displayChannel) {
+          try { displayChannel.postMessage(message); } catch { }
+        }
+      }
+      function renderDisplaySnapshot(snapshot) {
+        if (!displayMode || !snapshot) return;
+        lastDisplaySnapshot = snapshot;
+        if (snapshot.language === 'ja' || snapshot.language === 'en') language = snapshot.language;
+        document.documentElement.lang = language;
+        document.title = (snapshot.title || defaultDisplayTitle()) + ' | ' + (language === 'ja' ? APP_CONFIG.nameJa : APP_CONFIG.name);
+        $('#displayBoardTitle').textContent = snapshot.title || defaultDisplayTitle();
+        const sync = $('#displayBoardSync');
+        sync.classList.add('connected');
+        $('#displayBoardSyncText').textContent = translate('displayLive');
+        $('#displayEnded').hidden = !snapshot.ended;
+        if (snapshot.ended) return;
+
+        const current = Array.isArray(snapshot.current) ? snapshot.current : [];
+        const grid = $('#displayCurrentGrid');
+        const previousSignature = grid.dataset.signature || '';
+        const currentSignature = current.map(item => item.ticketId + ':' + item.callCount + ':' + item.counterId).join('|');
+        grid.dataset.count = String(current.length);
+        grid.dataset.signature = currentSignature;
+        grid.replaceChildren();
+        current.forEach(item => {
+          const card = document.createElement('section');
+          card.className = 'display-call-card' + (previousSignature !== currentSignature ? ' changed' : '');
+          const number = document.createElement('div');
+          number.className = 'display-call-number';
+          number.textContent = item.number;
+          const counter = document.createElement('div');
+          counter.className = 'display-call-counter';
+          counter.textContent = item.counterName;
+          card.append(number, counter);
+          grid.append(card);
+        });
+        $('#displayIdle').hidden = current.length > 0;
+
+        const recent = Array.isArray(snapshot.recent) ? snapshot.recent : [];
+        const recentSection = $('#displayRecentSection');
+        const recentList = $('#displayRecentList');
+        recentList.replaceChildren();
+        recent.forEach(item => {
+          const chip = document.createElement('span');
+          chip.className = 'display-recent-chip';
+          const number = document.createElement('span');
+          number.textContent = item.number;
+          chip.append(number);
+          if (item.counterName) {
+            const counter = document.createElement('small');
+            counter.textContent = item.counterName;
+            chip.append(counter);
+          }
+          recentList.append(chip);
+        });
+        recentSection.hidden = Number(snapshot.recentCallCount || 0) === 0 || recent.length === 0;
+        $('#displayWaiting').hidden = !snapshot.showWaitingCount;
+        $('#displayWaitingValue').textContent = new Intl.NumberFormat(language).format(Number(snapshot.waitingCount || 0));
+        document.querySelectorAll('#displayView [data-i18n]').forEach(element => {
+          if (!['displayBoardTitle'].includes(element.id)) element.textContent = translate(element.dataset.i18n);
+        });
+      }
+      function initializeDisplayMode() {
+        if (!displayMode) return;
+        document.body.classList.add('display-mode');
+        $('#displayView').hidden = false;
+        $('#displayBoardTitle').textContent = defaultDisplayTitle();
+        $('#displayBoardSyncText').textContent = translate('displayWaitingConnection');
+        document.title = defaultDisplayTitle() + ' | ' + (language === 'ja' ? APP_CONFIG.nameJa : APP_CONFIG.name);
+        notifyDisplayReady();
+      }
       function render() {
+        if (displayMode) return;
         const active = Boolean(session);
         $('#setupView').hidden = active;
         $('#operatorView').hidden = !active;
@@ -2308,6 +2615,7 @@
         if (lastIssued) $('#lastIssuedNumber').textContent = lastIssued.displayNumber;
         renderCounters(waiting);
         renderTicketLists(waiting, absent);
+        syncDisplayState();
       }
       function applyLanguage() {
         document.documentElement.lang = language;
@@ -2316,10 +2624,14 @@
         document.querySelectorAll('[data-i18n-aria-label]').forEach(element => { element.setAttribute('aria-label', translate(element.dataset.i18nAriaLabel)); });
         $('#languageButton').textContent = language === 'ja' ? 'EN' : '日本語';
         $('#languageButton').setAttribute('aria-label', language === 'ja' ? '英語に切り替え' : 'Switch to Japanese');
-        document.title = language === 'ja' ? APP_CONFIG.nameJa + ' | Queue Board' : APP_CONFIG.name;
+        document.title = displayMode ? defaultDisplayTitle() + ' | ' + (language === 'ja' ? APP_CONFIG.nameJa : APP_CONFIG.name) : (language === 'ja' ? APP_CONFIG.nameJa + ' | Queue Board' : APP_CONFIG.name);
         $('#brandName').textContent = language === 'ja' ? APP_CONFIG.nameJa : APP_CONFIG.name;
         $('#footerName').textContent = language === 'ja' ? APP_CONFIG.nameJa : APP_CONFIG.name;
-        if (!session) renderCounterSetupFields();
+        if (!session && !displayMode) {
+          renderCounterSetupFields();
+          if (!displayTitleCustom) $('#displayTitleInput').value = defaultDisplayTitle();
+        }
+        if (displayMode && lastDisplaySnapshot) renderDisplaySnapshot(lastDisplaySnapshot);
         render();
       }
 
@@ -2355,11 +2667,34 @@
           case 'delete': deleteCurrentTicket(counterId); break;
         }
       });
+      $('#openDisplayButton').addEventListener('click', openDisplayWindow);
+      $('#displayTitleInput').addEventListener('input', () => { displayTitleCustom = true; });
+      window.addEventListener('message', event => {
+        const allowedOrigin = location.protocol === 'file:' || event.origin === location.origin;
+        if (!allowedOrigin) return;
+        handleDisplayTransportMessage(event.data, event.source, 'window');
+      });
+      window.addEventListener('pagehide', () => {
+        if (displayMode) notifyDisplayClosing();
+        else if (session) sendDisplayEnded();
+        if (displayChannel) {
+          try { displayChannel.close(); } catch { }
+        }
+      });
+      window.setInterval(() => {
+        if (!displayMode && displayWindow && displayWindow.closed) {
+          displayWindow = null;
+          displayConnected = false;
+          renderOperatorDisplayStatus();
+        }
+      }, 1200);
       $('#resetButton').addEventListener('click', resetSession);
 
       $('#versionBadge').textContent = 'v' + APP_CONFIG.version;
+      setupDisplayChannel();
       renderCounterSetupFields();
       applyLanguage();
+      initializeDisplayMode();
     })();
   </script>
 </body>
