@@ -1270,6 +1270,75 @@
       .display-feature-note { display: none; }
     }
 
+
+    /* Queue Board v0.6.0 persistence / recovery */
+    .persistence-gate {
+      min-height: 180px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+    .persistence-gate[hidden] { display: none; }
+    .persistence-gate-inner { display: grid; gap: 8px; justify-items: center; }
+    .persistence-spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid var(--line);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: persistenceSpin .75s linear infinite;
+    }
+    @keyframes persistenceSpin { to { transform: rotate(360deg); } }
+    .recovery-card { border-color: color-mix(in srgb, var(--accent) 28%, var(--line)); }
+    .recovery-card[hidden] { display: none; }
+    .recovery-head { display: grid; gap: 5px; }
+    .recovery-head h2 { margin: 0; font-size: 21px; }
+    .recovery-head p { margin: 0; color: var(--muted); }
+    .recovery-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .recovery-stat {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: var(--surface-muted);
+    }
+    .recovery-stat-label { display: block; color: var(--muted); font-size: 10px; font-weight: 800; }
+    .recovery-stat-value { display: block; margin-top: 3px; font-size: 18px; font-weight: 900; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+    .recovery-actions { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 16px; }
+    .save-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 32px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--surface-muted);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .save-status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line-strong); }
+    .save-status[data-state="saving"] .save-status-dot { background: #ad7a15; }
+    .save-status[data-state="saved"] { color: var(--accent); background: var(--accent-soft); }
+    .save-status[data-state="saved"] .save-status-dot { background: var(--accent); }
+    .save-status[data-state="error"] { color: var(--danger); background: #fff1f0; }
+    .save-status[data-state="error"] .save-status-dot { background: var(--danger); }
+    body.display-mode #persistenceGate,
+    body.display-mode #recoveryView { display: none !important; }
+    @media (max-width: 620px) {
+      .recovery-summary { grid-template-columns: 1fr; }
+      .recovery-actions { display: grid; grid-template-columns: 1fr; }
+      .recovery-actions .button { width: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .persistence-spinner { animation: none; }
+    }
+
   </style>
 </head>
 <body>
@@ -1305,7 +1374,44 @@
       </div>
     </section>
 
-    <!-- APP:BEGIN Queue Board v0.5.0 sound fullscreen wake -->
+    <!-- APP:BEGIN Queue Board v0.6.0 persistence recovery -->
+    <section class="queue-card persistence-gate" id="persistenceGate" aria-live="polite">
+      <div class="persistence-gate-inner">
+        <span class="persistence-spinner" aria-hidden="true"></span>
+        <strong data-i18n="checkingSavedSession">端末内の受付を確認しています</strong>
+        <span class="field-help" data-i18n="checkingSavedSessionBody">保存済みの進行中Sessionがないか確認します。</span>
+      </div>
+    </section>
+
+    <section class="queue-card recovery-card" id="recoveryView" hidden aria-labelledby="recoveryTitle">
+      <div class="recovery-head">
+        <h2 id="recoveryTitle" data-i18n="recoveryTitle">進行中の受付があります</h2>
+        <p data-i18n="recoveryBody">前回の受付状態がこの端末に保存されています。</p>
+      </div>
+      <div class="recovery-summary">
+        <div class="recovery-stat">
+          <span class="recovery-stat-label" data-i18n="recoveryStarted">開始</span>
+          <strong class="recovery-stat-value" id="recoveryStartedAt">--:--</strong>
+        </div>
+        <div class="recovery-stat">
+          <span class="recovery-stat-label" data-i18n="recoveryWaiting">待ち</span>
+          <strong class="recovery-stat-value" id="recoveryWaitingCount">0</strong>
+        </div>
+        <div class="recovery-stat">
+          <span class="recovery-stat-label" data-i18n="recoveryCounters">窓口</span>
+          <strong class="recovery-stat-value" id="recoveryCounterCount">1</strong>
+        </div>
+      </div>
+      <div class="recovery-actions">
+        <button class="button primary large with-icon" id="resumeSessionButton" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h12"/><path d="m13 8 4 4-4 4"/></svg>
+          <span data-i18n="resumeSession">受付を再開</span>
+        </button>
+        <button class="button danger" id="discardSavedSessionButton" type="button" data-i18n="startNewSession">新しく始める</button>
+      </div>
+    </section>
+
+
     <section class="queue-card setup-card" id="setupView" aria-labelledby="setupTitle">
       <h2 id="setupTitle" data-i18n="setupTitle">受付を始める</h2>
       <p data-i18n="setupBody">開始番号と窓口を設定します。窓口は1〜4個まで使えます。</p>
@@ -1383,7 +1489,7 @@
           </button>
         </div>
       </form>
-      <div class="notice" data-i18n="setupNote">この開発段階では受付状態を自動保存しません。ページを再読み込みすると現在のSessionは失われます。</div>
+      <div class="notice" data-i18n="setupNote">受付状態はこの端末内へ自動保存されます。再読み込みしても、進行中の受付を再開できます。</div>
     </section>
 
     <section class="operator-shell" id="operatorView" hidden aria-labelledby="operatorTitle">
@@ -1396,6 +1502,10 @@
           </div>
         </div>
         <div class="session-actions">
+          <span class="save-status" id="saveStatus" data-state="saved">
+            <span class="save-status-dot" aria-hidden="true"></span>
+            <span id="saveStatusText" data-i18n="saveStatusSaved">保存済み</span>
+          </span>
           <span class="display-status" id="operatorDisplayStatus">
             <span class="display-status-dot" aria-hidden="true"></span>
             <span id="operatorDisplayStatusText" data-i18n="displayDisconnected">表示画面 未接続</span>
@@ -1570,7 +1680,7 @@
       </button>
     </div>
     <div class="dialog-body">
-      <!-- APP:HELP:BEGIN Queue Board v0.5.0 -->
+      <!-- APP:HELP:BEGIN Queue Board v0.6.0 -->
       <h3 data-i18n="helpBasicsTitle">基本操作</h3>
       <ol>
         <li data-i18n="helpStep1">開始番号と窓口数、必要なら各窓口名と表示画面設定を決めて受付を開始します。</li>
@@ -1581,11 +1691,11 @@
       </ol>
       <h3 data-i18n="helpPrivacyTitle">プライバシー</h3>
       <p data-i18n="helpPrivacyBody">Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。</p>
-      <h3 data-i18n="helpNotesTitle">v0.5.0 の範囲</h3>
+      <h3 data-i18n="helpNotesTitle">v0.6.0 の範囲</h3>
       <ul>
         <li data-i18n="helpNoteDisplay">DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。別端末への送信は行いません。</li>
         <li data-i18n="helpNoteFeatures">Fullscreen / Wake LockはFeature Detectionを行い、非対応環境ではその機能だけを無効化します。</li>
-        <li data-i18n="helpNoteNoRecovery">自動保存とSession復旧はまだありません。再読み込み・タブを閉じる・リセットで現在の受付状態は失われます。</li>
+        <li data-i18n="helpNotePersistence">進行中SessionはIndexedDBへ自動保存します。再読み込み時は「再開 / 新しく始める」を選べます。</li>
       </ul>
       <p class="dialog-note" data-i18n="helpOffline">配布用HTMLは実行時の外部通信を必要とせず、Display同期もブラウザ内だけで行います。</p>
       <!-- APP:HELP:END -->
