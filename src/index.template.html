@@ -632,6 +632,95 @@
       .waiting-time { grid-column: 2; }
     }
 
+
+    /* Queue Board v0.2.0 queue operations */
+    .local-badge svg { width: 15px; height: 15px; display: block; }
+    .manual-entry {
+      margin-top: 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
+      overflow: hidden;
+    }
+    .manual-entry summary {
+      padding: 11px 13px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .manual-entry[open] summary { border-bottom: 1px solid var(--line); color: var(--text); }
+    .manual-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; padding: 12px; align-items: start; }
+    .manual-field { display: grid; gap: 5px; min-width: 0; }
+    .manual-input {
+      width: 100%;
+      min-height: 42px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fbfbf9;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      font-weight: 800;
+      letter-spacing: .05em;
+    }
+    .manual-form .error-text { grid-column: 1 / -1; }
+    .panel-actions.current-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .button.warning { color: #8a5a00; }
+    .ticket-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+    .ticket-item {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      min-height: 58px;
+      padding: 9px 10px 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: #fbfbf9;
+    }
+    .ticket-item.absent { background: #fffaf0; border-color: #e7d5ac; }
+    .ticket-main { min-width: 0; }
+    .ticket-number { display: block; font-size: 19px; font-weight: 850; letter-spacing: .05em; font-variant-numeric: tabular-nums; }
+    .ticket-meta { display: block; margin-top: 2px; color: var(--muted); font-size: 11px; overflow-wrap: anywhere; }
+    .ticket-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+    .ticket-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      min-height: 36px;
+      padding: 6px 9px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .ticket-button:hover { border-color: var(--line-strong); background: var(--surface-hover); }
+    .ticket-button svg { width: 15px; height: 15px; }
+    .ticket-button.danger { color: var(--danger); }
+    .absent-panel { border-color: #e7d5ac; }
+    .big-number.pulse { animation: numberPulse .32s ease; }
+    @keyframes numberPulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.045); opacity: .7; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @media (max-width: 520px) {
+      .manual-form { grid-template-columns: 1fr; }
+      .manual-form .button { width: 100%; }
+      .ticket-item { grid-template-columns: auto minmax(0, 1fr); align-items: start; }
+      .ticket-actions { grid-column: 1 / -1; justify-content: stretch; }
+      .ticket-button { flex: 1 1 auto; min-height: 42px; }
+      .panel-actions.current-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .big-number.pulse { animation: none; }
+    }
+
   </style>
 </head>
 <body>
@@ -661,10 +750,13 @@
         <h2 id="heroTitle" data-i18n="introTitle">その場で使える呼び出し番号</h2>
         <p data-i18n="lead">番号を発行し、待ち列の先頭から順番に呼び出します。v0.1.0では1窓口の基本フローに絞っています。</p>
       </div>
-      <div class="stage-badge">v0.1.0 · Core Queue</div>
+      <div class="local-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v5c0 4.6 2.8 8 7 10 4.2-2 7-5.4 7-10V6z"/><path d="m9 12 2 2 4-5"/></svg>
+        <span data-i18n="localBadge">完全ローカル処理</span>
+      </div>
     </section>
 
-    <!-- APP:BEGIN Queue Board v0.1.0 core flow -->
+    <!-- APP:BEGIN Queue Board v0.2.0 queue operations -->
     <section class="queue-card setup-card" id="setupView" aria-labelledby="setupTitle">
       <h2 id="setupTitle" data-i18n="setupTitle">受付を始める</h2>
       <p data-i18n="setupBody">最初に発行する番号を決めます。番号は3桁以上で表示されます。</p>
@@ -704,7 +796,7 @@
         <div class="queue-card metric"><span class="metric-value" id="waitingCount">0</span><span class="metric-label" data-i18n="waitingCount">待ち</span></div>
         <div class="queue-card metric"><span class="metric-value" id="currentMetric">—</span><span class="metric-label" data-i18n="currentNumber">呼び出し中</span></div>
         <div class="queue-card metric"><span class="metric-value" id="completedCount">0</span><span class="metric-label" data-i18n="completedCount">完了</span></div>
-        <div class="queue-card metric"><span class="metric-value" id="issuedCount">0</span><span class="metric-label" data-i18n="issuedCount">発行</span></div>
+        <div class="queue-card metric"><span class="metric-value" id="issuedCount">0</span><span class="metric-label" data-i18n="issuedCount">登録</span></div>
       </div>
 
       <div class="operator-grid">
@@ -719,23 +811,48 @@
             </button>
           </div>
           <div class="issue-summary" id="lastIssuedPanel" hidden>
-            <span class="issue-summary-label" data-i18n="justIssued">今発行した番号</span>
+            <span class="issue-summary-label" data-i18n="justIssued">今追加した番号</span>
             <span class="issue-summary-number" id="lastIssuedNumber">001</span>
           </div>
+          <details class="manual-entry">
+            <summary data-i18n="manualAddSummary">番号を手動で待ち列へ追加</summary>
+            <form class="manual-form" id="manualAddForm" novalidate>
+              <label class="manual-field" for="manualNumber">
+                <span class="sr-only" data-i18n="manualNumberLabel">追加する番号</span>
+                <input class="manual-input" id="manualNumber" type="text" inputmode="numeric" autocomplete="off" maxlength="6" placeholder="125" aria-describedby="manualNumberError">
+              </label>
+              <button class="button" type="submit" data-i18n="manualAddButton">待ち列に追加</button>
+              <span class="error-text" id="manualNumberError" role="alert"></span>
+            </form>
+          </details>
         </section>
 
         <section class="queue-card action-panel" aria-labelledby="counterTitle">
           <p class="panel-kicker" data-i18n="counterOne">窓口 1</p>
           <h2 class="panel-title" id="counterTitle" data-i18n="currentNumber">呼び出し中</h2>
           <div class="big-number muted" id="currentNumber">—</div>
-          <div class="panel-actions two">
+          <div class="panel-actions">
             <button class="button primary large with-icon" id="callNextButton" type="button">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h12"/><path d="m13 8 4 4-4 4"/></svg>
               <span data-i18n="callNext">次を呼ぶ</span>
             </button>
-            <button class="button large with-icon" id="completeButton" type="button">
+          </div>
+          <div class="panel-actions current-actions">
+            <button class="button with-icon" id="recallButton" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6v5h-5"/><path d="M4 18v-5h5"/><path d="M6.1 9a7 7 0 0 1 11.6-2.4L20 11M4 13l2.3 4.4A7 7 0 0 0 18 15"/></svg>
+              <span data-i18n="recall">もう一度呼ぶ</span>
+            </button>
+            <button class="button with-icon" id="completeButton" type="button">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>
               <span data-i18n="complete">完了</span>
+            </button>
+            <button class="button warning with-icon" id="absentButton" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8v5"/><path d="M12 17h.01"/><path d="M10.3 3.6 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0Z"/></svg>
+              <span data-i18n="markAbsent">不在</span>
+            </button>
+            <button class="button danger with-icon" id="deleteCurrentButton" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="m8 11 .5 8h7l.5-8"/></svg>
+              <span data-i18n="deleteTicket">削除</span>
             </button>
           </div>
         </section>
@@ -748,10 +865,24 @@
             <p data-i18n="waitingBody">上から順番に呼び出します。</p>
           </div>
         </div>
-        <ol class="waiting-list" id="waitingList"></ol>
+        <ol class="ticket-list" id="waitingList"></ol>
         <div class="empty-state" id="waitingEmpty">
           <strong data-i18n="waitingEmptyTitle">待っている番号はありません。</strong>
-          <span data-i18n="waitingEmptyBody">番号を発行すると、ここに表示されます。</span>
+          <span data-i18n="waitingEmptyBody">番号を発行するか、手動で追加するとここに表示されます。</span>
+        </div>
+      </section>
+
+      <section class="queue-card queue-panel absent-panel" aria-labelledby="absentTitle">
+        <div class="queue-panel-head">
+          <div>
+            <h2 class="panel-title" id="absentTitle" data-i18n="absentTitle">不在</h2>
+            <p data-i18n="absentBody">戻ってきた番号は待ち列の末尾へ戻せます。</p>
+          </div>
+        </div>
+        <ul class="ticket-list" id="absentList"></ul>
+        <div class="empty-state" id="absentEmpty">
+          <strong data-i18n="absentEmptyTitle">不在の番号はありません。</strong>
+          <span data-i18n="absentEmptyBody">呼び出し中の番号を「不在」にすると、ここへ移動します。</span>
         </div>
       </section>
       <div class="sr-only" id="liveStatus" aria-live="polite" aria-atomic="true"></div>
@@ -790,23 +921,24 @@
       </button>
     </div>
     <div class="dialog-body">
-      <!-- APP:HELP:BEGIN Queue Board v0.1.0 -->
+      <!-- APP:HELP:BEGIN Queue Board v0.2.0 -->
       <h3 data-i18n="helpBasicsTitle">基本操作</h3>
       <ol>
         <li data-i18n="helpStep1">開始番号を確認して「受付を開始」を押します。</li>
-        <li data-i18n="helpStep2">来場者ごとに「番号を発行」を押します。発行した番号は待ち列へ追加されます。</li>
-        <li data-i18n="helpStep3">窓口が空いているときに「次を呼ぶ」を押すと、待ち列の先頭番号を呼び出し中にします。</li>
-        <li data-i18n="helpStep4">対応が終わったら「完了」を押します。窓口が空き、次の番号を呼べます。</li>
+        <li data-i18n="helpStep2">「番号を発行」、または手動追加で待ち列へ番号を登録します。</li>
+        <li data-i18n="helpStep3">「次を呼ぶ」で待ち列の先頭を呼び出します。必要なら「もう一度呼ぶ」を使えます。</li>
+        <li data-i18n="helpStep4">対応後は「完了」または「不在」にします。不在番号は待ち列の末尾へ戻せます。</li>
+        <li data-i18n="helpStep5">待機中・不在のTicket削除は直後の「元に戻す」で取り消せます。</li>
       </ol>
       <h3 data-i18n="helpPrivacyTitle">プライバシー</h3>
       <p data-i18n="helpPrivacyBody">Ticket番号と操作状態はこのページ内で処理します。このアプリは外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。</p>
-      <h3 data-i18n="helpNotesTitle">v0.1.0 の範囲</h3>
+      <h3 data-i18n="helpNotesTitle">v0.2.0 の範囲</h3>
       <ul>
         <li data-i18n="helpNoteOneCounter">窓口は1つだけです。複数窓口は後続バージョンで追加します。</li>
         <li data-i18n="helpNoteNoRecovery">自動保存とSession復旧はまだありません。再読み込み・タブを閉じる・リセットで現在の受付状態は失われます。</li>
-        <li data-i18n="helpNoteLater">手動番号追加、不在、再呼び出し、Display、CSV、印刷はv0.1.0には含みません。</li>
+        <li data-i18n="helpNoteLater">Display、CSV、印刷、複数窓口はv0.2.0には含みません。</li>
       </ul>
-      <p class="dialog-note" data-i18n="helpOffline">配布用HTMLは実行時の外部通信を必要としない構成です。</p>
+      <p class="dialog-note" data-i18n="helpOffline">配布用HTMLは実行時の外部通信を必要とせず、入力した番号や操作内容を外部へ送信しません。</p>
       <!-- APP:HELP:END -->
     </div>
   </dialog>
@@ -922,120 +1054,120 @@
       const translations = {
         ja: {
           brandMeta: '番号を発行して、順番に呼び出す',
-          helpTitle: '使い方と注意事項',
-          close: '閉じる',
+          helpTitle: '使い方と注意事項', close: '閉じる',
+          localBadge: '完全ローカル処理',
           introTitle: 'その場で使える呼び出し番号',
-          lead: '番号を発行し、待ち列の先頭から順番に呼び出します。v0.1.0では1窓口の基本フローに絞っています。',
+          lead: '番号を発行し、不在対応や手動追加を含む待ち列を1台のブラウザーで管理します。',
           setupTitle: '受付を始める',
           setupBody: '最初に発行する番号を決めます。番号は3桁以上で表示されます。',
           startNumberLabel: '開始番号',
           startNumberHelp: '例: 001。0〜999999の整数を入力できます。',
           startSession: '受付を開始',
           setupNote: 'この開発段階では受付状態を自動保存しません。ページを再読み込みすると現在のSessionは失われます。',
-          sessionRunning: '受付中',
-          startedAt: '開始',
-          counterOne: '窓口 1',
-          resetSession: '受付をリセット',
-          waitingCount: '待ち',
-          currentNumber: '呼び出し中',
-          completedCount: '完了',
-          issuedCount: '発行',
-          nextTicket: '次の発行番号',
-          issueTitle: '番号を発行',
-          issueTicket: '番号を発行',
-          justIssued: '今発行した番号',
-          callNext: '次を呼ぶ',
-          complete: '完了',
-          waitingTitle: '待機中',
-          waitingBody: '上から順番に呼び出します。',
-          waitingEmptyTitle: '待っている番号はありません。',
-          waitingEmptyBody: '番号を発行すると、ここに表示されます。',
-          acceptedAt: '受付',
+          sessionRunning: '受付中', startedAt: '開始', counterOne: '窓口 1', resetSession: '受付をリセット',
+          waitingCount: '待ち', currentNumber: '呼び出し中', completedCount: '完了', issuedCount: '登録',
+          nextTicket: '次の発行番号', issueTitle: '番号を発行', issueTicket: '番号を発行', justIssued: '今追加した番号',
+          manualAddSummary: '番号を手動で待ち列へ追加', manualNumberLabel: '追加する番号', manualAddButton: '待ち列に追加',
+          callNext: '次を呼ぶ', recall: 'もう一度呼ぶ', complete: '完了', markAbsent: '不在', deleteTicket: '削除',
+          waitingTitle: '待機中', waitingBody: '上から順番に呼び出します。',
+          waitingEmptyTitle: '待っている番号はありません。', waitingEmptyBody: '番号を発行するか、手動で追加するとここに表示されます。',
+          absentTitle: '不在', absentBody: '戻ってきた番号は待ち列の末尾へ戻せます。',
+          absentEmptyTitle: '不在の番号はありません。', absentEmptyBody: '呼び出し中の番号を「不在」にすると、ここへ移動します。',
+          returnToWaiting: '待ち列へ戻す', acceptedAt: '受付', calls: '呼出',
           helpBasicsTitle: '基本操作',
           helpStep1: '開始番号を確認して「受付を開始」を押します。',
-          helpStep2: '来場者ごとに「番号を発行」を押します。発行した番号は待ち列へ追加されます。',
-          helpStep3: '窓口が空いているときに「次を呼ぶ」を押すと、待ち列の先頭番号を呼び出し中にします。',
-          helpStep4: '対応が終わったら「完了」を押します。窓口が空き、次の番号を呼べます。',
+          helpStep2: '「番号を発行」、または手動追加で待ち列へ番号を登録します。',
+          helpStep3: '「次を呼ぶ」で待ち列の先頭を呼び出します。必要なら「もう一度呼ぶ」を使えます。',
+          helpStep4: '対応後は「完了」または「不在」にします。不在番号は待ち列の末尾へ戻せます。',
+          helpStep5: '待機中・不在のTicket削除は直後の「元に戻す」で取り消せます。',
           helpPrivacyTitle: 'プライバシー',
           helpPrivacyBody: 'Ticket番号と操作状態はこのページ内で処理します。このアプリは外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。',
-          helpNotesTitle: 'v0.1.0 の範囲',
+          helpNotesTitle: 'v0.2.0 の範囲',
           helpNoteOneCounter: '窓口は1つだけです。複数窓口は後続バージョンで追加します。',
           helpNoteNoRecovery: '自動保存とSession復旧はまだありません。再読み込み・タブを閉じる・リセットで現在の受付状態は失われます。',
-          helpNoteLater: '手動番号追加、不在、再呼び出し、Display、CSV、印刷はv0.1.0には含みません。',
-          helpOffline: '配布用HTMLは実行時の外部通信を必要としない構成です。',
+          helpNoteLater: 'Display、CSV、印刷、複数窓口はv0.2.0には含みません。',
+          helpOffline: '配布用HTMLは実行時の外部通信を必要とせず、入力した番号や操作内容を外部へ送信しません。',
           footer: '番号を発行して順番に呼び出すローカルツール',
-          confirmTitle: '確認',
-          confirmAction: '実行する',
-          cancel: 'キャンセル',
-          resetTitle: '受付をリセットしますか？',
-          resetBody: '現在の受付番号と状態を破棄して、開始画面へ戻ります。',
-          resetConfirm: 'リセット',
+          confirmTitle: '確認', confirmAction: '実行する', cancel: 'キャンセル',
+          resetTitle: '受付をリセットしますか？', resetBody: '現在の受付番号と状態を破棄して、開始画面へ戻ります。', resetConfirm: 'リセット',
+          deleteCurrentTitle: '呼び出し中の番号を削除しますか？',
+          deleteCurrentBody: '呼び出し中の番号 {number} を削除します。この操作は確認後すぐ反映されます。',
+          deleteConfirm: '削除',
           invalidStart: '0〜999999の整数を入力してください。',
+          invalidManual: '0〜999999の整数を入力してください。',
+          duplicateNumber: '番号 {number} はこのSessionですでに使われています。',
+          noNumbersLeft: '発行できる番号が残っていません。',
           sessionStarted: '受付を開始しました。',
           ticketIssued: '番号 {number} を発行しました。',
+          ticketAdded: '番号 {number} を待ち列へ追加しました。',
           ticketCalled: '番号 {number} を呼び出しました。',
+          ticketRecalled: '番号 {number} をもう一度呼び出しました。',
           ticketCompleted: '番号 {number} を完了しました。',
-          noWaiting: '待っている番号はありません。',
-          counterBusy: '現在の番号を完了してから次を呼んでください。',
+          ticketAbsent: '番号 {number} を不在にしました。',
+          ticketReturned: '番号 {number} を待ち列の末尾へ戻しました。',
+          ticketDeleted: '番号 {number} を削除しました。',
+          ticketRestored: '番号 {number} を元に戻しました。',
+          undo: '元に戻す', undoUnavailable: '状態が変わったため元に戻せません。',
+          noWaiting: '待っている番号はありません。', counterBusy: '現在の番号を完了または不在にしてから次を呼んでください。',
           sessionReset: '受付をリセットしました。'
         },
         en: {
           brandMeta: 'Issue numbers and call them in order',
-          helpTitle: 'How to use & notes',
-          close: 'Close',
+          helpTitle: 'How to use & notes', close: 'Close',
+          localBadge: 'Fully local processing',
           introTitle: 'A simple queue for temporary reception',
-          lead: 'Issue numbered tickets and call the waiting queue from the front. v0.1.0 focuses on the one-counter core flow.',
+          lead: 'Issue numbers and manage a one-browser queue with manual entry, absent handling, and recall.',
           setupTitle: 'Start reception',
           setupBody: 'Choose the first number to issue. Numbers are shown with at least three digits.',
           startNumberLabel: 'Starting number',
           startNumberHelp: 'Example: 001. Enter an integer from 0 to 999999.',
           startSession: 'Start reception',
           setupNote: 'This development version does not save an active session yet. Reloading the page loses the current session.',
-          sessionRunning: 'Reception in progress',
-          startedAt: 'Started',
-          counterOne: 'Counter 1',
-          resetSession: 'Reset reception',
-          waitingCount: 'Waiting',
-          currentNumber: 'Now calling',
-          completedCount: 'Completed',
-          issuedCount: 'Issued',
-          nextTicket: 'Next ticket number',
-          issueTitle: 'Issue a number',
-          issueTicket: 'Issue number',
-          justIssued: 'Just issued',
-          callNext: 'Call next',
-          complete: 'Complete',
-          waitingTitle: 'Waiting',
-          waitingBody: 'Tickets are called from the top of this list.',
-          waitingEmptyTitle: 'No one is waiting.',
-          waitingEmptyBody: 'Issued numbers will appear here.',
-          acceptedAt: 'Issued',
+          sessionRunning: 'Reception in progress', startedAt: 'Started', counterOne: 'Counter 1', resetSession: 'Reset reception',
+          waitingCount: 'Waiting', currentNumber: 'Now calling', completedCount: 'Completed', issuedCount: 'Registered',
+          nextTicket: 'Next ticket number', issueTitle: 'Issue a number', issueTicket: 'Issue number', justIssued: 'Just added',
+          manualAddSummary: 'Add a number manually', manualNumberLabel: 'Number to add', manualAddButton: 'Add to queue',
+          callNext: 'Call next', recall: 'Call again', complete: 'Complete', markAbsent: 'Absent', deleteTicket: 'Delete',
+          waitingTitle: 'Waiting', waitingBody: 'Tickets are called from the top of this list.',
+          waitingEmptyTitle: 'No one is waiting.', waitingEmptyBody: 'Issue a number or add one manually to show it here.',
+          absentTitle: 'Absent', absentBody: 'Returned visitors can be moved to the end of the waiting queue.',
+          absentEmptyTitle: 'No absent numbers.', absentEmptyBody: 'Mark the active ticket Absent to move it here.',
+          returnToWaiting: 'Return to queue', acceptedAt: 'Issued', calls: 'Calls',
           helpBasicsTitle: 'Basics',
           helpStep1: 'Check the starting number and select Start reception.',
-          helpStep2: 'Select Issue number for each visitor. The ticket is added to the waiting queue.',
-          helpStep3: 'When the counter is free, select Call next to move the first waiting ticket into the active call.',
-          helpStep4: 'Select Complete when service is finished. The counter becomes free for the next ticket.',
+          helpStep2: 'Use Issue number or manual entry to add a ticket to the waiting queue.',
+          helpStep3: 'Use Call next to call the first waiting ticket. Use Call again when needed.',
+          helpStep4: 'After service, choose Complete or Absent. Absent tickets can return to the end of the queue.',
+          helpStep5: 'Deleting a waiting or absent ticket can be reversed immediately with Undo.',
           helpPrivacyTitle: 'Privacy',
           helpPrivacyBody: 'Ticket numbers and queue state are processed inside this page. The app uses no external API, analytics, or telemetry and does not send session data outside.',
-          helpNotesTitle: 'v0.1.0 scope',
+          helpNotesTitle: 'v0.2.0 scope',
           helpNoteOneCounter: 'This version has one counter. Multiple counters are planned for a later version.',
           helpNoteNoRecovery: 'Autosave and session recovery are not implemented yet. Reloading, closing the tab, or resetting loses the current queue.',
-          helpNoteLater: 'Manual ticket entry, absent handling, recall, Display, CSV export, and printing are not part of v0.1.0.',
-          helpOffline: 'The distributable HTML is designed to run without runtime external network access.',
+          helpNoteLater: 'Display, CSV export, printing, and multiple counters are not part of v0.2.0.',
+          helpOffline: 'The distributable HTML needs no runtime external network access and does not send entered numbers or queue actions outside.',
           footer: 'Local tool for issuing numbers and calling them in order',
-          confirmTitle: 'Confirm',
-          confirmAction: 'Continue',
-          cancel: 'Cancel',
-          resetTitle: 'Reset reception?',
-          resetBody: 'Discard the current ticket numbers and state, then return to the start screen.',
-          resetConfirm: 'Reset',
+          confirmTitle: 'Confirm', confirmAction: 'Continue', cancel: 'Cancel',
+          resetTitle: 'Reset reception?', resetBody: 'Discard the current ticket numbers and state, then return to the start screen.', resetConfirm: 'Reset',
+          deleteCurrentTitle: 'Delete the active ticket?',
+          deleteCurrentBody: 'Delete active number {number}. The change is applied immediately after confirmation.',
+          deleteConfirm: 'Delete',
           invalidStart: 'Enter an integer from 0 to 999999.',
+          invalidManual: 'Enter an integer from 0 to 999999.',
+          duplicateNumber: 'Number {number} has already been used in this session.',
+          noNumbersLeft: 'No ticket numbers remain available.',
           sessionStarted: 'Reception started.',
           ticketIssued: 'Issued number {number}.',
+          ticketAdded: 'Added number {number} to the queue.',
           ticketCalled: 'Called number {number}.',
+          ticketRecalled: 'Called number {number} again.',
           ticketCompleted: 'Completed number {number}.',
-          noWaiting: 'No tickets are waiting.',
-          counterBusy: 'Complete the current ticket before calling the next one.',
+          ticketAbsent: 'Marked number {number} absent.',
+          ticketReturned: 'Returned number {number} to the end of the queue.',
+          ticketDeleted: 'Deleted number {number}.',
+          ticketRestored: 'Restored number {number}.',
+          undo: 'Undo', undoUnavailable: 'The state changed, so this can no longer be undone.',
+          noWaiting: 'No tickets are waiting.', counterBusy: 'Complete or mark the current ticket absent before calling the next one.',
           sessionReset: 'Reception reset.'
         }
       };
@@ -1124,49 +1256,87 @@
         const message = $('#appToastMessage');
         const action = $('#appToastAction');
         let timer = 0;
+        let actionHandler = null;
         function dismiss() {
           clearTimeout(timer);
           timer = 0;
           root.classList.remove('show');
-          action.hidden = true;
+          actionHandler = null;
         }
         function show(options) {
           const settings = options || {};
           clearTimeout(timer);
           message.textContent = String(settings.message || '');
           root.dataset.tone = settings.tone || 'default';
-          action.hidden = true;
+          actionHandler = typeof settings.onAction === 'function' ? settings.onAction : null;
+          action.textContent = settings.actionLabel || '';
+          action.hidden = !actionHandler || !settings.actionLabel;
           root.classList.add('show');
-          timer = window.setTimeout(dismiss, settings.duration || 2600);
+          if ((settings.duration ?? 3200) > 0) timer = window.setTimeout(dismiss, settings.duration ?? 3200);
           return Object.freeze({ dismiss });
         }
+        action.addEventListener('click', () => {
+          const handler = actionHandler;
+          dismiss();
+          if (handler) handler();
+        });
         return Object.freeze({ show, dismiss });
       })();
       window.AppToast = AppToast;
 
-      function announce(message) {
+      function announce(message, options) {
         $('#liveStatus').textContent = message;
-        AppToast.show({ message: message });
+        AppToast.show({ message, ...(options || {}) });
       }
-
-      function parseStartNumber() {
-        const raw = $('#startNumber').value.trim();
-        if (!/^\d+$/.test(raw)) return null;
-        const value = Number(raw);
-        if (!Number.isSafeInteger(value) || value < 0 || value > 999999) return null;
-        return value;
+      function parseNumber(raw) {
+        const value = String(raw || '').trim();
+        if (!/^\d+$/.test(value)) return null;
+        const number = Number(value);
+        if (!Number.isSafeInteger(number) || number < 0 || number > 999999) return null;
+        return number;
       }
-
+      function isNumberUsed(number) {
+        return Boolean(session && session.usedNumbers.includes(number));
+      }
+      function findNextAvailableNumber(from) {
+        if (!session) return null;
+        const used = new Set(session.usedNumbers);
+        for (let number = Math.max(0, from); number <= 999999; number += 1) {
+          if (!used.has(number)) return number;
+        }
+        return null;
+      }
+      function syncNextNumber() {
+        if (!session) return;
+        session.nextNumber = findNextAvailableNumber(session.nextNumber ?? 0);
+      }
+      function createTicket(number) {
+        const ticket = {
+          id: makeId(),
+          number,
+          displayNumber: formatTicketNumber(number),
+          status: 'waiting',
+          createdAt: Date.now(),
+          calledAt: null,
+          completedAt: null,
+          counterId: null,
+          callCount: 0
+        };
+        session.usedNumbers.push(number);
+        session.tickets.push(ticket);
+        lastIssuedId = ticket.id;
+        syncNextNumber();
+        return ticket;
+      }
       function normalizeStartNumber() {
-        const value = parseStartNumber();
+        const value = parseNumber($('#startNumber').value);
         if (value === null) return;
         $('#startNumber').value = formatTicketNumber(value);
         $('#startNumberError').textContent = '';
       }
-
       function startSession(event) {
         event.preventDefault();
-        const startNumber = parseStartNumber();
+        const startNumber = parseNumber($('#startNumber').value);
         if (startNumber === null) {
           $('#startNumberError').textContent = translate('invalidStart');
           $('#startNumber').focus();
@@ -1182,6 +1352,7 @@
           title: language === 'ja' ? 'お呼びしています' : 'Now calling',
           counters: [{ id: 'counter-1', name: language === 'ja' ? '窓口 1' : 'Counter 1', currentTicketId: null }],
           tickets: [],
+          usedNumbers: [],
           soundEnabled: false,
           showWaitingCount: true
         };
@@ -1190,54 +1361,74 @@
         announce(translate('sessionStarted'));
         $('#issueButton').focus();
       }
-
       function issueTicket() {
         if (!session) return;
-        const now = Date.now();
-        const ticket = {
-          id: makeId(),
-          number: session.nextNumber,
-          displayNumber: formatTicketNumber(session.nextNumber),
-          status: 'waiting',
-          createdAt: now,
-          calledAt: null,
-          completedAt: null,
-          counterId: null,
-          callCount: 0
-        };
-        session.tickets.push(ticket);
-        session.nextNumber += 1;
-        lastIssuedId = ticket.id;
+        syncNextNumber();
+        if (session.nextNumber === null) {
+          announce(translate('noNumbersLeft'), { tone: 'warning' });
+          return;
+        }
+        const ticket = createTicket(session.nextNumber);
         render();
-        announce(translate('ticketIssued', { number: ticket.displayNumber }));
+        announce(translate('ticketIssued', { number: ticket.displayNumber }), { tone: 'success' });
       }
-
+      function addManualTicket(event) {
+        event.preventDefault();
+        if (!session) return;
+        const input = $('#manualNumber');
+        const error = $('#manualNumberError');
+        const number = parseNumber(input.value);
+        if (number === null) {
+          error.textContent = translate('invalidManual');
+          input.focus();
+          return;
+        }
+        if (isNumberUsed(number)) {
+          error.textContent = translate('duplicateNumber', { number: formatTicketNumber(number) });
+          input.focus();
+          return;
+        }
+        error.textContent = '';
+        const ticket = createTicket(number);
+        input.value = '';
+        render();
+        announce(translate('ticketAdded', { number: ticket.displayNumber }), { tone: 'success' });
+      }
       function currentTicket() {
         if (!session) return null;
         const currentId = session.counters[0].currentTicketId;
         return currentId ? session.tickets.find(ticket => ticket.id === currentId) || null : null;
       }
-
       function callNextTicket() {
         if (!session) return;
         if (currentTicket()) {
-          announce(translate('counterBusy'));
+          announce(translate('counterBusy'), { tone: 'warning' });
           return;
         }
         const ticket = session.tickets.find(item => item.status === 'waiting');
         if (!ticket) {
-          announce(translate('noWaiting'));
+          announce(translate('noWaiting'), { tone: 'warning' });
           return;
         }
         ticket.status = 'called';
-        ticket.calledAt = Date.now();
+        ticket.calledAt = ticket.calledAt || Date.now();
+        ticket.lastCalledAt = Date.now();
         ticket.counterId = 'counter-1';
         ticket.callCount += 1;
         session.counters[0].currentTicketId = ticket.id;
         render();
-        announce(translate('ticketCalled', { number: ticket.displayNumber }));
+        flashCurrentNumber();
+        announce(translate('ticketCalled', { number: ticket.displayNumber }), { tone: 'success' });
       }
-
+      function recallCurrentTicket() {
+        const ticket = currentTicket();
+        if (!ticket) return;
+        ticket.callCount += 1;
+        ticket.lastCalledAt = Date.now();
+        render();
+        flashCurrentNumber();
+        announce(translate('ticketRecalled', { number: ticket.displayNumber }));
+      }
       function completeCurrentTicket() {
         if (!session) return;
         const ticket = currentTicket();
@@ -1246,9 +1437,91 @@
         ticket.completedAt = Date.now();
         session.counters[0].currentTicketId = null;
         render();
-        announce(translate('ticketCompleted', { number: ticket.displayNumber }));
+        announce(translate('ticketCompleted', { number: ticket.displayNumber }), { tone: 'success' });
       }
-
+      function markCurrentAbsent() {
+        if (!session) return;
+        const ticket = currentTicket();
+        if (!ticket) return;
+        ticket.status = 'absent';
+        ticket.counterId = null;
+        session.counters[0].currentTicketId = null;
+        render();
+        announce(translate('ticketAbsent', { number: ticket.displayNumber }), { tone: 'warning' });
+      }
+      function returnAbsentTicket(ticketId) {
+        if (!session) return;
+        const sessionId = session.id;
+        const originalIndex = session.tickets.findIndex(ticket => ticket.id === ticketId);
+        if (originalIndex < 0) return;
+        const ticket = session.tickets[originalIndex];
+        if (ticket.status !== 'absent') return;
+        session.tickets.splice(originalIndex, 1);
+        ticket.status = 'waiting';
+        ticket.counterId = null;
+        session.tickets.push(ticket);
+        render();
+        announce(translate('ticketReturned', { number: ticket.displayNumber }), {
+          actionLabel: translate('undo'),
+          duration: 5000,
+          onAction: () => {
+            if (!session || session.id !== sessionId || ticket.status !== 'waiting') {
+              announce(translate('undoUnavailable'), { tone: 'warning' });
+              return;
+            }
+            const currentIndex = session.tickets.findIndex(item => item.id === ticket.id);
+            if (currentIndex >= 0) session.tickets.splice(currentIndex, 1);
+            ticket.status = 'absent';
+            session.tickets.splice(Math.min(originalIndex, session.tickets.length), 0, ticket);
+            render();
+            announce(translate('ticketRestored', { number: ticket.displayNumber }));
+          }
+        });
+      }
+      function deleteQueuedTicket(ticketId) {
+        if (!session) return;
+        const sessionId = session.id;
+        const index = session.tickets.findIndex(ticket => ticket.id === ticketId);
+        if (index < 0) return;
+        const ticket = session.tickets[index];
+        if (ticket.status !== 'waiting' && ticket.status !== 'absent') return;
+        session.tickets.splice(index, 1);
+        if (lastIssuedId === ticket.id) lastIssuedId = null;
+        render();
+        announce(translate('ticketDeleted', { number: ticket.displayNumber }), {
+          actionLabel: translate('undo'),
+          duration: 5000,
+          onAction: () => {
+            if (!session || session.id !== sessionId) {
+              announce(translate('undoUnavailable'), { tone: 'warning' });
+              return;
+            }
+            if (session.tickets.some(item => item.id === ticket.id)) return;
+            session.tickets.splice(Math.min(index, session.tickets.length), 0, ticket);
+            render();
+            announce(translate('ticketRestored', { number: ticket.displayNumber }));
+          }
+        });
+      }
+      async function deleteCurrentTicket() {
+        if (!session) return;
+        const ticket = currentTicket();
+        if (!ticket) return;
+        const ok = await AppConfirm.ask({
+          title: translate('deleteCurrentTitle'),
+          message: translate('deleteCurrentBody', { number: ticket.displayNumber }),
+          confirmLabel: translate('deleteConfirm'),
+          cancelLabel: translate('cancel'),
+          tone: 'danger'
+        });
+        if (!ok || !session) return;
+        const index = session.tickets.findIndex(item => item.id === ticket.id);
+        if (index >= 0) session.tickets.splice(index, 1);
+        session.counters[0].currentTicketId = null;
+        if (lastIssuedId === ticket.id) lastIssuedId = null;
+        render();
+        announce(translate('ticketDeleted', { number: ticket.displayNumber }));
+      }
       async function resetSession() {
         if (!session) return;
         const ok = await AppConfirm.ask({
@@ -1262,39 +1535,77 @@
         session = null;
         lastIssuedId = null;
         $('#startNumber').value = '001';
+        $('#manualNumber').value = '';
+        $('#manualNumberError').textContent = '';
         render();
         announce(translate('sessionReset'));
         $('#startNumber').focus();
       }
-
-      function renderWaitingList(waiting) {
-        const list = $('#waitingList');
-        list.replaceChildren();
-        waiting.forEach((ticket, index) => {
-          const item = document.createElement('li');
-          item.className = 'waiting-item';
-          const order = document.createElement('span');
-          order.className = 'waiting-order';
-          order.textContent = String(index + 1);
-          const number = document.createElement('span');
-          number.className = 'waiting-number';
-          number.textContent = ticket.displayNumber;
-          const time = document.createElement('span');
-          time.className = 'waiting-time';
-          time.textContent = translate('acceptedAt') + ' ' + formatTime(ticket.createdAt);
-          item.append(order, number, time);
-          list.append(item);
-        });
-        $('#waitingEmpty').hidden = waiting.length > 0;
+      function iconDelete() {
+        return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="m8 11 .5 8h7l.5-8"/></svg>';
       }
-
+      function iconReturn() {
+        return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 7 4 12l5 5"/><path d="M4 12h10a6 6 0 0 1 6 6"/></svg>';
+      }
+      function createTicketRow(ticket, index, absent) {
+        const item = document.createElement('li');
+        item.className = 'ticket-item' + (absent ? ' absent' : '');
+        const order = document.createElement('span');
+        order.className = 'waiting-order';
+        order.textContent = String(index + 1);
+        const main = document.createElement('span');
+        main.className = 'ticket-main';
+        const number = document.createElement('span');
+        number.className = 'ticket-number';
+        number.textContent = ticket.displayNumber;
+        const meta = document.createElement('span');
+        meta.className = 'ticket-meta';
+        meta.textContent = translate('acceptedAt') + ' ' + formatTime(ticket.createdAt) + (ticket.callCount ? ' · ' + translate('calls') + ' ' + ticket.callCount : '');
+        main.append(number, meta);
+        const actions = document.createElement('span');
+        actions.className = 'ticket-actions';
+        if (absent) {
+          const returnButton = document.createElement('button');
+          returnButton.type = 'button';
+          returnButton.className = 'ticket-button';
+          returnButton.innerHTML = iconReturn() + '<span>' + translate('returnToWaiting') + '</span>';
+          returnButton.setAttribute('aria-label', translate('returnToWaiting') + ' ' + ticket.displayNumber);
+          returnButton.addEventListener('click', () => returnAbsentTicket(ticket.id));
+          actions.append(returnButton);
+        }
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.className = 'ticket-button danger';
+        deleteButton.innerHTML = iconDelete() + '<span>' + translate('deleteTicket') + '</span>';
+        deleteButton.setAttribute('aria-label', translate('deleteTicket') + ' ' + ticket.displayNumber);
+        deleteButton.addEventListener('click', () => deleteQueuedTicket(ticket.id));
+        actions.append(deleteButton);
+        item.append(order, main, actions);
+        return item;
+      }
+      function renderTicketLists(waiting, absent) {
+        const waitingList = $('#waitingList');
+        const absentList = $('#absentList');
+        waitingList.replaceChildren(...waiting.map((ticket, index) => createTicketRow(ticket, index, false)));
+        absentList.replaceChildren(...absent.map((ticket, index) => createTicketRow(ticket, index, true)));
+        $('#waitingEmpty').hidden = waiting.length > 0;
+        $('#absentEmpty').hidden = absent.length > 0;
+      }
+      function flashCurrentNumber() {
+        const element = $('#currentNumber');
+        element.classList.remove('pulse');
+        void element.offsetWidth;
+        element.classList.add('pulse');
+      }
       function render() {
         const active = Boolean(session);
         $('#setupView').hidden = active;
         $('#operatorView').hidden = !active;
         if (!session) return;
 
+        syncNextNumber();
         const waiting = session.tickets.filter(ticket => ticket.status === 'waiting');
+        const absent = session.tickets.filter(ticket => ticket.status === 'absent');
         const completed = session.tickets.filter(ticket => ticket.status === 'completed');
         const current = currentTicket();
         const lastIssued = lastIssuedId ? session.tickets.find(ticket => ticket.id === lastIssuedId) : null;
@@ -1302,19 +1613,21 @@
         $('#sessionStartedAt').textContent = formatTime(session.startedAt);
         $('#waitingCount').textContent = new Intl.NumberFormat(language).format(waiting.length);
         $('#completedCount').textContent = new Intl.NumberFormat(language).format(completed.length);
-        $('#issuedCount').textContent = new Intl.NumberFormat(language).format(session.tickets.length);
-        $('#nextNumber').textContent = formatTicketNumber(session.nextNumber);
+        $('#issuedCount').textContent = new Intl.NumberFormat(language).format(session.usedNumbers.length);
+        $('#nextNumber').textContent = session.nextNumber === null ? '—' : formatTicketNumber(session.nextNumber);
         $('#currentMetric').textContent = current ? current.displayNumber : '—';
         $('#currentNumber').textContent = current ? current.displayNumber : '—';
         $('#currentNumber').classList.toggle('muted', !current);
+        $('#issueButton').disabled = session.nextNumber === null;
         $('#callNextButton').disabled = Boolean(current) || waiting.length === 0;
+        $('#recallButton').disabled = !current;
         $('#completeButton').disabled = !current;
-
+        $('#absentButton').disabled = !current;
+        $('#deleteCurrentButton').disabled = !current;
         $('#lastIssuedPanel').hidden = !lastIssued;
         if (lastIssued) $('#lastIssuedNumber').textContent = lastIssued.displayNumber;
-        renderWaitingList(waiting);
+        renderTicketLists(waiting, absent);
       }
-
       function applyLanguage() {
         document.documentElement.lang = language;
         document.querySelectorAll('[data-i18n]').forEach(element => { element.textContent = translate(element.dataset.i18n); });
@@ -1346,8 +1659,13 @@
       $('#startNumber').addEventListener('blur', normalizeStartNumber);
       $('#startNumber').addEventListener('input', () => { $('#startNumberError').textContent = ''; });
       $('#issueButton').addEventListener('click', issueTicket);
+      $('#manualAddForm').addEventListener('submit', addManualTicket);
+      $('#manualNumber').addEventListener('input', () => { $('#manualNumberError').textContent = ''; });
       $('#callNextButton').addEventListener('click', callNextTicket);
+      $('#recallButton').addEventListener('click', recallCurrentTicket);
       $('#completeButton').addEventListener('click', completeCurrentTicket);
+      $('#absentButton').addEventListener('click', markCurrentAbsent);
+      $('#deleteCurrentButton').addEventListener('click', deleteCurrentTicket);
       $('#resetButton').addEventListener('click', resetSession);
 
       $('#versionBadge').textContent = 'v' + APP_CONFIG.version;
