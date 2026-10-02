@@ -2,6 +2,25 @@
 
 All notable changes to Queue Board are documented here.
 
+## [0.5.0] - 2026-10-02
+
+### Added
+
+- Built-in chime generated with the Web Audio API; no runtime audio download.
+- Call-sound ON/OFF setting, enabled by default.
+- Pre-session chime preview.
+- Distinct chime pattern for recalls.
+- Operator sound toggle during an active Session.
+- Display Fullscreen control with feature detection.
+- Display Screen Wake Lock control with feature detection.
+- Wake Lock reacquisition after visibility changes when the user requested it.
+- Clear fallback messaging when Web Audio, Fullscreen, or Wake Lock is unsupported or fails.
+
+### Changed
+
+- Display top controls now keep optional venue features compact and separate from queue information.
+- Help and README now describe the v0.5.0 venue-display workflow.
+
 ## [0.4.0] - 2026-10-02
 
 ### Added
