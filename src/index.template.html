@@ -1187,6 +1187,89 @@
       .display-call-card.changed { animation: none; }
     }
 
+
+    /* Queue Board v0.5.0 sound / fullscreen / wake */
+    .sound-setup {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+    }
+    .sound-setup-main { display: grid; gap: 4px; min-width: 0; }
+    .sound-setup-title { font-size: 13px; font-weight: 850; }
+    .sound-setup-note { color: var(--muted); font-size: 11px; line-height: 1.5; }
+    .sound-setup-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .sound-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 42px;
+      padding: 8px 11px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface);
+      font-size: 12px;
+      font-weight: 850;
+      cursor: pointer;
+    }
+    .sound-switch input { width: 18px; height: 18px; accent-color: var(--accent); }
+    .sound-status-button[aria-pressed="true"] { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); background: var(--accent-soft); }
+    .display-board-tools {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+      flex: 0 1 auto;
+    }
+    .display-tool-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 40px;
+      padding: 7px 10px;
+      border: 1px solid #cfd7d3;
+      border-radius: 10px;
+      background: rgba(255,255,255,.88);
+      color: #263934;
+      font: inherit;
+      font-size: 11px;
+      font-weight: 850;
+      cursor: pointer;
+    }
+    .display-tool-button:hover:not(:disabled) { border-color: #9eaaa5; background: #fff; }
+    .display-tool-button:disabled { opacity: .5; cursor: not-allowed; }
+    .display-tool-button[aria-pressed="true"] { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 35%, #cfd7d3); background: #eaf2ef; }
+    .display-tool-button svg { width: 16px; height: 16px; flex: 0 0 auto; }
+    .display-feature-note {
+      width: 100%;
+      margin: 3px 0 0;
+      color: #61706b;
+      font-size: 10px;
+      line-height: 1.45;
+      text-align: right;
+    }
+    .display-feature-note:empty { display: none; }
+    @media (max-width: 760px) {
+      .sound-setup { grid-template-columns: 1fr; }
+      .sound-setup-actions { justify-content: stretch; }
+      .sound-setup-actions > * { flex: 1 1 auto; }
+      .display-board-top { align-items: flex-start; }
+      .display-board-tools { max-width: 52vw; }
+      .display-tool-button span { display: none; }
+      .display-feature-note { text-align: left; }
+    }
+    @media (orientation: landscape) and (max-height: 650px) {
+      .display-tool-button { min-height: 34px; padding: 5px 8px; }
+      .display-feature-note { display: none; }
+    }
+
   </style>
 </head>
 <body>
@@ -1251,6 +1334,23 @@
           </div>
         </fieldset>
 
+        <div class="sound-setup">
+          <div class="sound-setup-main">
+            <span class="sound-setup-title" data-i18n="soundSettingTitle">呼び出し音</span>
+            <span class="sound-setup-note" id="soundSupportNote" data-i18n="soundSettingNote">呼び出し・再呼び出し時に内蔵チャイムを鳴らします。</span>
+          </div>
+          <div class="sound-setup-actions">
+            <label class="sound-switch" for="soundEnabled">
+              <input id="soundEnabled" type="checkbox" checked>
+              <span data-i18n="soundEnabledLabel">ON</span>
+            </label>
+            <button class="button with-icon" id="previewChimeButton" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10v4h4l5 4V6L8 10H4Z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg>
+              <span data-i18n="previewChime">試聴</span>
+            </button>
+          </div>
+        </div>
+
         <details class="display-settings">
           <summary data-i18n="displaySettings">表示画面の設定</summary>
           <div class="display-settings-grid">
@@ -1300,6 +1400,10 @@
             <span class="display-status-dot" aria-hidden="true"></span>
             <span id="operatorDisplayStatusText" data-i18n="displayDisconnected">表示画面 未接続</span>
           </span>
+          <button class="button with-icon sound-status-button" id="toggleSoundButton" type="button" aria-pressed="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 7 3 7 3 7H3s3 0 3-7"/><path d="M10 20h4"/></svg>
+            <span id="toggleSoundButtonText" data-i18n="soundOn">呼び出し音 ON</span>
+          </button>
           <button class="button with-icon" id="openDisplayButton" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
             <span data-i18n="openDisplay">表示画面を開く</span>
@@ -1390,9 +1494,20 @@
     <section class="display-board" id="displayView" hidden aria-labelledby="displayBoardTitle">
       <div class="display-board-top">
         <h1 class="display-board-title" id="displayBoardTitle">お呼びしています</h1>
-        <div class="display-board-sync" id="displayBoardSync">
-          <span class="display-board-sync-dot" aria-hidden="true"></span>
-          <span id="displayBoardSyncText">接続待ち</span>
+        <div class="display-board-tools">
+          <div class="display-board-sync" id="displayBoardSync">
+            <span class="display-board-sync-dot" aria-hidden="true"></span>
+            <span id="displayBoardSyncText">接続待ち</span>
+          </div>
+          <button class="display-tool-button" id="fullscreenButton" type="button" aria-pressed="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg>
+            <span id="fullscreenButtonText" data-i18n="enterFullscreen">全画面表示</span>
+          </button>
+          <button class="display-tool-button" id="wakeLockButton" type="button" aria-pressed="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+            <span id="wakeLockButtonText" data-i18n="keepAwake">画面を点灯したままにする</span>
+          </button>
+          <p class="display-feature-note" id="displayFeatureNote" aria-live="polite"></p>
         </div>
       </div>
       <div class="display-current-wrap">
@@ -1455,21 +1570,21 @@
       </button>
     </div>
     <div class="dialog-body">
-      <!-- APP:HELP:BEGIN Queue Board v0.4.0 -->
+      <!-- APP:HELP:BEGIN Queue Board v0.5.0 -->
       <h3 data-i18n="helpBasicsTitle">基本操作</h3>
       <ol>
         <li data-i18n="helpStep1">開始番号と窓口数、必要なら各窓口名と表示画面設定を決めて受付を開始します。</li>
         <li data-i18n="helpStep2">「番号を発行」、または手動追加で待ち列へ番号を登録します。</li>
         <li data-i18n="helpStep3">「表示画面を開く」で待合向けDisplayを別ウィンドウに開きます。外部モニターへ移動して使えます。</li>
         <li data-i18n="helpStep4">空いている窓口の「次を呼ぶ」で、Displayへ番号と窓口がリアルタイム反映されます。</li>
-        <li data-i18n="helpStep5">Displayを閉じてもOperatorは継続できます。再度「表示画面を開く」で現在状態へ再接続します。</li>
+        <li data-i18n="helpStep5">呼び出し音を試聴・ON/OFFできます。Displayでは全画面表示と対応環境でのWake Lockを利用できます。</li>
       </ol>
       <h3 data-i18n="helpPrivacyTitle">プライバシー</h3>
       <p data-i18n="helpPrivacyBody">Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。</p>
-      <h3 data-i18n="helpNotesTitle">v0.4.0 の範囲</h3>
+      <h3 data-i18n="helpNotesTitle">v0.5.0 の範囲</h3>
       <ul>
         <li data-i18n="helpNoteDisplay">DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。別端末への送信は行いません。</li>
-        <li data-i18n="helpNoteNoSound">チャイム、全画面表示、Wake Lockは次のマイルストーンで追加します。</li>
+        <li data-i18n="helpNoteFeatures">Fullscreen / Wake LockはFeature Detectionを行い、非対応環境ではその機能だけを無効化します。</li>
         <li data-i18n="helpNoteNoRecovery">自動保存とSession復旧はまだありません。再読み込み・タブを閉じる・リセットで現在の受付状態は失われます。</li>
       </ul>
       <p class="dialog-note" data-i18n="helpOffline">配布用HTMLは実行時の外部通信を必要とせず、Display同期もブラウザ内だけで行います。</p>
