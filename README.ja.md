@@ -2,76 +2,102 @@
 
 小規模イベントや一時受付で、番号を発行して待ち列を作り、順番に呼び出すためのBrowser Kittyアプリです。
 
-現在は **v0.6.0 — Persistence / Recovery** です。
+現在は **v0.7.0 — History / Export** です。
 
-## できること
+## 主な機能
 
-- 開始番号を指定してSessionを開始
-- 1〜4窓口を設定し、各窓口名を指定
-- 連番 / 手動でTicketを追加
-- 同一Session内の重複番号を防止
-- 各窓口から共通待ち列の先頭を呼び出し
-- 再呼び出し / 完了 / 不在 / 削除
-- 不在番号を待ち列の末尾へ戻す
-- 待合向けDisplayを別ウィンドウで開く
-- 内蔵チャイム、Fullscreen、Wake Lock
-- 進行中Sessionの自動保存
-- ページ再読み込み後のSession再開
-- 保存済みSessionを破棄して新しく始める
-- 開始番号・窓口・音・Display設定の保存
-- 保存中 / 保存済み / 保存失敗の状態表示
+- 1〜4窓口のQueue運用
+- 連番 / 手動Ticket追加
+- 呼び出し / 再呼び出し / 完了 / 不在 / 再待機
+- 待合向けDisplay
+- 呼び出しチャイム / Fullscreen / Wake Lock
+- 進行中Sessionの自動保存と再開
+- History画面
+- 状態フィルタ（すべて / 待機中 / 呼び出し中 / 完了 / 不在）
+- Ticketごとの受付・呼出・不在・完了時刻
+- callCount表示
+- CSV保存
+- Session Summary
+- 平均待ち時間
+- Session終了フロー
+- 終了履歴の端末内保存
+- 新しい受付開始フロー
 - 日本語 / 英語
 - 完全ローカル処理
 
-## 自動保存と復旧
+## History
 
-進行中Sessionは端末内へ自動保存します。
+Operator画面の「履歴」から、そのSession内のTicketを確認できます。
 
-保存先は **IndexedDBを第一候補** とし、IndexedDBを利用できない場合はlocalStorageへフォールバックします。開始番号、窓口数、窓口名、呼び出し音、Display設定などの軽量な設定値はlocalStorageへ保存します。
+各Ticketでは、記録されている範囲で次の時刻を表示します。
 
-ページを再読み込みすると、保存された進行中Sessionがある場合は設定画面をそのまま表示せず、
+- 受付
+- 呼出
+- 不在
+- 完了
 
-- 受付を再開
-- 新しく始める
+現在状態でフィルタでき、呼び出し回数と最後に担当した窓口も確認できます。
 
-を選択する画面を表示します。新しく始める場合は、保存済みSessionを破棄する前に確認を行います。
+## CSV
 
-Ticket操作は短いデバウンス後に保存し、ページがバックグラウンドへ移るときも保存を試みます。保存とSession削除は直列化し、リセット直前の遅延保存で古いSessionが復活しないようにしています。
+History / Session SummaryからCSVを保存できます。
 
-## 設定の再利用
+列は次の7列です。
 
-以下の設定は端末内へ保存し、次回の受付設定で再利用します。
+```text
+number
+status
+created_at
+called_at
+completed_at
+counter
+call_count
+```
 
-- 開始番号
-- 窓口数
-- 窓口名
-- 呼び出し音ON/OFF
-- Displayタイトル
-- 最近呼んだ番号の表示数
-- 待ち人数表示
+CSVはUTF-8 BOM付きで生成し、ファイル名は `queue-board-YYYY-MM-DD.csv` 形式です。
 
-Sessionをリセットしても、これらの設定値は維持します。
+## Session Summary
 
-## 保存エラー
+「受付を終了」は確認付きの操作です。終了時には履歴を端末内へ保存し、その保存が成功した場合だけactive Sessionを終了します。
 
-Sessionまたは設定値の保存に失敗した場合は、UI上で保存失敗を表示し、トーストでも理由を案内します。保存に失敗してもQueue Boardの基本操作自体は継続できますが、再読み込み後の復旧は保証されません。
+Summaryでは以下を表示します。
 
-## v0.6.0の制限
+- 受付数
+- 完了数
+- 不在数
+- 現在待機数
+- 受付開始時刻
+- 受付終了時刻
+- 平均待ち時間
+
+平均待ち時間は仕様どおり `createdAt → calledAt` から算出します。
+
+終了後は、
+
+- CSVを保存
+- 履歴を見る
+- 新しい受付を開始
+
+を選べます。新しい受付を開始しても、終了済みSessionの履歴は端末内アーカイブに残します。
+
+## 保存
+
+進行中SessionはIndexedDBを第一候補として自動保存し、利用できない場合はlocalStorageへフォールバックします。
+
+終了済みSessionもローカル履歴として保存します。ページ再読み込み後、進行中Sessionがなければ最新の終了済みSessionのSummaryを再表示できます。
+
+## v0.7.0の制限
 
 - 最大4窓口
-- Displayは同一ブラウザ内の別ウィンドウ
-- Session履歴一覧なし
-- CSV出力なし
-- Session Summaryなし
+- 過去Session一覧を横断して選ぶ画面はまだありません
 - 番号札印刷なし
+- 正式リリース前のMobile / Accessibility最終調整は未実施
 
-履歴・CSV・Session終了フローは次のマイルストーンで追加予定です。
+番号札印刷はv0.8.0、Mobile / UX / Accessibility RCはv0.9.0で対応予定です。
 
 ## プライバシー
 
-Ticket番号、窓口設定、Display設定、Session状態はブラウザ内で処理します。Session保存もIndexedDB / localStorageなど端末内ストレージだけを使用します。
-
-外部API、分析、テレメトリーは使用せず、Content Security Policyで実行時の外部接続を遮断しています。
+Ticket、Session履歴、設定、Display状態はブラウザ内で処理します。外部API、分析、テレメトリーは使用せず、Content Security Policyで実行時の外部接続を遮断しています。
 
 ## 単一HTML
 
