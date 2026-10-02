@@ -1289,26 +1289,29 @@
       animation: persistenceSpin .75s linear infinite;
     }
     @keyframes persistenceSpin { to { transform: rotate(360deg); } }
-    .recovery-card { border-color: color-mix(in srgb, var(--accent) 28%, var(--line)); }
+    .recovery-card {
+      padding: clamp(20px, 3vw, 28px);
+      border-color: color-mix(in srgb, var(--accent) 28%, var(--line));
+    }
     .recovery-card[hidden] { display: none; }
-    .recovery-head { display: grid; gap: 5px; }
+    .recovery-head { display: grid; gap: 7px; }
     .recovery-head h2 { margin: 0; font-size: 21px; }
     .recovery-head p { margin: 0; color: var(--muted); }
     .recovery-summary {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 16px;
+      gap: 14px;
+      margin-top: 20px;
     }
     .recovery-stat {
-      padding: 12px;
+      padding: 15px 14px;
       border: 1px solid var(--line);
       border-radius: 11px;
       background: var(--surface-muted);
     }
     .recovery-stat-label { display: block; color: var(--muted); font-size: 10px; font-weight: 800; }
     .recovery-stat-value { display: block; margin-top: 3px; font-size: 18px; font-weight: 900; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-    .recovery-actions { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 16px; }
+    .recovery-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
     .save-status {
       display: inline-flex;
       align-items: center;
@@ -1340,7 +1343,7 @@
     }
 
 
-    /* Queue Board v0.7.0 history / export */
+    /* Queue Board history / export */
     .history-toolbar {
       display: flex;
       align-items: center;
@@ -1447,7 +1450,7 @@
     }
     .history-empty strong { display: block; color: var(--text); }
     .history-empty span { display: block; margin-top: 6px; }
-    .summary-shell { display: grid; gap: 14px; }
+    .summary-shell { display: grid; gap: 18px; }
     .summary-shell[hidden],
     .history-shell[hidden] { display: none; }
     .summary-hero {
@@ -1461,11 +1464,11 @@
     .summary-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
+      gap: 14px;
     }
     .summary-card {
       min-width: 0;
-      padding: 15px;
+      padding: 18px;
       border: 1px solid var(--line);
       border-radius: 13px;
       background: var(--surface);
@@ -1483,9 +1486,15 @@
     .summary-times {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
+      gap: 14px;
     }
-    .summary-actions { margin-top: 4px; }
+    .summary-action-card {
+      padding: clamp(18px, 2.6vw, 24px);
+    }
+    .summary-actions {
+      margin-top: 0;
+      gap: 12px;
+    }
     .end-session-button { border-color: color-mix(in srgb, var(--danger) 35%, var(--line)); }
     @media (max-width: 760px) {
       .history-item { grid-template-columns: 78px minmax(0, 1fr); }
@@ -1504,6 +1513,208 @@
       .history-filter { width: 100%; }
     }
 
+
+    /* Queue Board v0.8.0 ticket printing */
+    .print-view {
+      display: grid;
+      gap: 20px;
+    }
+    .print-view[hidden] { display: none; }
+    .print-editor-card {
+      display: grid;
+      gap: 22px;
+      padding: clamp(18px, 3vw, 30px);
+    }
+    .print-editor-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .print-editor-head h2 { margin: 0; font-size: 22px; }
+    .print-editor-head p { margin: 7px 0 0; max-width: 760px; color: var(--muted); }
+    #printSettingsForm {
+      display: grid;
+      gap: 18px;
+    }
+    .print-settings-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px 18px;
+    }
+    .print-settings-grid .wide { grid-column: span 2; }
+    .print-editor-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      padding-top: 2px;
+    }
+    .print-summary {
+      display: flex;
+      gap: 10px 20px;
+      flex-wrap: wrap;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: var(--surface-muted);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .print-summary strong { color: var(--text); font-variant-numeric: tabular-nums; }
+    .print-preview-panel {
+      display: grid;
+      gap: 14px;
+      padding-top: 2px;
+    }
+    .print-preview-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .print-preview-head h3 { margin: 0; font-size: 15px; }
+    .print-preview-head span { color: var(--muted); font-size: 11px; }
+    .print-page-list {
+      display: grid;
+      gap: 18px;
+      justify-items: center;
+      overflow-x: auto;
+      padding: 4px 0 18px;
+    }
+    .ticket-print-page {
+      width: min(100%, var(--print-paper-width, 210mm));
+      aspect-ratio: var(--print-paper-ratio, 210 / 297);
+      padding: clamp(6mm, 2vw, 10mm);
+      background: #fff;
+      color: #111;
+      border: 1px solid #d2d2d2;
+      box-shadow: 0 8px 28px rgba(0,0,0,.08);
+      break-after: page;
+      page-break-after: always;
+    }
+    .ticket-print-page:last-child { break-after: auto; page-break-after: auto; }
+    .ticket-print-grid {
+      display: grid;
+      grid-template-columns: repeat(var(--print-columns, 2), minmax(0, 1fr));
+      grid-template-rows: repeat(var(--print-rows, 4), minmax(0, 1fr));
+      gap: 4mm;
+      height: 100%;
+    }
+    .print-ticket {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      place-items: center;
+      align-content: center;
+      gap: clamp(2mm, 1vw, 5mm);
+      padding: 4mm;
+      border: 0.45mm dashed #888;
+      text-align: center;
+      overflow: hidden;
+    }
+    .print-ticket-title {
+      max-width: 100%;
+      font-size: clamp(11px, 2.2vw, 22px);
+      font-weight: 800;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+    .print-ticket-number {
+      max-width: 100%;
+      color: #111;
+      font-size: clamp(34px, 8vw, 82px);
+      font-weight: 950;
+      line-height: .95;
+      letter-spacing: .05em;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+    .print-error {
+      min-height: 18px;
+      color: var(--danger);
+      font-size: 11px;
+      font-weight: 750;
+    }
+    body.print-editor-mode .queue-intro { display: none; }
+    body.display-mode #printTicketsButton { display: none !important; }
+    @media (max-width: 760px) {
+      .print-settings-grid { grid-template-columns: 1fr 1fr; }
+      .print-settings-grid .wide { grid-column: 1 / -1; }
+      .print-editor-actions { display: grid; grid-template-columns: 1fr 1fr; }
+      .print-editor-actions .button { width: 100%; }
+      .ticket-print-page { min-width: 620px; }
+    }
+    @media (max-width: 480px) {
+      .print-settings-grid { grid-template-columns: 1fr; }
+      .print-settings-grid .wide { grid-column: auto; }
+      .print-editor-actions { grid-template-columns: 1fr; }
+    }
+    @media print {
+      body {
+        margin: 0 !important;
+        background: #fff !important;
+        color: #000 !important;
+      }
+      body > header,
+      body > footer,
+      body > .app-toast,
+      body > dialog,
+      .queue-intro,
+      #persistenceGate,
+      #recoveryView,
+      #setupView,
+      #operatorView,
+      #historyView,
+      #summaryView,
+      #displayView,
+      .print-editor-card,
+      .print-preview-head {
+        display: none !important;
+      }
+      .main.queue-main {
+        width: auto !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      #printView,
+      .print-preview-panel,
+      #printSheets {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      .ticket-print-page {
+        width: var(--print-paper-width, 210mm) !important;
+        height: var(--print-paper-height, 297mm) !important;
+        aspect-ratio: auto !important;
+        margin: 0 !important;
+        padding: 8mm !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        overflow: hidden !important;
+      }
+      .ticket-print-grid {
+        gap: 4mm !important;
+      }
+      .print-ticket-title {
+        font-size: var(--print-title-size, 16pt) !important;
+      }
+      .print-ticket-number {
+        font-size: var(--print-number-size, 42pt) !important;
+      }
+      .print-ticket {
+        border: .35mm dashed #777 !important;
+        padding: 3mm !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1519,6 +1730,9 @@
         </div>
       </div>
       <div class="header-actions">
+        <button class="icon-button header-icon-button" id="printTicketsButton" type="button" data-i18n-title="printTicketsTitle" data-i18n-aria-label="printTicketsTitle" title="番号札を作成" aria-label="番号札を作成">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 8V3h10v5"/><rect x="4" y="8" width="16" height="9" rx="2"/><path d="M7 14h10v7H7z"/><path d="M17 11h.01"/></svg>
+        </button>
         <button class="language-button" id="languageButton" type="button" aria-label="Switch language">EN</button>
         <button class="icon-button header-icon-button" id="helpButton" type="button" data-i18n-title="helpTitle" data-i18n-aria-label="helpTitle" title="使い方と注意事項" aria-label="使い方と注意事項">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.35 2.35 0 1 1 3.72 1.9c-.92.67-1.52 1.12-1.52 2.1"/><path d="M12 17h.01"/></svg>
@@ -1539,7 +1753,7 @@
       </div>
     </section>
 
-    <!-- APP:BEGIN Queue Board v0.7.0 history export -->
+    <!-- APP:BEGIN Queue Board v0.8.0 ticket printing -->
     <section class="queue-card persistence-gate" id="persistenceGate" aria-live="polite">
       <div class="persistence-gate-inner">
         <span class="persistence-spinner" aria-hidden="true"></span>
@@ -1820,7 +2034,7 @@
         <div class="summary-card"><span class="summary-card-label" data-i18n="summaryEnded">受付終了</span><strong class="summary-card-value" id="summaryEnded">--:--</strong></div>
         <div class="summary-card"><span class="summary-card-label" data-i18n="summaryAverageWait">平均待ち時間</span><strong class="summary-card-value" id="summaryAverageWait">—</strong></div>
       </div>
-      <div class="queue-card">
+      <div class="queue-card summary-action-card">
         <div class="summary-actions">
           <button class="button primary large with-icon" id="summaryCsvButton" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M5 20h14"/></svg>
@@ -1830,6 +2044,76 @@
           <button class="button" id="newSessionButton" type="button" data-i18n="startAnotherSession">新しい受付を開始</button>
         </div>
       </div>
+    </section>
+
+    <section class="print-view" id="printView" hidden aria-labelledby="printViewTitle">
+      <div class="queue-card print-editor-card">
+        <div class="print-editor-head">
+          <div>
+            <p class="panel-kicker" data-i18n="printKicker">Ticket Printing</p>
+            <h2 id="printViewTitle" tabindex="-1" data-i18n="printViewTitle">番号札を作成</h2>
+            <p data-i18n="printViewBody">番号範囲とレイアウトを設定して、ブラウザの印刷機能から整理券を印刷します。</p>
+          </div>
+          <button class="button" id="closePrintViewButton" type="button" data-i18n="closePrintView">戻る</button>
+        </div>
+
+        <form id="printSettingsForm" novalidate>
+          <div class="print-settings-grid">
+            <label class="field" for="printStartNumber">
+              <span class="field-label" data-i18n="printStartNumber">開始番号</span>
+              <input class="number-input" id="printStartNumber" type="text" inputmode="numeric" maxlength="6" value="001">
+            </label>
+            <label class="field" for="printEndNumber">
+              <span class="field-label" data-i18n="printEndNumber">終了番号</span>
+              <input class="number-input" id="printEndNumber" type="text" inputmode="numeric" maxlength="6" value="030">
+            </label>
+            <label class="field" for="printDigits">
+              <span class="field-label" data-i18n="printDigits">桁数</span>
+              <select class="select-input" id="printDigits">
+                <option value="1">1</option><option value="2">2</option><option value="3" selected>3</option>
+                <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+              </select>
+            </label>
+            <label class="field wide" for="printTitleInput">
+              <span class="field-label" data-i18n="printTicketTitle">タイトル</span>
+              <input class="text-input" id="printTitleInput" type="text" maxlength="40" value="受付番号">
+            </label>
+            <label class="field" for="printPaperSize">
+              <span class="field-label" data-i18n="printPaperSize">用紙サイズ</span>
+              <select class="select-input" id="printPaperSize">
+                <option value="a4" selected>A4</option>
+                <option value="letter">Letter</option>
+              </select>
+            </label>
+            <label class="field" for="printPerPage">
+              <span class="field-label" data-i18n="printPerPage">1ページあたりの枚数</span>
+              <input class="number-input" id="printPerPage" type="number" inputmode="numeric" min="1" max="20" value="8">
+              <span class="field-help" data-i18n="printPerPageHelp">1〜20枚で指定できます。</span>
+            </label>
+          </div>
+          <p class="print-error" id="printSettingsError" role="alert"></p>
+          <div class="print-editor-actions">
+            <button class="button primary large with-icon" id="printNowButton" type="submit">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 8V3h10v5"/><rect x="4" y="8" width="16" height="9" rx="2"/><path d="M7 14h10v7H7z"/></svg>
+              <span data-i18n="printNow">印刷する</span>
+            </button>
+            <button class="button" id="refreshPrintPreviewButton" type="button" data-i18n="refreshPreview">プレビューを更新</button>
+          </div>
+        </form>
+        <div class="print-summary" aria-live="polite">
+          <span><span data-i18n="printTicketCount">番号札</span>: <strong id="printTicketCount">30</strong></span>
+          <span><span data-i18n="printPageCount">ページ</span>: <strong id="printPageCount">4</strong></span>
+          <span data-i18n="printLimitNote">一度に作成できる番号札は最大1000枚です。</span>
+        </div>
+      </div>
+
+      <section class="print-preview-panel" aria-labelledby="printPreviewTitle">
+        <div class="print-preview-head">
+          <h3 id="printPreviewTitle" data-i18n="printPreviewTitle">印刷プレビュー</h3>
+          <span data-i18n="printPreviewNote">点線は切り取り目安です。実際の余白はブラウザやプリンター設定で変わる場合があります。</span>
+        </div>
+        <div class="print-page-list" id="printSheets"></div>
+      </section>
     </section>
 
     <section class="display-board" id="displayView" hidden aria-labelledby="displayBoardTitle">
@@ -1911,22 +2195,22 @@
       </button>
     </div>
     <div class="dialog-body">
-      <!-- APP:HELP:BEGIN Queue Board v0.7.0 -->
+      <!-- APP:HELP:BEGIN Queue Board v0.8.0 -->
       <h3 data-i18n="helpBasicsTitle">基本操作</h3>
       <ol>
         <li data-i18n="helpStep1">開始番号と窓口数、必要なら各窓口名と表示画面設定を決めて受付を開始します。</li>
         <li data-i18n="helpStep2">「番号を発行」、または手動追加で待ち列へ番号を登録します。</li>
         <li data-i18n="helpStep3">「表示画面を開く」で待合向けDisplayを別ウィンドウに開きます。外部モニターへ移動して使えます。</li>
         <li data-i18n="helpStep4">空いている窓口の「次を呼ぶ」で、Displayへ番号と窓口がリアルタイム反映されます。</li>
-        <li data-i18n="helpStep5">履歴を確認・CSV保存し、受付終了後はSession Summaryから新しい受付を開始できます。</li>
+        <li data-i18n="helpStep5">ヘッダーのプリンターアイコンから番号札を作成し、印刷プレビューを確認してブラウザから印刷できます。</li>
       </ol>
       <h3 data-i18n="helpPrivacyTitle">プライバシー</h3>
       <p data-i18n="helpPrivacyBody">Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。</p>
-      <h3 data-i18n="helpNotesTitle">v0.7.0 の範囲</h3>
+      <h3 data-i18n="helpNotesTitle">v0.8.0 の範囲</h3>
       <ul>
         <li data-i18n="helpNoteDisplay">DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。別端末への送信は行いません。</li>
         <li data-i18n="helpNoteFeatures">Fullscreen / Wake LockはFeature Detectionを行い、非対応環境ではその機能だけを無効化します。</li>
-        <li data-i18n="helpNoteHistory">受付終了時は履歴を端末内へ保存し、CSV保存とSession Summaryを利用できます。</li>
+        <li data-i18n="helpNotePrinting">番号札作成は現在のSessionと独立して利用でき、A4を既定とした印刷用CSSを使用します。</li>
       </ul>
       <p class="dialog-note" data-i18n="helpOffline">配布用HTMLは実行時の外部通信を必要とせず、Display同期もブラウザ内だけで行います。</p>
       <!-- APP:HELP:END -->
@@ -2136,13 +2420,13 @@
           helpStep2: '「番号を発行」、または手動追加で待ち列へ番号を登録します。',
           helpStep3: '「表示画面を開く」で待合向けDisplayを別ウィンドウに開きます。外部モニターへ移動して使えます。',
           helpStep4: '空いている窓口の「次を呼ぶ」で、Displayへ番号と窓口がリアルタイム反映されます。',
-          helpStep5: '履歴を確認・CSV保存し、受付終了後はSession Summaryから新しい受付を開始できます。',
+          helpStep5: 'ヘッダーのプリンターアイコンから番号札を作成し、印刷プレビューを確認してブラウザから印刷できます。',
           helpPrivacyTitle: 'プライバシー',
           helpPrivacyBody: 'Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。',
-          helpNotesTitle: 'v0.7.0 の範囲',
+          helpNotesTitle: 'v0.8.0 の範囲',
           helpNoteDisplay: 'DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。別端末への送信は行いません。',
           helpNoteFeatures: 'Fullscreen / Wake LockはFeature Detectionを行い、非対応環境ではその機能だけを無効化します。',
-          helpNoteHistory: '受付終了時は履歴を端末内へ保存し、CSV保存とSession Summaryを利用できます。',
+          helpNotePrinting: '番号札作成は現在のSessionと独立して利用でき、A4を既定とした印刷用CSSを使用します。',
 
           helpOffline: '配布用HTMLは実行時の外部通信を必要とせず、Display同期もブラウザ内だけで行います。',
           footer: '番号を発行して順番に呼び出すローカルツール',
@@ -2217,6 +2501,32 @@
           historySaveFailed: '履歴を端末へ保存できなかったため、受付を終了しませんでした。ストレージ設定や空き容量を確認してください。',
           csvSaved: 'CSVを保存しました。',
           csvSaveFailed: 'CSVを保存できませんでした。',
+          printTicketsTitle: '番号札を作成',
+          printKicker: 'Ticket Printing',
+          printViewTitle: '番号札を作成',
+          printViewBody: '番号範囲とレイアウトを設定して、ブラウザの印刷機能から整理券を印刷します。',
+          closePrintView: '戻る',
+          printStartNumber: '開始番号',
+          printEndNumber: '終了番号',
+          printDigits: '桁数',
+          printTicketTitle: 'タイトル',
+          printPaperSize: '用紙サイズ',
+          printPerPage: '1ページあたりの枚数',
+          printPerPageHelp: '1〜20枚で指定できます。',
+          printNow: '印刷する',
+          refreshPreview: 'プレビューを更新',
+          printTicketCount: '番号札',
+          printPageCount: 'ページ',
+          printLimitNote: '一度に作成できる番号札は最大1000枚です。',
+          printPreviewTitle: '印刷プレビュー',
+          printPreviewNote: '点線は切り取り目安です。実際の余白はブラウザやプリンター設定で変わる場合があります。',
+          printDefaultTitle: '受付番号',
+          printInvalidNumber: '開始番号と終了番号は0〜999999の整数で入力してください。',
+          printInvalidRange: '終了番号は開始番号以上にしてください。',
+          printTooMany: '一度に作成できる番号札は1000枚までです。',
+          printInvalidPerPage: '1ページあたりの枚数は1〜20で指定してください。',
+          printPreviewUpdated: '印刷プレビューを更新しました。',
+          printDialogOpened: 'ブラウザの印刷画面を開きました。',
           sessionReset: '受付をリセットしました。'
         },
         en: {
@@ -2313,13 +2623,13 @@
           helpStep2: 'Use Issue number or manual entry to add a ticket to the waiting queue.',
           helpStep3: 'Use Open display to launch the waiting-room Display in a separate window that can be moved to an external monitor.',
           helpStep4: 'Use Call next at any available counter and the number and Counter will update on the Display in real time.',
-          helpStep5: 'Review History, save CSV, and start a new reception from Session Summary after ending the current Session.',
+          helpStep5: 'Use the printer icon in the header to create number tickets, review the print preview, and print from the browser.',
           helpPrivacyTitle: 'Privacy',
           helpPrivacyBody: 'Ticket numbers, Counter settings, Display settings, and queue state are processed inside the same browser. The app uses no external API, analytics, or telemetry and does not send session data outside.',
-          helpNotesTitle: 'v0.7.0 scope',
+          helpNotesTitle: 'v0.8.0 scope',
           helpNoteDisplay: 'The Display syncs in a separate window of the same browser. It does not transmit data to another device.',
           helpNoteFeatures: 'Fullscreen and Wake Lock use feature detection. Unsupported environments disable only that optional feature.',
-          helpNoteHistory: 'Ending reception saves the Session history locally and enables CSV export and Session Summary.',
+          helpNotePrinting: 'Ticket creation works independently of the current Session and uses print CSS with A4 as the default paper size.',
 
           helpOffline: 'The distributable HTML needs no runtime external network access, and Display synchronization stays inside the browser.',
           footer: 'Local tool for issuing numbers and calling them in order',
@@ -2394,6 +2704,32 @@
           historySaveFailed: 'Reception was not ended because the history could not be saved locally. Check storage settings or available space.',
           csvSaved: 'CSV saved.',
           csvSaveFailed: 'CSV could not be saved.',
+          printTicketsTitle: 'Create number tickets',
+          printKicker: 'Ticket Printing',
+          printViewTitle: 'Create number tickets',
+          printViewBody: 'Choose a number range and layout, then print tickets with the browser print dialog.',
+          closePrintView: 'Back',
+          printStartNumber: 'Starting number',
+          printEndNumber: 'Ending number',
+          printDigits: 'Digits',
+          printTicketTitle: 'Title',
+          printPaperSize: 'Paper size',
+          printPerPage: 'Tickets per page',
+          printPerPageHelp: 'Choose from 1 to 20 tickets per page.',
+          printNow: 'Print',
+          refreshPreview: 'Refresh preview',
+          printTicketCount: 'Tickets',
+          printPageCount: 'Pages',
+          printLimitNote: 'Up to 1000 tickets can be generated at once.',
+          printPreviewTitle: 'Print preview',
+          printPreviewNote: 'Dashed lines are cutting guides. Actual margins can vary by browser and printer settings.',
+          printDefaultTitle: 'Queue Number',
+          printInvalidNumber: 'Starting and ending numbers must be integers from 0 to 999999.',
+          printInvalidRange: 'Ending number must be greater than or equal to the starting number.',
+          printTooMany: 'Up to 1000 tickets can be generated at once.',
+          printInvalidPerPage: 'Tickets per page must be from 1 to 20.',
+          printPreviewUpdated: 'Print preview refreshed.',
+          printDialogOpened: 'Browser print dialog opened.',
           sessionReset: 'Reception reset.'
         }
       };
@@ -2430,6 +2766,9 @@
       let endedSession = null;
       let historyVisible = false;
       let historyFilter = 'all';
+      let printVisible = false;
+      let printTitleCustom = false;
+      let printReturnFocus = null;
       let persistenceDbPromise = null;
       let persistenceTimer = 0;
       let saveState = 'saved';
@@ -3272,6 +3611,138 @@
         announce(translate('sessionReset'));
         $('#startNumber').focus();
       }
+      function defaultPrintTitle() {
+        return translate('printDefaultTitle');
+      }
+      function parsePrintNumber(value) {
+        const text = String(value ?? '').trim();
+        if (!/^\d+$/.test(text)) return null;
+        const number = Number(text);
+        if (!Number.isInteger(number) || number < 0 || number > 999999) return null;
+        return number;
+      }
+      function readPrintSettings() {
+        const start = parsePrintNumber($('#printStartNumber').value);
+        const end = parsePrintNumber($('#printEndNumber').value);
+        const digits = Number($('#printDigits').value);
+        const perPage = Number($('#printPerPage').value);
+        const title = $('#printTitleInput').value.trim();
+        const paper = $('#printPaperSize').value === 'letter' ? 'letter' : 'a4';
+        if (start === null || end === null) return { error: translate('printInvalidNumber') };
+        if (end < start) return { error: translate('printInvalidRange') };
+        const count = end - start + 1;
+        if (count > 1000) return { error: translate('printTooMany') };
+        if (!Number.isInteger(digits) || digits < 1 || digits > 6) return { error: translate('printInvalidNumber') };
+        if (!Number.isInteger(perPage) || perPage < 1 || perPage > 20) return { error: translate('printInvalidPerPage') };
+        return { start, end, digits, perPage, title, paper, count };
+      }
+      function printPaperConfig(paper) {
+        return paper === 'letter'
+          ? { width: 215.9, height: 279.4, cssSize: 'letter' }
+          : { width: 210, height: 297, cssSize: 'A4' };
+      }
+      function printGridLayout(perPage) {
+        if (perPage <= 1) return { columns: 1, rows: 1, numberSize: 72, titleSize: 20 };
+        if (perPage <= 2) return { columns: 1, rows: 2, numberSize: 64, titleSize: 18 };
+        if (perPage <= 4) return { columns: 2, rows: 2, numberSize: 54, titleSize: 17 };
+        if (perPage <= 6) return { columns: 2, rows: 3, numberSize: 46, titleSize: 15 };
+        if (perPage <= 9) return { columns: 3, rows: 3, numberSize: 38, titleSize: 14 };
+        if (perPage <= 12) return { columns: 3, rows: 4, numberSize: 32, titleSize: 12 };
+        if (perPage <= 16) return { columns: 4, rows: 4, numberSize: 26, titleSize: 11 };
+        return { columns: 4, rows: 5, numberSize: 22, titleSize: 10 };
+      }
+      function formatPrintNumber(value, digits) {
+        return String(value).padStart(digits, '0');
+      }
+      function applyPrintPageStyle(settings, layout) {
+        const paper = printPaperConfig(settings.paper);
+        const root = $('#printView');
+        root.style.setProperty('--print-paper-width', paper.width + 'mm');
+        root.style.setProperty('--print-paper-height', paper.height + 'mm');
+        root.style.setProperty('--print-paper-ratio', paper.width + ' / ' + paper.height);
+        root.style.setProperty('--print-columns', String(layout.columns));
+        root.style.setProperty('--print-rows', String(layout.rows));
+        root.style.setProperty('--print-number-size', layout.numberSize + 'pt');
+        root.style.setProperty('--print-title-size', layout.titleSize + 'pt');
+        let style = $('#dynamicPrintPageStyle');
+        if (!style) {
+          style = document.createElement('style');
+          style.id = 'dynamicPrintPageStyle';
+          document.head.append(style);
+        }
+        style.textContent = '@media print { @page { size: ' + paper.cssSize + ' portrait; margin: 0; } }';
+      }
+      function createPrintTicket(number, settings) {
+        const ticket = document.createElement('article');
+        ticket.className = 'print-ticket';
+        const title = document.createElement('div');
+        title.className = 'print-ticket-title';
+        title.textContent = settings.title;
+        title.hidden = !settings.title;
+        const value = document.createElement('div');
+        value.className = 'print-ticket-number';
+        value.textContent = formatPrintNumber(number, settings.digits);
+        ticket.append(title, value);
+        return ticket;
+      }
+      function renderPrintPreview(options = {}) {
+        const settings = readPrintSettings();
+        const error = $('#printSettingsError');
+        if (settings.error) {
+          error.textContent = settings.error;
+          $('#printSheets').replaceChildren();
+          $('#printTicketCount').textContent = '0';
+          $('#printPageCount').textContent = '0';
+          return false;
+        }
+        error.textContent = '';
+        const layout = printGridLayout(settings.perPage);
+        applyPrintPageStyle(settings, layout);
+        const sheets = $('#printSheets');
+        const fragment = document.createDocumentFragment();
+        let page = null;
+        let grid = null;
+        for (let number = settings.start, index = 0; number <= settings.end; number += 1, index += 1) {
+          if (index % settings.perPage === 0) {
+            page = document.createElement('section');
+            page.className = 'ticket-print-page';
+            page.setAttribute('aria-label', translate('printPageCount') + ' ' + (Math.floor(index / settings.perPage) + 1));
+            grid = document.createElement('div');
+            grid.className = 'ticket-print-grid';
+            page.append(grid);
+            fragment.append(page);
+          }
+          grid.append(createPrintTicket(number, settings));
+        }
+        sheets.replaceChildren(fragment);
+        $('#printTicketCount').textContent = new Intl.NumberFormat(language).format(settings.count);
+        $('#printPageCount').textContent = new Intl.NumberFormat(language).format(Math.ceil(settings.count / settings.perPage));
+        if (options.announce) announce(translate('printPreviewUpdated'));
+        return true;
+      }
+      function openPrintView() {
+        if (displayMode) return;
+        printReturnFocus = document.activeElement;
+        printVisible = true;
+        if (!printTitleCustom) $('#printTitleInput').value = defaultPrintTitle();
+        document.body.classList.add('print-editor-mode');
+        render();
+        renderPrintPreview();
+        $('#printViewTitle').focus();
+      }
+      function closePrintView() {
+        printVisible = false;
+        document.body.classList.remove('print-editor-mode');
+        render();
+        if (printReturnFocus && typeof printReturnFocus.focus === 'function') printReturnFocus.focus();
+        printReturnFocus = null;
+      }
+      function printTickets(event) {
+        event?.preventDefault();
+        if (!renderPrintPreview()) return;
+        announce(translate('printDialogOpened'));
+        window.requestAnimationFrame(() => window.print());
+      }
       function historySession() {
         return session || endedSession || null;
       }
@@ -3938,6 +4409,16 @@
       }
       function render() {
         if (displayMode) return;
+        $('#printView').hidden = !printVisible;
+        if (printVisible) {
+          $('#persistenceGate').hidden = true;
+          $('#recoveryView').hidden = true;
+          $('#setupView').hidden = true;
+          $('#operatorView').hidden = true;
+          $('#historyView').hidden = true;
+          $('#summaryView').hidden = true;
+          return;
+        }
         $('#persistenceGate').hidden = persistenceReady;
         if (!persistenceReady) {
           $('#recoveryView').hidden = true;
@@ -4005,10 +4486,23 @@
           initializeSoundSupport();
           if (recoveryCandidate) renderRecoveryCandidate();
           if (session) setSaveState(saveState);
+          if (!printTitleCustom) $('#printTitleInput').value = defaultPrintTitle();
+          if (printVisible) renderPrintPreview();
         } else updateDisplayFeatureControls();
         render();
       }
 
+      $('#printTicketsButton').addEventListener('click', openPrintView);
+      $('#closePrintViewButton').addEventListener('click', closePrintView);
+      $('#printSettingsForm').addEventListener('submit', printTickets);
+      $('#refreshPrintPreviewButton').addEventListener('click', () => renderPrintPreview({ announce: true }));
+      ['printStartNumber', 'printEndNumber', 'printDigits', 'printPaperSize', 'printPerPage'].forEach(id => {
+        $('#' + id).addEventListener('change', () => renderPrintPreview());
+      });
+      $('#printTitleInput').addEventListener('input', () => {
+        printTitleCustom = true;
+        renderPrintPreview();
+      });
       $('#languageButton').addEventListener('click', () => {
         language = language === 'ja' ? 'en' : 'ja';
         writeStorage(storageKey, language);

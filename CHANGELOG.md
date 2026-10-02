@@ -2,6 +2,31 @@
 
 All notable changes to Queue Board are documented here.
 
+## [0.8.0] - 2026-10-02
+
+### Added
+
+- Standalone number-ticket creation independent of the active Session.
+- Starting / ending number settings.
+- 1–6 digit number formatting.
+- Custom ticket title.
+- A4 and Letter paper sizes, with A4 as the default.
+- Configurable 1–20 tickets per page.
+- Page-by-page print preview.
+- Dashed cutting guides.
+- Dynamic print grid sizing.
+- Browser print flow using `window.print()`.
+- Print-specific `@media print` and dynamic `@page` size.
+- Print output that excludes application controls.
+- Safety limit of 1000 generated tickets per print job.
+
+### Changed
+
+- Header now includes a printer action available independently of Session state.
+- Help and README now document ticket printing and print constraints.
+- Increased spacing in the recovery card, number-ticket editor, and Session Summary actions so controls have more breathing room and wrap cleanly.
+- Replaced the canonical app icon / favicon with the provided Queue Board artwork.
+
 ## [0.7.0] - 2026-10-02
 
 ### Added

@@ -1,8 +1,8 @@
 # Queue Board
 
-Queue Board is a Browser Kitty app for temporary reception desks and small events. It issues numbered Tickets, keeps a shared queue, and calls people in order.
+Queue Board is a Browser Kitty app for temporary reception desks and small events. It issues numbered Tickets, manages a shared queue, shows a waiting-room Display, records History, and can prepare printable number tickets.
 
-The project is currently at **v0.7.0 — History / Export**.
+The project is currently at **v0.8.0 — Ticket Printing**.
 
 ## Features
 
@@ -12,92 +12,83 @@ The project is currently at **v0.7.0 — History / Export**.
 - Waiting-room Display
 - Built-in chime / Fullscreen / Wake Lock
 - Active-Session autosave and recovery
-- History screen
-- Status filters: All / Waiting / Calling / Completed / Absent
-- Issued / called / absent / completed timestamps per Ticket
-- callCount display
-- CSV export
-- Session Summary
-- Average wait time
-- Confirmed Session-ending flow
-- Local archive for ended Sessions
-- Start-new-reception flow
+- History / CSV / Session Summary
+- Number-ticket creation
+- Print preview
+- Browser printing
 - Japanese / English UI
 - Fully local processing
 
-## History
+## Number-ticket creation
 
-Open **History** from the Operator screen to review Tickets in the current Session.
+Use the printer icon in the header to create number tickets independently from the current Session.
 
-Each Ticket shows the timestamps that are available for:
+Settings:
 
-- Issued
-- Called
-- Absent
-- Completed
+- Starting number
+- Ending number
+- Digits
+- Title
+- Paper size
+- Tickets per page
 
-History can be filtered by current status and also shows call count and the most recent Counter associated with the Ticket.
+Defaults:
 
-## CSV
+- Starting number: 001
+- Ending number: 030
+- Digits: 3
+- Title: “Queue Number”
+- Paper size: A4
+- Tickets per page: 8
 
-CSV can be saved from History or Session Summary.
+Paper sizes: **A4 / Letter**. Tickets per page can be set from 1 to 20.
 
-The file contains these seven columns:
+## Print preview
 
-```text
-number
-status
-created_at
-called_at
-completed_at
-counter
-call_count
-```
+Queue Board generates a page-by-page preview from the selected settings.
 
-CSV is generated as UTF-8 with BOM, with filenames in the form `queue-board-YYYY-MM-DD.csv`.
+- Ticket title and number
+- Dashed cutting guides
+- Page break after each paper sheet
+- Dynamic print `@page` size
+- Application controls excluded from printed output
 
-## Session Summary
+Select **Print** to open the browser's standard print dialog.
 
-**End reception** is a confirmed operation. Queue Board first saves the ended Session history locally and only ends the active Session after that save succeeds.
+Printer margins and scaling can still vary depending on the browser, operating system, and printer driver.
 
-Summary shows:
+## v0.8.0 limitations
 
-- Issued count
-- Completed count
-- Absent count
-- Still-waiting count
-- Started time
-- Ended time
-- Average wait
+To avoid freezing the browser, one print job can generate up to **1000 tickets**.
 
-Average wait is calculated from `createdAt → calledAt`, as defined by the specification.
+- Number range: 0–999999
+- Digits: 1–6
+- Tickets per page: 1–20
+- Paper sizes: A4 / Letter
+- Desktop browser printing is the primary target
+- Printed dimensions can vary slightly with browser / OS / printer settings
 
-After ending reception, the user can:
+Ticket creation is independent of the active Session, so it can be used before, during, or after reception.
 
-- Save CSV
-- View History
-- Start a new reception
+## Other features
 
-Starting a new reception does not delete the archived ended Session.
+### History / CSV
 
-## Persistence
+Filter Session History by five states and export it as UTF-8 BOM CSV.
 
-The active Session is autosaved with IndexedDB as the primary store and localStorage as fallback.
+### Session Summary
 
-Ended Sessions are also archived locally. After reload, when no active Session exists, Queue Board can restore the latest ended Session Summary.
+Ending reception shows issued, completed, absent, waiting, start/end time, and average wait.
 
-## v0.7.0 limitations
+### Persistence
 
-- Up to four Counters
-- No cross-Session archive browser yet
-- No ticket printing yet
-- Final Mobile / Accessibility release-candidate refinement is not yet complete
-
-Ticket printing is planned for v0.8.0 and Mobile / UX / Accessibility RC work for v0.9.0.
+The active Session uses IndexedDB as the primary local store with localStorage fallback.
 
 ## Privacy
 
-Tickets, Session history, settings, and Display state are processed in the browser. The app uses no external API, analytics, or telemetry, and its Content Security Policy blocks runtime external connections.
+Tickets, Session History, printable number tickets, settings, and Display state are processed in the browser. Printing does not send ticket data to an external service.
+
+The app uses no external API, analytics, or telemetry, and its Content Security Policy blocks runtime external connections.
 
 ## Single HTML
 
@@ -106,6 +97,8 @@ The build produces:
 - `dist/index.html`
 - `dist/index.self-extract.html`
 - `queue-board.html`
+
+Number-ticket creation and printing are included in the same standalone HTML.
 
 ## Development
 
