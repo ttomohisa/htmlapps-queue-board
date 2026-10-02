@@ -2,36 +2,38 @@
 
 Queue Board is a Browser Kitty app for temporary reception desks and small events. It issues numbered tickets, keeps a waiting queue, and calls people in order.
 
-The project is currently at **v0.1.0 — Core Queue**.
+The project is currently at **v0.2.0 — Queue Operations**.
 
-## What v0.1.0 includes
+## Features
 
 - Start a session with a chosen starting number
 - Issue sequential tickets
-- Add issued tickets to the waiting queue
+- Add an arbitrary number manually
+- Prevent duplicate numbers within the same session
 - Call the first waiting ticket at one counter
-- Complete the currently called ticket
-- Show waiting, issued, and completed counts
-- Reset the session with confirmation
+- Recall the active ticket
+- Complete or mark the active ticket absent
+- Return absent tickets to the end of the queue
+- Delete waiting / absent tickets with Undo
+- Delete the active ticket with confirmation
+- Show waiting, registered, and completed counts
 - Japanese / English UI
 - Responsive desktop and smartphone layout
-- Single-HTML build with runtime external connections blocked
+- Fully local processing
 
 ## Usage
 
 1. Check the starting number and select **Start reception**.
-2. Select **Issue number** for each visitor.
-3. When the counter is free, select **Call next**.
-4. Select **Complete** when service is finished.
+2. Use **Issue number** for normal sequential tickets, or manual entry for existing paper tickets.
+3. Select **Call next** to call the first waiting ticket.
+4. Use **Call again** when needed.
+5. Finish with **Complete** or **Absent**.
+6. Return an absent ticket to the end of the queue when the visitor comes back.
 
-## v0.1.0 limitations
-
-This version intentionally implements only the core flow defined in the roadmap.
+## v0.2.0 limitations
 
 - One counter only
 - No autosave or session recovery
-- No manual ticket entry
-- No absent or recall flow
 - No Display window
 - No CSV export
 - No ticket printing
@@ -44,7 +46,7 @@ Ticket numbers and session state are processed in the browser. The app uses no e
 
 ## Single HTML
 
-The template build produces:
+The build produces:
 
 - `dist/index.html`
 - `dist/index.self-extract.html`
@@ -57,7 +59,7 @@ powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File .\scripts\check-
 powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File .\scripts\check-repository.ps1
 ```
 
-See `APP_SPEC.md` for the formal product specification and the v0.1.0–v1.0.0 roadmap.
+See `APP_SPEC.md` for the formal specification and v0.1.0–v1.0.0 roadmap.
 
 ## License
 
