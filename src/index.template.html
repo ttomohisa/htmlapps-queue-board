@@ -3628,7 +3628,7 @@
           .sort((a, b) => (b.lastCalledAt || b.calledAt || 0) - (a.lastCalledAt || a.calledAt || 0))
           .slice(0, session.recentCallCount)
           .map(ticket => {
-            const counter = session.counters.find(item => item.id === ticket.counterId);
+            const counter = session.counters.find(item => item.id === (ticket.lastCounterId || ticket.counterId));
             return {
               ticketId: ticket.id,
               number: ticket.displayNumber,
