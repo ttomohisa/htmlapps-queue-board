@@ -1504,6 +1504,201 @@
       .history-filter { width: 100%; }
     }
 
+
+    /* Queue Board v0.8.0 ticket printing */
+    .print-view {
+      display: grid;
+      gap: 14px;
+    }
+    .print-view[hidden] { display: none; }
+    .print-editor-card {
+      display: grid;
+      gap: 16px;
+    }
+    .print-editor-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .print-editor-head h2 { margin: 0; font-size: 22px; }
+    .print-editor-head p { margin: 5px 0 0; color: var(--muted); }
+    .print-settings-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .print-settings-grid .wide { grid-column: span 2; }
+    .print-editor-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .print-summary {
+      display: flex;
+      gap: 8px 16px;
+      flex-wrap: wrap;
+      padding: 11px 13px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: var(--surface-muted);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .print-summary strong { color: var(--text); font-variant-numeric: tabular-nums; }
+    .print-preview-panel {
+      display: grid;
+      gap: 10px;
+    }
+    .print-preview-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .print-preview-head h3 { margin: 0; font-size: 15px; }
+    .print-preview-head span { color: var(--muted); font-size: 11px; }
+    .print-page-list {
+      display: grid;
+      gap: 18px;
+      justify-items: center;
+      overflow-x: auto;
+      padding: 4px 0 18px;
+    }
+    .ticket-print-page {
+      width: min(100%, 210mm);
+      aspect-ratio: var(--print-paper-ratio, 210 / 297);
+      padding: clamp(6mm, 2vw, 10mm);
+      background: #fff;
+      color: #111;
+      border: 1px solid #d2d2d2;
+      box-shadow: 0 8px 28px rgba(0,0,0,.08);
+      break-after: page;
+      page-break-after: always;
+    }
+    .ticket-print-page:last-child { break-after: auto; page-break-after: auto; }
+    .ticket-print-grid {
+      display: grid;
+      grid-template-columns: repeat(var(--print-columns, 2), minmax(0, 1fr));
+      grid-template-rows: repeat(var(--print-rows, 4), minmax(0, 1fr));
+      gap: 4mm;
+      height: 100%;
+    }
+    .print-ticket {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      place-items: center;
+      align-content: center;
+      gap: clamp(2mm, 1vw, 5mm);
+      padding: 4mm;
+      border: 0.45mm dashed #888;
+      text-align: center;
+      overflow: hidden;
+    }
+    .print-ticket-title {
+      max-width: 100%;
+      font-size: clamp(11px, 2.2vw, 22px);
+      font-weight: 800;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+    .print-ticket-number {
+      max-width: 100%;
+      color: #111;
+      font-size: clamp(34px, 8vw, 82px);
+      font-weight: 950;
+      line-height: .95;
+      letter-spacing: .05em;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+    .print-error {
+      min-height: 18px;
+      color: var(--danger);
+      font-size: 11px;
+      font-weight: 750;
+    }
+    body.print-editor-mode .queue-intro { display: none; }
+    body.display-mode #printTicketsButton { display: none !important; }
+    @media (max-width: 760px) {
+      .print-settings-grid { grid-template-columns: 1fr 1fr; }
+      .print-settings-grid .wide { grid-column: 1 / -1; }
+      .print-editor-actions { display: grid; grid-template-columns: 1fr 1fr; }
+      .print-editor-actions .button { width: 100%; }
+      .ticket-print-page { min-width: 620px; }
+    }
+    @media (max-width: 480px) {
+      .print-settings-grid { grid-template-columns: 1fr; }
+      .print-settings-grid .wide { grid-column: auto; }
+      .print-editor-actions { grid-template-columns: 1fr; }
+    }
+    @media print {
+      body {
+        margin: 0 !important;
+        background: #fff !important;
+        color: #000 !important;
+      }
+      body > header,
+      body > footer,
+      body > .app-toast,
+      body > dialog,
+      .queue-intro,
+      #persistenceGate,
+      #recoveryView,
+      #setupView,
+      #operatorView,
+      #historyView,
+      #summaryView,
+      #displayView,
+      .print-editor-card,
+      .print-preview-head {
+        display: none !important;
+      }
+      .main.queue-main {
+        width: auto !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      #printView,
+      .print-preview-panel,
+      #printSheets {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      .ticket-print-page {
+        width: var(--print-paper-width, 210mm) !important;
+        height: var(--print-paper-height, 297mm) !important;
+        aspect-ratio: auto !important;
+        margin: 0 !important;
+        padding: 8mm !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        overflow: hidden !important;
+      }
+      .ticket-print-grid {
+        gap: 4mm !important;
+      }
+      .print-ticket-title {
+        font-size: var(--print-title-size, 16pt) !important;
+      }
+      .print-ticket-number {
+        font-size: var(--print-number-size, 42pt) !important;
+      }
+      .print-ticket {
+        border: .35mm dashed #777 !important;
+        padding: 3mm !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1519,6 +1714,9 @@
         </div>
       </div>
       <div class="header-actions">
+        <button class="icon-button header-icon-button" id="printTicketsButton" type="button" data-i18n-title="printTicketsTitle" data-i18n-aria-label="printTicketsTitle" title="番号札を作成" aria-label="番号札を作成">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 8V3h10v5"/><rect x="4" y="8" width="16" height="9" rx="2"/><path d="M7 14h10v7H7z"/><path d="M17 11h.01"/></svg>
+        </button>
         <button class="language-button" id="languageButton" type="button" aria-label="Switch language">EN</button>
         <button class="icon-button header-icon-button" id="helpButton" type="button" data-i18n-title="helpTitle" data-i18n-aria-label="helpTitle" title="使い方と注意事項" aria-label="使い方と注意事項">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.35 2.35 0 1 1 3.72 1.9c-.92.67-1.52 1.12-1.52 2.1"/><path d="M12 17h.01"/></svg>
@@ -1832,6 +2030,76 @@
       </div>
     </section>
 
+    <section class="print-view" id="printView" hidden aria-labelledby="printViewTitle">
+      <div class="queue-card print-editor-card">
+        <div class="print-editor-head">
+          <div>
+            <p class="panel-kicker" data-i18n="printKicker">Ticket Printing</p>
+            <h2 id="printViewTitle" tabindex="-1" data-i18n="printViewTitle">番号札を作成</h2>
+            <p data-i18n="printViewBody">番号範囲とレイアウトを設定して、ブラウザの印刷機能から整理券を印刷します。</p>
+          </div>
+          <button class="button" id="closePrintViewButton" type="button" data-i18n="closePrintView">戻る</button>
+        </div>
+
+        <form id="printSettingsForm" novalidate>
+          <div class="print-settings-grid">
+            <label class="field" for="printStartNumber">
+              <span class="field-label" data-i18n="printStartNumber">開始番号</span>
+              <input class="number-input" id="printStartNumber" type="text" inputmode="numeric" maxlength="6" value="001">
+            </label>
+            <label class="field" for="printEndNumber">
+              <span class="field-label" data-i18n="printEndNumber">終了番号</span>
+              <input class="number-input" id="printEndNumber" type="text" inputmode="numeric" maxlength="6" value="030">
+            </label>
+            <label class="field" for="printDigits">
+              <span class="field-label" data-i18n="printDigits">桁数</span>
+              <select class="select-input" id="printDigits">
+                <option value="1">1</option><option value="2">2</option><option value="3" selected>3</option>
+                <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+              </select>
+            </label>
+            <label class="field wide" for="printTitleInput">
+              <span class="field-label" data-i18n="printTicketTitle">タイトル</span>
+              <input class="text-input" id="printTitleInput" type="text" maxlength="40" value="受付番号">
+            </label>
+            <label class="field" for="printPaperSize">
+              <span class="field-label" data-i18n="printPaperSize">用紙サイズ</span>
+              <select class="select-input" id="printPaperSize">
+                <option value="a4" selected>A4</option>
+                <option value="letter">Letter</option>
+              </select>
+            </label>
+            <label class="field" for="printPerPage">
+              <span class="field-label" data-i18n="printPerPage">1ページあたりの枚数</span>
+              <input class="number-input" id="printPerPage" type="number" inputmode="numeric" min="1" max="20" value="8">
+              <span class="field-help" data-i18n="printPerPageHelp">1〜20枚で指定できます。</span>
+            </label>
+          </div>
+          <p class="print-error" id="printSettingsError" role="alert"></p>
+          <div class="print-editor-actions">
+            <button class="button primary large with-icon" id="printNowButton" type="submit">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 8V3h10v5"/><rect x="4" y="8" width="16" height="9" rx="2"/><path d="M7 14h10v7H7z"/></svg>
+              <span data-i18n="printNow">印刷する</span>
+            </button>
+            <button class="button" id="refreshPrintPreviewButton" type="button" data-i18n="refreshPreview">プレビューを更新</button>
+          </div>
+        </form>
+        <div class="print-summary" aria-live="polite">
+          <span><span data-i18n="printTicketCount">番号札</span>: <strong id="printTicketCount">30</strong></span>
+          <span><span data-i18n="printPageCount">ページ</span>: <strong id="printPageCount">4</strong></span>
+          <span data-i18n="printLimitNote">一度に作成できる番号札は最大1000枚です。</span>
+        </div>
+      </div>
+
+      <section class="print-preview-panel" aria-labelledby="printPreviewTitle">
+        <div class="print-preview-head">
+          <h3 id="printPreviewTitle" data-i18n="printPreviewTitle">印刷プレビュー</h3>
+          <span data-i18n="printPreviewNote">点線は切り取り目安です。実際の余白はブラウザやプリンター設定で変わる場合があります。</span>
+        </div>
+        <div class="print-page-list" id="printSheets"></div>
+      </section>
+    </section>
+
     <section class="display-board" id="displayView" hidden aria-labelledby="displayBoardTitle">
       <div class="display-board-top">
         <h1 class="display-board-title" id="displayBoardTitle">お呼びしています</h1>
@@ -1911,22 +2179,22 @@
       </button>
     </div>
     <div class="dialog-body">
-      <!-- APP:HELP:BEGIN Queue Board v0.7.0 -->
+      <!-- APP:HELP:BEGIN Queue Board v0.8.0 -->
       <h3 data-i18n="helpBasicsTitle">基本操作</h3>
       <ol>
         <li data-i18n="helpStep1">開始番号と窓口数、必要なら各窓口名と表示画面設定を決めて受付を開始します。</li>
         <li data-i18n="helpStep2">「番号を発行」、または手動追加で待ち列へ番号を登録します。</li>
         <li data-i18n="helpStep3">「表示画面を開く」で待合向けDisplayを別ウィンドウに開きます。外部モニターへ移動して使えます。</li>
         <li data-i18n="helpStep4">空いている窓口の「次を呼ぶ」で、Displayへ番号と窓口がリアルタイム反映されます。</li>
-        <li data-i18n="helpStep5">履歴を確認・CSV保存し、受付終了後はSession Summaryから新しい受付を開始できます。</li>
+        <li data-i18n="helpStep5">ヘッダーのプリンターアイコンから番号札を作成し、印刷プレビューを確認してブラウザから印刷できます。</li>
       </ol>
       <h3 data-i18n="helpPrivacyTitle">プライバシー</h3>
       <p data-i18n="helpPrivacyBody">Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。</p>
-      <h3 data-i18n="helpNotesTitle">v0.7.0 の範囲</h3>
+      <h3 data-i18n="helpNotesTitle">v0.8.0 の範囲</h3>
       <ul>
         <li data-i18n="helpNoteDisplay">DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。別端末への送信は行いません。</li>
         <li data-i18n="helpNoteFeatures">Fullscreen / Wake LockはFeature Detectionを行い、非対応環境ではその機能だけを無効化します。</li>
-        <li data-i18n="helpNoteHistory">受付終了時は履歴を端末内へ保存し、CSV保存とSession Summaryを利用できます。</li>
+        <li data-i18n="helpNotePrinting">番号札作成は現在のSessionと独立して利用でき、A4を既定とした印刷用CSSを使用します。</li>
       </ul>
       <p class="dialog-note" data-i18n="helpOffline">配布用HTMLは実行時の外部通信を必要とせず、Display同期もブラウザ内だけで行います。</p>
       <!-- APP:HELP:END -->
