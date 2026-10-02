@@ -2,6 +2,27 @@
 
 All notable changes to Queue Board are documented here.
 
+## [0.4.0] - 2026-10-02
+
+### Added
+
+- Dedicated waiting-room Display mode opened with `window.open`.
+- Real-time Operator → Display synchronization for active numbers, Counter names, recent calls, waiting count, and Display title.
+- Display settings for title, waiting-count visibility, and recent-call count.
+- Large active-number cards for one to four simultaneous Counters.
+- Recent-call list with configured item count.
+- Number-change animation with reduced-motion support.
+- Display connection state in the Operator UI.
+- Reopen / reconnect behavior after the Display window is closed.
+- Display-ended state when the Operator resets or leaves the active Session.
+- Portrait and landscape responsive Display layouts.
+- `postMessage` synchronization with optional `BroadcastChannel` supplementation and `file://` handling.
+
+### Changed
+
+- Operator Session controls now include a Display connection indicator and Open display action.
+- Help and README now describe the v0.4.0 Display workflow and same-browser synchronization model.
+
 ## [0.3.0] - 2026-10-02
 
 ### Added
