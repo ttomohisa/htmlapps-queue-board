@@ -24,7 +24,7 @@ All notable changes to Queue Board are documented here.
 
 - Header now includes a printer action available independently of Session state.
 - Help and README now document ticket printing and print constraints.
-- Increased spacing in the number-ticket editor and Session Summary actions so controls have more breathing room and wrap cleanly.
+- Increased spacing in the recovery card, number-ticket editor, and Session Summary actions so controls have more breathing room and wrap cleanly.
 - Replaced the canonical app icon / favicon with the provided Queue Board artwork.
 
 ## [0.7.0] - 2026-10-02

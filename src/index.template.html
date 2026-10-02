@@ -1289,26 +1289,29 @@
       animation: persistenceSpin .75s linear infinite;
     }
     @keyframes persistenceSpin { to { transform: rotate(360deg); } }
-    .recovery-card { border-color: color-mix(in srgb, var(--accent) 28%, var(--line)); }
+    .recovery-card {
+      padding: clamp(20px, 3vw, 28px);
+      border-color: color-mix(in srgb, var(--accent) 28%, var(--line));
+    }
     .recovery-card[hidden] { display: none; }
-    .recovery-head { display: grid; gap: 5px; }
+    .recovery-head { display: grid; gap: 7px; }
     .recovery-head h2 { margin: 0; font-size: 21px; }
     .recovery-head p { margin: 0; color: var(--muted); }
     .recovery-summary {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 16px;
+      gap: 14px;
+      margin-top: 20px;
     }
     .recovery-stat {
-      padding: 12px;
+      padding: 15px 14px;
       border: 1px solid var(--line);
       border-radius: 11px;
       background: var(--surface-muted);
     }
     .recovery-stat-label { display: block; color: var(--muted); font-size: 10px; font-weight: 800; }
     .recovery-stat-value { display: block; margin-top: 3px; font-size: 18px; font-weight: 900; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-    .recovery-actions { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 16px; }
+    .recovery-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
     .save-status {
       display: inline-flex;
       align-items: center;
