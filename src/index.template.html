@@ -1447,7 +1447,7 @@
     }
     .history-empty strong { display: block; color: var(--text); }
     .history-empty span { display: block; margin-top: 6px; }
-    .summary-shell { display: grid; gap: 14px; }
+    .summary-shell { display: grid; gap: 18px; }
     .summary-shell[hidden],
     .history-shell[hidden] { display: none; }
     .summary-hero {
@@ -1461,11 +1461,11 @@
     .summary-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
+      gap: 14px;
     }
     .summary-card {
       min-width: 0;
-      padding: 15px;
+      padding: 18px;
       border: 1px solid var(--line);
       border-radius: 13px;
       background: var(--surface);
@@ -1483,9 +1483,15 @@
     .summary-times {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
+      gap: 14px;
     }
-    .summary-actions { margin-top: 4px; }
+    .summary-action-card {
+      padding: clamp(18px, 2.6vw, 24px);
+    }
+    .summary-actions {
+      margin-top: 0;
+      gap: 12px;
+    }
     .end-session-button { border-color: color-mix(in srgb, var(--danger) 35%, var(--line)); }
     @media (max-width: 760px) {
       .history-item { grid-template-columns: 78px minmax(0, 1fr); }
@@ -1508,39 +1514,45 @@
     /* Queue Board v0.8.0 ticket printing */
     .print-view {
       display: grid;
-      gap: 14px;
+      gap: 20px;
     }
     .print-view[hidden] { display: none; }
     .print-editor-card {
       display: grid;
-      gap: 16px;
+      gap: 22px;
+      padding: clamp(18px, 3vw, 30px);
     }
     .print-editor-head {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 14px;
+      gap: 20px;
       flex-wrap: wrap;
     }
     .print-editor-head h2 { margin: 0; font-size: 22px; }
-    .print-editor-head p { margin: 5px 0 0; color: var(--muted); }
+    .print-editor-head p { margin: 7px 0 0; max-width: 760px; color: var(--muted); }
+    #printSettingsForm {
+      display: grid;
+      gap: 18px;
+    }
     .print-settings-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
+      gap: 20px 18px;
     }
     .print-settings-grid .wide { grid-column: span 2; }
     .print-editor-actions {
       display: flex;
-      gap: 8px;
+      gap: 12px;
       align-items: center;
       flex-wrap: wrap;
+      padding-top: 2px;
     }
     .print-summary {
       display: flex;
-      gap: 8px 16px;
+      gap: 10px 20px;
       flex-wrap: wrap;
-      padding: 11px 13px;
+      padding: 14px 16px;
       border: 1px solid var(--line);
       border-radius: 11px;
       background: var(--surface-muted);
@@ -1551,7 +1563,8 @@
     .print-summary strong { color: var(--text); font-variant-numeric: tabular-nums; }
     .print-preview-panel {
       display: grid;
-      gap: 10px;
+      gap: 14px;
+      padding-top: 2px;
     }
     .print-preview-head {
       display: flex;
@@ -2018,7 +2031,7 @@
         <div class="summary-card"><span class="summary-card-label" data-i18n="summaryEnded">受付終了</span><strong class="summary-card-value" id="summaryEnded">--:--</strong></div>
         <div class="summary-card"><span class="summary-card-label" data-i18n="summaryAverageWait">平均待ち時間</span><strong class="summary-card-value" id="summaryAverageWait">—</strong></div>
       </div>
-      <div class="queue-card">
+      <div class="queue-card summary-action-card">
         <div class="summary-actions">
           <button class="button primary large with-icon" id="summaryCsvButton" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M5 20h14"/></svg>
