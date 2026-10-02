@@ -6,7 +6,7 @@
   <meta name="color-scheme" content="light">
   <meta name="theme-color" content="#f5f5f2">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' 'unsafe-inline' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data: blob:; media-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
-  <title>Single HTML App Starter</title>
+  <title>Queue Board</title>
   <link rel="icon" href="__APP_ICON_DATA_URI__">
   <style>
     :root {
@@ -439,6 +439,199 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
     }
+
+    /* Queue Board v0.1.0 */
+    .queue-main { width: min(1120px, 100%); }
+    .queue-intro { padding-bottom: 16px; }
+    .stage-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 5px 10px;
+      border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--line));
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .queue-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+    }
+    .setup-card {
+      max-width: 620px;
+      margin: 0 auto;
+      padding: clamp(18px, 3vw, 28px);
+    }
+    .setup-card h2, .panel-title { margin: 0; letter-spacing: -.02em; }
+    .setup-card h2 { font-size: clamp(22px, 4vw, 28px); }
+    .setup-card > p { margin: 7px 0 22px; color: var(--muted); }
+    .field { display: grid; gap: 7px; }
+    .field-label { font-size: 13px; font-weight: 800; }
+    .field-help { color: var(--muted); font-size: 12px; }
+    .number-input {
+      width: min(100%, 240px);
+      min-height: 52px;
+      padding: 10px 13px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fbfbf9;
+      color: var(--text);
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: .08em;
+    }
+    .setup-actions { display: flex; gap: 10px; margin-top: 22px; }
+    .button.large {
+      min-height: 50px;
+      padding-inline: 20px;
+      font-size: 15px;
+    }
+    .button svg { width: 18px; height: 18px; flex: 0 0 auto; }
+    .button.with-icon { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    .button:disabled {
+      cursor: not-allowed;
+      opacity: .48;
+      transform: none;
+    }
+    .button:disabled:hover { border-color: var(--line); background: var(--surface); }
+    .button.primary:disabled:hover { border-color: var(--accent); background: var(--accent); }
+    .operator-shell { display: grid; gap: 14px; }
+    .session-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+    }
+    .session-status { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .status-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+    .session-label { font-weight: 800; }
+    .session-meta { color: var(--muted); font-size: 12px; }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .metric { padding: 14px; text-align: center; }
+    .metric-value {
+      display: block;
+      font-variant-numeric: tabular-nums;
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 850;
+      line-height: 1.05;
+    }
+    .metric-label { display: block; margin-top: 5px; color: var(--muted); font-size: 11px; font-weight: 700; }
+    .operator-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+    .action-panel { min-height: 300px; padding: 20px; display: flex; flex-direction: column; }
+    .panel-kicker {
+      margin: 0 0 4px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .04em;
+    }
+    .panel-title { font-size: 19px; }
+    .big-number {
+      margin: auto 0;
+      text-align: center;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      font-size: clamp(64px, 11vw, 112px);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: .04em;
+    }
+    .big-number.muted { color: var(--line-strong); }
+    .panel-actions { display: grid; gap: 9px; margin-top: 18px; }
+    .panel-actions.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .issue-summary {
+      margin-top: 12px;
+      padding: 13px 14px;
+      border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line));
+      border-radius: 12px;
+      background: var(--accent-soft);
+    }
+    .issue-summary-label { color: var(--muted); font-size: 11px; font-weight: 800; }
+    .issue-summary-number { display: block; margin-top: 2px; color: var(--accent); font-size: 30px; font-weight: 900; letter-spacing: .06em; }
+    .queue-panel { padding: 20px; }
+    .queue-panel-head { display: flex; align-items: end; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
+    .queue-panel-head p { margin: 0; color: var(--muted); font-size: 12px; }
+    .waiting-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+    .waiting-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 12px;
+      min-height: 54px;
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: #fbfbf9;
+    }
+    .waiting-order {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--surface-muted);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .waiting-number { font-size: 19px; font-weight: 850; letter-spacing: .05em; font-variant-numeric: tabular-nums; }
+    .waiting-time { color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .empty-state {
+      padding: 30px 16px;
+      border: 1px dashed var(--line-strong);
+      border-radius: 12px;
+      text-align: center;
+      color: var(--muted);
+    }
+    .empty-state strong { display: block; margin-bottom: 4px; color: var(--text); }
+    .notice {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 11px;
+      background: var(--surface-muted);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.65;
+    }
+    .error-text { min-height: 20px; margin: 7px 0 0; color: var(--danger); font-size: 12px; }
+    [hidden] { display: none !important; }
+    @media (max-width: 760px) {
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .operator-grid { grid-template-columns: 1fr; }
+      .action-panel { min-height: 270px; }
+      .session-bar { align-items: flex-start; }
+    }
+    @media (max-width: 520px) {
+      .queue-main { padding-bottom: calc(30px + env(safe-area-inset-bottom)); }
+      .queue-intro { gap: 8px; }
+      .setup-card { padding: 18px 15px; }
+      .number-input { width: 100%; }
+      .setup-actions .button { width: 100%; }
+      .session-bar { flex-direction: column; }
+      .session-bar .button { width: 100%; }
+      .metric { padding: 12px 8px; }
+      .action-panel, .queue-panel { padding: 16px; }
+      .big-number { font-size: clamp(66px, 24vw, 104px); }
+      .panel-actions.two { grid-template-columns: 1fr; }
+      .waiting-item { grid-template-columns: auto 1fr; }
+      .waiting-time { grid-column: 2; }
+    }
+
   </style>
 </head>
 <body>
@@ -462,83 +655,111 @@
     </div>
   </header>
 
-  <main class="main">
-    <section class="page-intro" aria-labelledby="heroTitle">
+  <main class="main queue-main">
+    <section class="page-intro queue-intro" aria-labelledby="heroTitle">
       <div>
-        <h2 id="heroTitle" data-i18n="introTitle">単一HTMLアプリのスターター</h2>
-        <p data-i18n="lead">PDF Organizerと同じ、固定依存・完全内包・実行時通信なしの構成から、新しいブラウザーアプリを作れます。</p>
+        <h2 id="heroTitle" data-i18n="introTitle">その場で使える呼び出し番号</h2>
+        <p data-i18n="lead">番号を発行し、待ち列の先頭から順番に呼び出します。v0.1.0では1窓口の基本フローに絞っています。</p>
       </div>
-      <div class="local-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v5c0 4.6 2.8 8 7 10 4.2-2 7-5.4 7-10V6z"/><path d="m9 12 2 2 4-5"/></svg>
-        <span data-i18n="localBadge">実行時通信なし</span>
-      </div>
+      <div class="stage-badge">v0.1.0 · Core Queue</div>
     </section>
 
-    <!-- APP:BEGIN Replace this demo workspace with the real application. -->
-    <section class="shell workspace" aria-labelledby="workspaceTitle">
-      <div class="workspace-head">
-        <div>
-          <h2 id="workspaceTitle" data-i18n="workspaceTitle">Starter workspace</h2>
-          <p data-i18n="workspaceBody">Text stays in this browser. It is never sent by this app.</p>
-        </div>
-        <div class="stats" aria-live="polite">
-          <div class="stat"><span class="stat-value" id="characterCount">0</span><span class="stat-label" data-i18n="characters">Characters</span></div>
-          <div class="stat"><span class="stat-value" id="wordCount">0</span><span class="stat-label" data-i18n="words">Words</span></div>
-          <div class="stat"><span class="stat-value" id="lineCount">0</span><span class="stat-label" data-i18n="lines">Lines</span></div>
-        </div>
-      </div>
-      <label class="sr-only" for="editor" data-i18n="editorLabel">Text editor</label>
-      <textarea id="editor" spellcheck="true"></textarea>
-      <div class="export-row">
-        <label class="export-field" for="outputFilename">
-          <span class="export-label" data-i18n="outputFilename">出力ファイル名</span>
-          <span class="filename-control">
-            <input class="filename-input" id="outputFilename" type="text" maxlength="120" autocomplete="off" spellcheck="false" aria-describedby="outputFilenameHint">
-            <span class="filename-extension" aria-hidden="true">.txt</span>
-          </span>
-          <span class="sr-only" id="outputFilenameHint" data-i18n="outputFilenameHint">拡張子は自動で .txt が付きます</span>
+    <!-- APP:BEGIN Queue Board v0.1.0 core flow -->
+    <section class="queue-card setup-card" id="setupView" aria-labelledby="setupTitle">
+      <h2 id="setupTitle" data-i18n="setupTitle">受付を始める</h2>
+      <p data-i18n="setupBody">最初に発行する番号を決めます。番号は3桁以上で表示されます。</p>
+      <form id="setupForm" novalidate>
+        <label class="field" for="startNumber">
+          <span class="field-label" data-i18n="startNumberLabel">開始番号</span>
+          <input class="number-input" id="startNumber" type="text" inputmode="numeric" autocomplete="off" maxlength="6" value="001" aria-describedby="startNumberHelp startNumberError">
+          <span class="field-help" id="startNumberHelp" data-i18n="startNumberHelp">例: 001。0〜999999の整数を入力できます。</span>
+          <span class="error-text" id="startNumberError" role="alert"></span>
         </label>
-      </div>
-      <div class="toolbar">
-        <div class="button-row">
-          <button class="button primary" id="copyButton" type="button" data-i18n="copy">Copy</button>
-          <button class="button" id="downloadButton" type="button" data-i18n="download">Download text</button>
-          <button class="button" id="sampleButton" type="button" data-i18n="sample">Restore sample</button>
+        <div class="setup-actions">
+          <button class="button primary large with-icon" type="submit">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            <span data-i18n="startSession">受付を開始</span>
+          </button>
         </div>
-        <div class="button-row">
-          <button class="button danger" id="clearButton" type="button" data-i18n="clear">Clear</button>
+      </form>
+      <div class="notice" data-i18n="setupNote">この開発段階では受付状態を自動保存しません。ページを再読み込みすると現在のSessionは失われます。</div>
+    </section>
+
+    <section class="operator-shell" id="operatorView" hidden aria-labelledby="operatorTitle">
+      <div class="queue-card session-bar">
+        <div class="session-status">
+          <span class="status-dot" aria-hidden="true"></span>
+          <div>
+            <div class="session-label" id="operatorTitle" data-i18n="sessionRunning">受付中</div>
+            <div class="session-meta"><span data-i18n="startedAt">開始</span>: <span id="sessionStartedAt">--:--</span> · <span data-i18n="counterOne">窓口 1</span></div>
+          </div>
         </div>
-        <span class="save-status" id="saveStatus" data-i18n="savedLocally">Saved locally</span>
+        <button class="button danger with-icon" id="resetButton" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4v6h6"/><path d="M5.5 15a7 7 0 1 0 1.7-7.2L4 10"/></svg>
+          <span data-i18n="resetSession">受付をリセット</span>
+        </button>
       </div>
+
+      <div class="metrics" aria-live="polite">
+        <div class="queue-card metric"><span class="metric-value" id="waitingCount">0</span><span class="metric-label" data-i18n="waitingCount">待ち</span></div>
+        <div class="queue-card metric"><span class="metric-value" id="currentMetric">—</span><span class="metric-label" data-i18n="currentNumber">呼び出し中</span></div>
+        <div class="queue-card metric"><span class="metric-value" id="completedCount">0</span><span class="metric-label" data-i18n="completedCount">完了</span></div>
+        <div class="queue-card metric"><span class="metric-value" id="issuedCount">0</span><span class="metric-label" data-i18n="issuedCount">発行</span></div>
+      </div>
+
+      <div class="operator-grid">
+        <section class="queue-card action-panel" aria-labelledby="issueTitle">
+          <p class="panel-kicker" data-i18n="nextTicket">次の発行番号</p>
+          <h2 class="panel-title" id="issueTitle" data-i18n="issueTitle">番号を発行</h2>
+          <div class="big-number" id="nextNumber">001</div>
+          <div class="panel-actions">
+            <button class="button primary large with-icon" id="issueButton" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+              <span data-i18n="issueTicket">番号を発行</span>
+            </button>
+          </div>
+          <div class="issue-summary" id="lastIssuedPanel" hidden>
+            <span class="issue-summary-label" data-i18n="justIssued">今発行した番号</span>
+            <span class="issue-summary-number" id="lastIssuedNumber">001</span>
+          </div>
+        </section>
+
+        <section class="queue-card action-panel" aria-labelledby="counterTitle">
+          <p class="panel-kicker" data-i18n="counterOne">窓口 1</p>
+          <h2 class="panel-title" id="counterTitle" data-i18n="currentNumber">呼び出し中</h2>
+          <div class="big-number muted" id="currentNumber">—</div>
+          <div class="panel-actions two">
+            <button class="button primary large with-icon" id="callNextButton" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h12"/><path d="m13 8 4 4-4 4"/></svg>
+              <span data-i18n="callNext">次を呼ぶ</span>
+            </button>
+            <button class="button large with-icon" id="completeButton" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>
+              <span data-i18n="complete">完了</span>
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <section class="queue-card queue-panel" aria-labelledby="waitingTitle">
+        <div class="queue-panel-head">
+          <div>
+            <h2 class="panel-title" id="waitingTitle" data-i18n="waitingTitle">待機中</h2>
+            <p data-i18n="waitingBody">上から順番に呼び出します。</p>
+          </div>
+        </div>
+        <ol class="waiting-list" id="waitingList"></ol>
+        <div class="empty-state" id="waitingEmpty">
+          <strong data-i18n="waitingEmptyTitle">待っている番号はありません。</strong>
+          <span data-i18n="waitingEmptyBody">番号を発行すると、ここに表示されます。</span>
+        </div>
+      </section>
+      <div class="sr-only" id="liveStatus" aria-live="polite" aria-atomic="true"></div>
     </section>
     <!-- APP:END -->
-
-    <section class="shell section" aria-labelledby="guaranteesTitle">
-      <div class="section-head">
-        <h2 class="section-title" id="guaranteesTitle" data-i18n="guaranteesTitle">Template guarantees</h2>
-        <p data-i18n="guaranteesBody">Keep these constraints unless the product specification explicitly changes them.</p>
-      </div>
-      <div class="card-grid">
-        <article class="card"><div class="card-number">01</div><h3 data-i18n="card1Title">One deliverable</h3><p data-i18n="card1Body">The release artifact is dist/index.html. It opens directly and can be hosted as a static page.</p></article>
-        <article class="card"><div class="card-number">02</div><h3 data-i18n="card2Title">Pinned dependencies</h3><p data-i18n="card2Body">Third-party npm assets are version-pinned, hashed, and embedded during the build.</p></article>
-        <article class="card"><div class="card-number">03</div><h3 data-i18n="card3Title">No runtime network</h3><p data-i18n="card3Body">Content Security Policy blocks runtime connections. User data stays inside the page.</p></article>
-        <article class="card"><div class="card-number">04</div><h3 data-i18n="card4Title">LLM-ready workflow</h3><p data-i18n="card4Body">AGENTS.md and APP_SPEC.md give coding agents a stable contract, acceptance criteria, and handoff format.</p></article>
-      </div>
-    </section>
-
-    <section class="shell section">
-      <details>
-        <summary data-i18n="buildInfo">Build information</summary>
-        <div class="build-grid">
-          <div class="build-item"><span data-i18n="appVersion">App version</span><strong id="buildVersion">—</strong></div>
-          <div class="build-item"><span data-i18n="builtAt">Built at</span><strong id="builtAt">—</strong></div>
-          <div class="build-item"><span data-i18n="dependencies">Embedded dependencies</span><strong id="dependencyCount">0</strong></div>
-        </div>
-      </details>
-    </section>
   </main>
 
-  <footer><span id="footerName">Single HTML App Starter</span> · MIT License · <span data-i18n="footer">Generated as one self-contained HTML file</span></footer>
+  <footer><span id="footerName">Queue Board</span> · MIT License · <span data-i18n="footer">番号を発行して順番に呼び出すローカルツール</span></footer>
   <div class="app-toast" id="appToast" role="status" aria-live="polite" aria-atomic="true" data-tone="default">
     <span class="app-toast-message" id="appToastMessage"></span>
     <button class="app-toast-action" id="appToastAction" type="button" hidden></button>
@@ -569,24 +790,23 @@
       </button>
     </div>
     <div class="dialog-body">
-      <!-- APP:HELP:BEGIN Update this section together with the real application. -->
+      <!-- APP:HELP:BEGIN Queue Board v0.1.0 -->
       <h3 data-i18n="helpBasicsTitle">基本操作</h3>
       <ol>
-        <li data-i18n="helpStep1">作業領域へテキストを入力します。内容は入力のたびに端末内へ保存されます。</li>
-        <li data-i18n="helpStep2">出力ファイル名を必要に応じて変更し、「コピー」または「テキスト保存」で入力内容を取り出せます。</li>
-        <li data-i18n="helpStep3">「サンプルに戻す」や「消去」の直後は、トーストの「元に戻す」から取り消せます。</li>
+        <li data-i18n="helpStep1">開始番号を確認して「受付を開始」を押します。</li>
+        <li data-i18n="helpStep2">来場者ごとに「番号を発行」を押します。発行した番号は待ち列へ追加されます。</li>
+        <li data-i18n="helpStep3">窓口が空いているときに「次を呼ぶ」を押すと、待ち列の先頭番号を呼び出し中にします。</li>
+        <li data-i18n="helpStep4">対応が終わったら「完了」を押します。窓口が空き、次の番号を呼べます。</li>
       </ol>
-
       <h3 data-i18n="helpPrivacyTitle">プライバシー</h3>
-      <p data-i18n="helpPrivacyBody">入力内容と操作はブラウザー内で処理され、このアプリから外部へ送信されません。必要なコードと依存ファイルも配布用HTMLに内包されます。</p>
-
-      <h3 data-i18n="helpNotesTitle">注意事項</h3>
+      <p data-i18n="helpPrivacyBody">Ticket番号と操作状態はこのページ内で処理します。このアプリは外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。</p>
+      <h3 data-i18n="helpNotesTitle">v0.1.0 の範囲</h3>
       <ul>
-        <li data-i18n="helpNoteStorage">ブラウザーのサイトデータを削除すると、端末内に保存した入力内容も消える場合があります。必要な内容はファイルとして保存してください。</li>
-        <li data-i18n="helpNoteBrowser">一部の機能はブラウザーの制限や端末性能の影響を受けます。重要な成果物は保存後に内容を確認してください。</li>
-        <li data-i18n="helpNoteTemplate">この画面はスターターの例です。新しいアプリを作る際は、機能と一緒にこのヘルプも実際の操作へ書き換えます。</li>
+        <li data-i18n="helpNoteOneCounter">窓口は1つだけです。複数窓口は後続バージョンで追加します。</li>
+        <li data-i18n="helpNoteNoRecovery">自動保存とSession復旧はまだありません。再読み込み・タブを閉じる・リセットで現在の受付状態は失われます。</li>
+        <li data-i18n="helpNoteLater">手動番号追加、不在、再呼び出し、Display、CSV、印刷はv0.1.0には含みません。</li>
       </ul>
-      <p class="dialog-note" data-i18n="helpOffline">配布物は dist/index.html ひとつです。ローカルで直接開くことも、GitHub Pagesで公開することもできます。</p>
+      <p class="dialog-note" data-i18n="helpOffline">配布用HTMLは実行時の外部通信を必要としない構成です。</p>
       <!-- APP:HELP:END -->
     </div>
   </dialog>
@@ -701,84 +921,157 @@
 
       const translations = {
         ja: {
-          brandMeta: '単一HTML・ローカル処理・GitHub Pages',
-          helpTitle: '使い方と注意事項', close: '閉じる',
+          brandMeta: '番号を発行して、順番に呼び出す',
+          helpTitle: '使い方と注意事項',
+          close: '閉じる',
+          introTitle: 'その場で使える呼び出し番号',
+          lead: '番号を発行し、待ち列の先頭から順番に呼び出します。v0.1.0では1窓口の基本フローに絞っています。',
+          setupTitle: '受付を始める',
+          setupBody: '最初に発行する番号を決めます。番号は3桁以上で表示されます。',
+          startNumberLabel: '開始番号',
+          startNumberHelp: '例: 001。0〜999999の整数を入力できます。',
+          startSession: '受付を開始',
+          setupNote: 'この開発段階では受付状態を自動保存しません。ページを再読み込みすると現在のSessionは失われます。',
+          sessionRunning: '受付中',
+          startedAt: '開始',
+          counterOne: '窓口 1',
+          resetSession: '受付をリセット',
+          waitingCount: '待ち',
+          currentNumber: '呼び出し中',
+          completedCount: '完了',
+          issuedCount: '発行',
+          nextTicket: '次の発行番号',
+          issueTitle: '番号を発行',
+          issueTicket: '番号を発行',
+          justIssued: '今発行した番号',
+          callNext: '次を呼ぶ',
+          complete: '完了',
+          waitingTitle: '待機中',
+          waitingBody: '上から順番に呼び出します。',
+          waitingEmptyTitle: '待っている番号はありません。',
+          waitingEmptyBody: '番号を発行すると、ここに表示されます。',
+          acceptedAt: '受付',
           helpBasicsTitle: '基本操作',
-          helpStep1: '作業領域へテキストを入力します。内容は入力のたびに端末内へ保存されます。',
-          helpStep2: '出力ファイル名を必要に応じて変更し、「コピー」または「テキスト保存」で入力内容を取り出せます。',
-          helpStep3: '「サンプルに戻す」や「消去」の直後は、トーストの「元に戻す」から取り消せます。',
+          helpStep1: '開始番号を確認して「受付を開始」を押します。',
+          helpStep2: '来場者ごとに「番号を発行」を押します。発行した番号は待ち列へ追加されます。',
+          helpStep3: '窓口が空いているときに「次を呼ぶ」を押すと、待ち列の先頭番号を呼び出し中にします。',
+          helpStep4: '対応が終わったら「完了」を押します。窓口が空き、次の番号を呼べます。',
           helpPrivacyTitle: 'プライバシー',
-          helpPrivacyBody: '入力内容と操作はブラウザー内で処理され、このアプリから外部へ送信されません。必要なコードと依存ファイルも配布用HTMLに内包されます。',
-          helpNotesTitle: '注意事項',
-          helpNoteStorage: 'ブラウザーのサイトデータを削除すると、端末内に保存した入力内容も消える場合があります。必要な内容はファイルとして保存してください。',
-          helpNoteBrowser: '一部の機能はブラウザーの制限や端末性能の影響を受けます。重要な成果物は保存後に内容を確認してください。',
-          helpNoteTemplate: 'この画面はスターターの例です。新しいアプリを作る際は、機能と一緒にこのヘルプも実際の操作へ書き換えます。',
-          helpOffline: '配布物は dist/index.html ひとつです。ローカルで直接開くことも、GitHub Pagesで公開することもできます。',
-          introTitle: '単一HTMLアプリのスターター',
-          lead: 'PDF Organizerと同じ、固定依存・完全内包・実行時通信なしの構成から、新しいブラウザーアプリを作れます。',
-          localBadge: '実行時通信なし',
-          workspaceTitle: 'スターター作業領域',
-          workspaceBody: '入力内容はこのブラウザー内だけに保存され、このアプリから送信されません。',
-          characters: '文字', words: '単語', lines: '行', editorLabel: 'テキスト入力',
-          copy: 'コピー', download: 'テキスト保存', sample: 'サンプルに戻す', clear: '消去', savedLocally: '端末内に保存済み', outputFilename: '出力ファイル名', outputFilenameHint: '拡張子は自動で .txt が付きます', undo: '元に戻す', undone: '元に戻しました',
-          confirmTitle: '確認', confirmAction: '実行する', cancel: 'キャンセル',
-          guaranteesTitle: 'テンプレートの基本保証',
-          guaranteesBody: 'アプリ仕様で明示的に変更しない限り、この制約を維持します。',
-          card1Title: '配布物はひとつ', card1Body: 'リリース成果物は dist/index.html。直接開くことも、静的サイトとして公開することもできます。',
-          card2Title: '依存を固定して内包', card2Body: 'npmの外部素材はバージョンとtarball hashを固定し、検証してからHTMLへ内包します。',
-          card3Title: '実行時通信なし', card3Body: 'Content Security Policyで実行時通信を遮断し、ユーザーデータをページ内に保ちます。',
-          card4Title: 'LLM向けの作業契約', card4Body: 'AGENTS.mdとAPP_SPEC.mdで、実装方針、受入条件、完了報告を安定して伝えます。',
-          buildInfo: 'ビルド情報', appVersion: 'アプリバージョン', builtAt: '生成日時', dependencies: '内包依存数',
-          footer: '完全内包HTMLとして生成', copied: 'コピーしました', copyFailed: 'コピーできませんでした', downloaded: 'テキストを保存しました', cleared: '入力を消去しました', restored: 'サンプルを復元しました'
+          helpPrivacyBody: 'Ticket番号と操作状態はこのページ内で処理します。このアプリは外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。',
+          helpNotesTitle: 'v0.1.0 の範囲',
+          helpNoteOneCounter: '窓口は1つだけです。複数窓口は後続バージョンで追加します。',
+          helpNoteNoRecovery: '自動保存とSession復旧はまだありません。再読み込み・タブを閉じる・リセットで現在の受付状態は失われます。',
+          helpNoteLater: '手動番号追加、不在、再呼び出し、Display、CSV、印刷はv0.1.0には含みません。',
+          helpOffline: '配布用HTMLは実行時の外部通信を必要としない構成です。',
+          footer: '番号を発行して順番に呼び出すローカルツール',
+          confirmTitle: '確認',
+          confirmAction: '実行する',
+          cancel: 'キャンセル',
+          resetTitle: '受付をリセットしますか？',
+          resetBody: '現在の受付番号と状態を破棄して、開始画面へ戻ります。',
+          resetConfirm: 'リセット',
+          invalidStart: '0〜999999の整数を入力してください。',
+          sessionStarted: '受付を開始しました。',
+          ticketIssued: '番号 {number} を発行しました。',
+          ticketCalled: '番号 {number} を呼び出しました。',
+          ticketCompleted: '番号 {number} を完了しました。',
+          noWaiting: '待っている番号はありません。',
+          counterBusy: '現在の番号を完了してから次を呼んでください。',
+          sessionReset: '受付をリセットしました。'
         },
         en: {
-          brandMeta: 'Single file · Local-first · GitHub Pages',
-          helpTitle: 'How to use & notes', close: 'Close',
+          brandMeta: 'Issue numbers and call them in order',
+          helpTitle: 'How to use & notes',
+          close: 'Close',
+          introTitle: 'A simple queue for temporary reception',
+          lead: 'Issue numbered tickets and call the waiting queue from the front. v0.1.0 focuses on the one-counter core flow.',
+          setupTitle: 'Start reception',
+          setupBody: 'Choose the first number to issue. Numbers are shown with at least three digits.',
+          startNumberLabel: 'Starting number',
+          startNumberHelp: 'Example: 001. Enter an integer from 0 to 999999.',
+          startSession: 'Start reception',
+          setupNote: 'This development version does not save an active session yet. Reloading the page loses the current session.',
+          sessionRunning: 'Reception in progress',
+          startedAt: 'Started',
+          counterOne: 'Counter 1',
+          resetSession: 'Reset reception',
+          waitingCount: 'Waiting',
+          currentNumber: 'Now calling',
+          completedCount: 'Completed',
+          issuedCount: 'Issued',
+          nextTicket: 'Next ticket number',
+          issueTitle: 'Issue a number',
+          issueTicket: 'Issue number',
+          justIssued: 'Just issued',
+          callNext: 'Call next',
+          complete: 'Complete',
+          waitingTitle: 'Waiting',
+          waitingBody: 'Tickets are called from the top of this list.',
+          waitingEmptyTitle: 'No one is waiting.',
+          waitingEmptyBody: 'Issued numbers will appear here.',
+          acceptedAt: 'Issued',
           helpBasicsTitle: 'Basics',
-          helpStep1: 'Enter text in the workspace. The content is saved locally as you type.',
-          helpStep2: 'Change the output filename if needed, then use Copy or Download text.',
-          helpStep3: 'After Restore sample or Clear, use Undo in the toast to reverse the change.',
+          helpStep1: 'Check the starting number and select Start reception.',
+          helpStep2: 'Select Issue number for each visitor. The ticket is added to the waiting queue.',
+          helpStep3: 'When the counter is free, select Call next to move the first waiting ticket into the active call.',
+          helpStep4: 'Select Complete when service is finished. The counter becomes free for the next ticket.',
           helpPrivacyTitle: 'Privacy',
-          helpPrivacyBody: 'Your content and actions are processed in the browser and are not sent outside by this app. Required code and dependencies are embedded in the distributable HTML.',
-          helpNotesTitle: 'Notes',
-          helpNoteStorage: 'Clearing browser site data may also remove content saved locally. Download anything important as a file.',
-          helpNoteBrowser: 'Some features are affected by browser restrictions and device performance. Review important output after saving it.',
-          helpNoteTemplate: 'This screen is a starter example. When building a new app, update this help together with the real features and workflow.',
-          helpOffline: 'The deliverable is one dist/index.html file. It can open locally or be published with GitHub Pages.',
-          introTitle: 'Single HTML App Starter',
-          lead: 'Build a new browser app from the same pinned-dependency, fully embedded, no-runtime-network foundation used by PDF Organizer.',
-          localBadge: 'No runtime network',
-          workspaceTitle: 'Starter workspace',
-          workspaceBody: 'Text stays in this browser. It is never sent by this app.',
-          characters: 'Characters', words: 'Words', lines: 'Lines', editorLabel: 'Text editor',
-          copy: 'Copy', download: 'Download text', sample: 'Restore sample', clear: 'Clear', savedLocally: 'Saved locally', outputFilename: 'Output filename', outputFilenameHint: 'The .txt extension is added automatically', undo: 'Undo', undone: 'Restored',
-          confirmTitle: 'Confirm', confirmAction: 'Continue', cancel: 'Cancel',
-          guaranteesTitle: 'Template guarantees',
-          guaranteesBody: 'Keep these constraints unless the product specification explicitly changes them.',
-          card1Title: 'One deliverable', card1Body: 'The release artifact is dist/index.html. It opens directly and can be hosted as a static page.',
-          card2Title: 'Pinned dependencies', card2Body: 'Third-party npm assets are version-pinned, hashed, and embedded during the build.',
-          card3Title: 'No runtime network', card3Body: 'Content Security Policy blocks runtime connections. User data stays inside the page.',
-          card4Title: 'LLM-ready workflow', card4Body: 'AGENTS.md and APP_SPEC.md give coding agents a stable contract, acceptance criteria, and handoff format.',
-          buildInfo: 'Build information', appVersion: 'App version', builtAt: 'Built at', dependencies: 'Embedded dependencies',
-          footer: 'Generated as one self-contained HTML file', copied: 'Copied', copyFailed: 'Could not copy', downloaded: 'Text downloaded', cleared: 'Text cleared', restored: 'Sample restored'
+          helpPrivacyBody: 'Ticket numbers and queue state are processed inside this page. The app uses no external API, analytics, or telemetry and does not send session data outside.',
+          helpNotesTitle: 'v0.1.0 scope',
+          helpNoteOneCounter: 'This version has one counter. Multiple counters are planned for a later version.',
+          helpNoteNoRecovery: 'Autosave and session recovery are not implemented yet. Reloading, closing the tab, or resetting loses the current queue.',
+          helpNoteLater: 'Manual ticket entry, absent handling, recall, Display, CSV export, and printing are not part of v0.1.0.',
+          helpOffline: 'The distributable HTML is designed to run without runtime external network access.',
+          footer: 'Local tool for issuing numbers and calling them in order',
+          confirmTitle: 'Confirm',
+          confirmAction: 'Continue',
+          cancel: 'Cancel',
+          resetTitle: 'Reset reception?',
+          resetBody: 'Discard the current ticket numbers and state, then return to the start screen.',
+          resetConfirm: 'Reset',
+          invalidStart: 'Enter an integer from 0 to 999999.',
+          sessionStarted: 'Reception started.',
+          ticketIssued: 'Issued number {number}.',
+          ticketCalled: 'Called number {number}.',
+          ticketCompleted: 'Completed number {number}.',
+          noWaiting: 'No tickets are waiting.',
+          counterBusy: 'Complete the current ticket before calling the next one.',
+          sessionReset: 'Reception reset.'
         }
       };
 
-      const storageKeys = {
-        text: `${APP_CONFIG.slug}:starter-text`,
-        language: `${APP_CONFIG.slug}:language`
-      };
-      const sampleText = {
-        ja: 'この領域はサンプルです。\n\n新しいアプリを作るときは APP_SPEC.md に目的と受入条件を書き、LLMに AGENTS.md から読むよう指示してください。',
-        en: 'This workspace is a sample.\n\nFor a new app, describe the goal and acceptance criteria in APP_SPEC.md, then tell the LLM to start with AGENTS.md.'
-      };
-
       const $ = selector => document.querySelector(selector);
-      const editor = $('#editor');
-      const outputFilename = $('#outputFilename');
-      let language = readStorage(storageKeys.language) || detectLanguage();
+      const storageKey = APP_CONFIG.slug + ':language';
+      let language = readStorage(storageKey) || detectLanguage();
+      let session = null;
+      let lastIssuedId = null;
 
-      // Reusable Promise-based confirmation API. Canonical source: components/confirm-dialog.html.
+      function readStorage(key) {
+        try { return localStorage.getItem(key); } catch { return null; }
+      }
+      function writeStorage(key, value) {
+        try { localStorage.setItem(key, value); } catch { }
+      }
+      function detectLanguage() {
+        if (APP_CONFIG.defaultLanguage === 'ja' || APP_CONFIG.defaultLanguage === 'en') return APP_CONFIG.defaultLanguage;
+        return (navigator.language || '').toLowerCase().startsWith('ja') ? 'ja' : 'en';
+      }
+      function translate(key, values) {
+        let value = translations[language]?.[key] ?? translations.en[key] ?? key;
+        if (values) Object.keys(values).forEach(name => { value = value.replace('{' + name + '}', String(values[name])); });
+        return value;
+      }
+      function formatTicketNumber(value) {
+        return String(value).padStart(3, '0');
+      }
+      function formatTime(timestamp) {
+        return new Intl.DateTimeFormat(language === 'ja' ? 'ja-JP' : 'en-US', { hour: '2-digit', minute: '2-digit' }).format(new Date(timestamp));
+      }
+      function makeId() {
+        if (crypto && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+        return String(Date.now()) + '-' + Math.random().toString(16).slice(2);
+      }
+
       const AppConfirm = (() => {
         const dialog = $('#appConfirmDialog');
         const title = $('#appConfirmTitle');
@@ -788,7 +1081,6 @@
         const okButton = $('#appConfirmOk');
         let resolver = null;
         let restoreFocus = null;
-
         function finish(result) {
           if (!dialog.open) return;
           const currentResolver = resolver;
@@ -798,15 +1090,15 @@
           restoreFocus = null;
           if (currentResolver) currentResolver(result);
         }
-
-        function ask({ title: heading, message: body, confirmLabel, cancelLabel, tone = 'default' } = {}) {
+        function ask(options) {
+          const settings = options || {};
           if (dialog.open) finish(false);
-          title.textContent = heading || translate('confirmTitle');
-          message.textContent = body || '';
-          cancelButton.textContent = cancelLabel || translate('cancel');
-          okButton.textContent = confirmLabel || translate('confirmAction');
-          okButton.classList.toggle('danger', tone === 'danger');
-          okButton.classList.toggle('primary', tone !== 'danger');
+          title.textContent = settings.title || translate('confirmTitle');
+          message.textContent = settings.message || '';
+          cancelButton.textContent = settings.cancelLabel || translate('cancel');
+          okButton.textContent = settings.confirmLabel || translate('confirmAction');
+          okButton.classList.toggle('danger', settings.tone === 'danger');
+          okButton.classList.toggle('primary', settings.tone !== 'danger');
           restoreFocus = document.activeElement;
           return new Promise(resolve => {
             resolver = resolve;
@@ -814,7 +1106,6 @@
             requestAnimationFrame(() => cancelButton.focus({ preventScroll: true }));
           });
         }
-
         closeButton.addEventListener('click', () => finish(false));
         cancelButton.addEventListener('click', () => finish(false));
         okButton.addEventListener('click', () => finish(true));
@@ -824,56 +1115,206 @@
           const outside = event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom;
           if (outside) finish(false);
         });
-
         return Object.freeze({ ask });
       })();
       window.AppConfirm = AppConfirm;
 
-      function readStorage(key) {
-        try { return localStorage.getItem(key); } catch { return null; }
-      }
-      function writeStorage(key, value) {
-        try { localStorage.setItem(key, value); } catch { /* Storage may be unavailable in private contexts. */ }
-      }
-      function detectLanguage() {
-        if (APP_CONFIG.defaultLanguage === 'ja' || APP_CONFIG.defaultLanguage === 'en') return APP_CONFIG.defaultLanguage;
-        return (navigator.language || '').toLowerCase().startsWith('ja') ? 'ja' : 'en';
-      }
-      function translate(key) { return translations[language]?.[key] ?? translations.en[key] ?? key; }
-
-      // Reusable toast / Undo API. Canonical source: components/toast.html.
       const AppToast = (() => {
         const root = $('#appToast');
         const message = $('#appToastMessage');
         const action = $('#appToastAction');
         let timer = 0;
-        let actionHandler = null;
         function dismiss() {
           clearTimeout(timer);
           timer = 0;
           root.classList.remove('show');
-          actionHandler = null;
+          action.hidden = true;
         }
-        function show({ message: text = '', actionLabel = '', onAction = null, duration = 3200, tone = 'default' } = {}) {
+        function show(options) {
+          const settings = options || {};
           clearTimeout(timer);
-          message.textContent = String(text);
-          root.dataset.tone = tone;
-          actionHandler = typeof onAction === 'function' ? onAction : null;
-          action.textContent = actionLabel || '';
-          action.hidden = !actionHandler || !actionLabel;
+          message.textContent = String(settings.message || '');
+          root.dataset.tone = settings.tone || 'default';
+          action.hidden = true;
           root.classList.add('show');
-          if (duration > 0) timer = window.setTimeout(dismiss, duration);
+          timer = window.setTimeout(dismiss, settings.duration || 2600);
           return Object.freeze({ dismiss });
         }
-        action.addEventListener('click', () => {
-          const handler = actionHandler;
-          dismiss();
-          if (handler) handler();
-        });
         return Object.freeze({ show, dismiss });
       })();
       window.AppToast = AppToast;
-      function showToast(message, options = {}) { AppToast.show({ message, ...options }); }
+
+      function announce(message) {
+        $('#liveStatus').textContent = message;
+        AppToast.show({ message: message });
+      }
+
+      function parseStartNumber() {
+        const raw = $('#startNumber').value.trim();
+        if (!/^\d+$/.test(raw)) return null;
+        const value = Number(raw);
+        if (!Number.isSafeInteger(value) || value < 0 || value > 999999) return null;
+        return value;
+      }
+
+      function normalizeStartNumber() {
+        const value = parseStartNumber();
+        if (value === null) return;
+        $('#startNumber').value = formatTicketNumber(value);
+        $('#startNumberError').textContent = '';
+      }
+
+      function startSession(event) {
+        event.preventDefault();
+        const startNumber = parseStartNumber();
+        if (startNumber === null) {
+          $('#startNumberError').textContent = translate('invalidStart');
+          $('#startNumber').focus();
+          return;
+        }
+        $('#startNumberError').textContent = '';
+        session = {
+          id: makeId(),
+          startedAt: Date.now(),
+          endedAt: null,
+          nextNumber: startNumber,
+          digits: 3,
+          title: language === 'ja' ? 'お呼びしています' : 'Now calling',
+          counters: [{ id: 'counter-1', name: language === 'ja' ? '窓口 1' : 'Counter 1', currentTicketId: null }],
+          tickets: [],
+          soundEnabled: false,
+          showWaitingCount: true
+        };
+        lastIssuedId = null;
+        render();
+        announce(translate('sessionStarted'));
+        $('#issueButton').focus();
+      }
+
+      function issueTicket() {
+        if (!session) return;
+        const now = Date.now();
+        const ticket = {
+          id: makeId(),
+          number: session.nextNumber,
+          displayNumber: formatTicketNumber(session.nextNumber),
+          status: 'waiting',
+          createdAt: now,
+          calledAt: null,
+          completedAt: null,
+          counterId: null,
+          callCount: 0
+        };
+        session.tickets.push(ticket);
+        session.nextNumber += 1;
+        lastIssuedId = ticket.id;
+        render();
+        announce(translate('ticketIssued', { number: ticket.displayNumber }));
+      }
+
+      function currentTicket() {
+        if (!session) return null;
+        const currentId = session.counters[0].currentTicketId;
+        return currentId ? session.tickets.find(ticket => ticket.id === currentId) || null : null;
+      }
+
+      function callNextTicket() {
+        if (!session) return;
+        if (currentTicket()) {
+          announce(translate('counterBusy'));
+          return;
+        }
+        const ticket = session.tickets.find(item => item.status === 'waiting');
+        if (!ticket) {
+          announce(translate('noWaiting'));
+          return;
+        }
+        ticket.status = 'called';
+        ticket.calledAt = Date.now();
+        ticket.counterId = 'counter-1';
+        ticket.callCount += 1;
+        session.counters[0].currentTicketId = ticket.id;
+        render();
+        announce(translate('ticketCalled', { number: ticket.displayNumber }));
+      }
+
+      function completeCurrentTicket() {
+        if (!session) return;
+        const ticket = currentTicket();
+        if (!ticket) return;
+        ticket.status = 'completed';
+        ticket.completedAt = Date.now();
+        session.counters[0].currentTicketId = null;
+        render();
+        announce(translate('ticketCompleted', { number: ticket.displayNumber }));
+      }
+
+      async function resetSession() {
+        if (!session) return;
+        const ok = await AppConfirm.ask({
+          title: translate('resetTitle'),
+          message: translate('resetBody'),
+          confirmLabel: translate('resetConfirm'),
+          cancelLabel: translate('cancel'),
+          tone: 'danger'
+        });
+        if (!ok) return;
+        session = null;
+        lastIssuedId = null;
+        $('#startNumber').value = '001';
+        render();
+        announce(translate('sessionReset'));
+        $('#startNumber').focus();
+      }
+
+      function renderWaitingList(waiting) {
+        const list = $('#waitingList');
+        list.replaceChildren();
+        waiting.forEach((ticket, index) => {
+          const item = document.createElement('li');
+          item.className = 'waiting-item';
+          const order = document.createElement('span');
+          order.className = 'waiting-order';
+          order.textContent = String(index + 1);
+          const number = document.createElement('span');
+          number.className = 'waiting-number';
+          number.textContent = ticket.displayNumber;
+          const time = document.createElement('span');
+          time.className = 'waiting-time';
+          time.textContent = translate('acceptedAt') + ' ' + formatTime(ticket.createdAt);
+          item.append(order, number, time);
+          list.append(item);
+        });
+        $('#waitingEmpty').hidden = waiting.length > 0;
+      }
+
+      function render() {
+        const active = Boolean(session);
+        $('#setupView').hidden = active;
+        $('#operatorView').hidden = !active;
+        if (!session) return;
+
+        const waiting = session.tickets.filter(ticket => ticket.status === 'waiting');
+        const completed = session.tickets.filter(ticket => ticket.status === 'completed');
+        const current = currentTicket();
+        const lastIssued = lastIssuedId ? session.tickets.find(ticket => ticket.id === lastIssuedId) : null;
+
+        $('#sessionStartedAt').textContent = formatTime(session.startedAt);
+        $('#waitingCount').textContent = new Intl.NumberFormat(language).format(waiting.length);
+        $('#completedCount').textContent = new Intl.NumberFormat(language).format(completed.length);
+        $('#issuedCount').textContent = new Intl.NumberFormat(language).format(session.tickets.length);
+        $('#nextNumber').textContent = formatTicketNumber(session.nextNumber);
+        $('#currentMetric').textContent = current ? current.displayNumber : '—';
+        $('#currentNumber').textContent = current ? current.displayNumber : '—';
+        $('#currentNumber').classList.toggle('muted', !current);
+        $('#callNextButton').disabled = Boolean(current) || waiting.length === 0;
+        $('#completeButton').disabled = !current;
+
+        $('#lastIssuedPanel').hidden = !lastIssued;
+        if (lastIssued) $('#lastIssuedNumber').textContent = lastIssued.displayNumber;
+        renderWaitingList(waiting);
+      }
+
       function applyLanguage() {
         document.documentElement.lang = language;
         document.querySelectorAll('[data-i18n]').forEach(element => { element.textContent = translate(element.dataset.i18n); });
@@ -881,57 +1322,16 @@
         document.querySelectorAll('[data-i18n-aria-label]').forEach(element => { element.setAttribute('aria-label', translate(element.dataset.i18nAriaLabel)); });
         $('#languageButton').textContent = language === 'ja' ? 'EN' : '日本語';
         $('#languageButton').setAttribute('aria-label', language === 'ja' ? '英語に切り替え' : 'Switch to Japanese');
-        document.title = language === 'ja' ? APP_CONFIG.nameJa : APP_CONFIG.name;
+        document.title = language === 'ja' ? APP_CONFIG.nameJa + ' | Queue Board' : APP_CONFIG.name;
         $('#brandName').textContent = language === 'ja' ? APP_CONFIG.nameJa : APP_CONFIG.name;
         $('#footerName').textContent = language === 'ja' ? APP_CONFIG.nameJa : APP_CONFIG.name;
-        if (!editor.value) editor.value = sampleText[language];
-        updateStats();
-      }
-      function updateStats() {
-        const value = editor.value;
-        const words = value.trim() ? (value.match(/[\p{L}\p{N}]+(?:['’_-][\p{L}\p{N}]+)*/gu) || []).length : 0;
-        $('#characterCount').textContent = new Intl.NumberFormat(language).format([...value].length);
-        $('#wordCount').textContent = new Intl.NumberFormat(language).format(words);
-        $('#lineCount').textContent = new Intl.NumberFormat(language).format(value ? value.split(/\r?\n/).length : 0);
-        $('#saveStatus').textContent = translate('savedLocally');
-      }
-      function saveText() {
-        writeStorage(storageKeys.text, editor.value);
-        updateStats();
-      }
-      async function copyText() {
-        try {
-          await navigator.clipboard.writeText(editor.value);
-          showToast(translate('copied'));
-        } catch {
-          editor.select();
-          const ok = document.execCommand('copy');
-          showToast(translate(ok ? 'copied' : 'copyFailed'));
-        }
-      }
-      function normalizedFilenameBase() {
-        const fallback = APP_CONFIG.slug || 'text';
-        const cleaned = outputFilename.value.trim().replace(/[\\/:*?"<>|\u0000-\u001f]/g, '-').replace(/\.+$/g, '').trim();
-        let base = cleaned.replace(/\.txt$/i, '') || fallback;
-        if (/^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i.test(base)) base = `${base}-file`;
-        if (!cleaned) outputFilename.value = fallback;
-        return base.slice(0, 120);
-      }
-      function downloadText() {
-        const url = URL.createObjectURL(new Blob([editor.value], { type: 'text/plain;charset=utf-8' }));
-        const anchor = document.createElement('a');
-        const filenameBase = normalizedFilenameBase();
-        outputFilename.value = filenameBase;
-        anchor.href = url;
-        anchor.download = `${filenameBase}.txt`;
-        anchor.click();
-        URL.revokeObjectURL(url);
-        showToast(translate('downloaded'), { tone: 'success' });
+        if (session) session.counters[0].name = language === 'ja' ? '窓口 1' : 'Counter 1';
+        render();
       }
 
       $('#languageButton').addEventListener('click', () => {
         language = language === 'ja' ? 'en' : 'ja';
-        writeStorage(storageKeys.language, language);
+        writeStorage(storageKey, language);
         applyLanguage();
       });
       const helpDialog = $('#helpDialog');
@@ -942,35 +1342,15 @@
         const outside = event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom;
         if (outside) helpDialog.close();
       });
-      editor.addEventListener('input', saveText);
-      outputFilename.addEventListener('blur', () => { outputFilename.value = normalizedFilenameBase(); });
-      $('#copyButton').addEventListener('click', copyText);
-      $('#downloadButton').addEventListener('click', downloadText);
-      $('#sampleButton').addEventListener('click', () => {
-        const before = editor.value;
-        editor.value = sampleText[language];
-        saveText();
-        showToast(translate('restored'), { actionLabel: translate('undo'), onAction: () => { editor.value = before; saveText(); editor.focus(); showToast(translate('undone')); } });
-      });
-      $('#clearButton').addEventListener('click', () => {
-        if (!editor.value) return;
-        const before = editor.value;
-        editor.value = '';
-        saveText();
-        editor.focus();
-        showToast(translate('cleared'), {
-          actionLabel: translate('undo'),
-          onAction: () => { editor.value = before; saveText(); editor.focus(); showToast(translate('undone')); },
-          duration: 5000
-        });
-      });
+      $('#setupForm').addEventListener('submit', startSession);
+      $('#startNumber').addEventListener('blur', normalizeStartNumber);
+      $('#startNumber').addEventListener('input', () => { $('#startNumberError').textContent = ''; });
+      $('#issueButton').addEventListener('click', issueTicket);
+      $('#callNextButton').addEventListener('click', callNextTicket);
+      $('#completeButton').addEventListener('click', completeCurrentTicket);
+      $('#resetButton').addEventListener('click', resetSession);
 
-      editor.value = readStorage(storageKeys.text) || sampleText[language];
-      outputFilename.value = APP_CONFIG.slug || 'text';
-      $('#versionBadge').textContent = `v${APP_CONFIG.version}`;
-      $('#buildVersion').textContent = APP_CONFIG.version;
-      $('#builtAt').textContent = BUILD_MANIFEST.generatedAtUtc || '—';
-      $('#dependencyCount').textContent = String(BUILD_MANIFEST.dependencies?.length || 0);
+      $('#versionBadge').textContent = 'v' + APP_CONFIG.version;
       applyLanguage();
     })();
   </script>
