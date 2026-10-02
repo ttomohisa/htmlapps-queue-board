@@ -1340,7 +1340,7 @@
     }
 
 
-    /* Queue Board v0.7.0 history / export */
+    /* Queue Board history / export */
     .history-toolbar {
       display: flex;
       align-items: center;
@@ -1570,7 +1570,7 @@
       padding: 4px 0 18px;
     }
     .ticket-print-page {
-      width: min(100%, 210mm);
+      width: min(100%, var(--print-paper-width, 210mm));
       aspect-ratio: var(--print-paper-ratio, 210 / 297);
       padding: clamp(6mm, 2vw, 10mm);
       background: #fff;
@@ -1737,7 +1737,7 @@
       </div>
     </section>
 
-    <!-- APP:BEGIN Queue Board v0.7.0 history export -->
+    <!-- APP:BEGIN Queue Board v0.8.0 ticket printing -->
     <section class="queue-card persistence-gate" id="persistenceGate" aria-live="polite">
       <div class="persistence-gate-inner">
         <span class="persistence-spinner" aria-hidden="true"></span>
@@ -2404,13 +2404,13 @@
           helpStep2: '「番号を発行」、または手動追加で待ち列へ番号を登録します。',
           helpStep3: '「表示画面を開く」で待合向けDisplayを別ウィンドウに開きます。外部モニターへ移動して使えます。',
           helpStep4: '空いている窓口の「次を呼ぶ」で、Displayへ番号と窓口がリアルタイム反映されます。',
-          helpStep5: '履歴を確認・CSV保存し、受付終了後はSession Summaryから新しい受付を開始できます。',
+          helpStep5: 'ヘッダーのプリンターアイコンから番号札を作成し、印刷プレビューを確認してブラウザから印刷できます。',
           helpPrivacyTitle: 'プライバシー',
           helpPrivacyBody: 'Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。',
-          helpNotesTitle: 'v0.7.0 の範囲',
+          helpNotesTitle: 'v0.8.0 の範囲',
           helpNoteDisplay: 'DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。別端末への送信は行いません。',
           helpNoteFeatures: 'Fullscreen / Wake LockはFeature Detectionを行い、非対応環境ではその機能だけを無効化します。',
-          helpNoteHistory: '受付終了時は履歴を端末内へ保存し、CSV保存とSession Summaryを利用できます。',
+          helpNotePrinting: '番号札作成は現在のSessionと独立して利用でき、A4を既定とした印刷用CSSを使用します。',
 
           helpOffline: '配布用HTMLは実行時の外部通信を必要とせず、Display同期もブラウザ内だけで行います。',
           footer: '番号を発行して順番に呼び出すローカルツール',
@@ -2485,6 +2485,32 @@
           historySaveFailed: '履歴を端末へ保存できなかったため、受付を終了しませんでした。ストレージ設定や空き容量を確認してください。',
           csvSaved: 'CSVを保存しました。',
           csvSaveFailed: 'CSVを保存できませんでした。',
+          printTicketsTitle: '番号札を作成',
+          printKicker: 'Ticket Printing',
+          printViewTitle: '番号札を作成',
+          printViewBody: '番号範囲とレイアウトを設定して、ブラウザの印刷機能から整理券を印刷します。',
+          closePrintView: '戻る',
+          printStartNumber: '開始番号',
+          printEndNumber: '終了番号',
+          printDigits: '桁数',
+          printTicketTitle: 'タイトル',
+          printPaperSize: '用紙サイズ',
+          printPerPage: '1ページあたりの枚数',
+          printPerPageHelp: '1〜20枚で指定できます。',
+          printNow: '印刷する',
+          refreshPreview: 'プレビューを更新',
+          printTicketCount: '番号札',
+          printPageCount: 'ページ',
+          printLimitNote: '一度に作成できる番号札は最大1000枚です。',
+          printPreviewTitle: '印刷プレビュー',
+          printPreviewNote: '点線は切り取り目安です。実際の余白はブラウザやプリンター設定で変わる場合があります。',
+          printDefaultTitle: '受付番号',
+          printInvalidNumber: '開始番号と終了番号は0〜999999の整数で入力してください。',
+          printInvalidRange: '終了番号は開始番号以上にしてください。',
+          printTooMany: '一度に作成できる番号札は1000枚までです。',
+          printInvalidPerPage: '1ページあたりの枚数は1〜20で指定してください。',
+          printPreviewUpdated: '印刷プレビューを更新しました。',
+          printDialogOpened: 'ブラウザの印刷画面を開きました。',
           sessionReset: '受付をリセットしました。'
         },
         en: {
@@ -2581,13 +2607,13 @@
           helpStep2: 'Use Issue number or manual entry to add a ticket to the waiting queue.',
           helpStep3: 'Use Open display to launch the waiting-room Display in a separate window that can be moved to an external monitor.',
           helpStep4: 'Use Call next at any available counter and the number and Counter will update on the Display in real time.',
-          helpStep5: 'Review History, save CSV, and start a new reception from Session Summary after ending the current Session.',
+          helpStep5: 'Use the printer icon in the header to create number tickets, review the print preview, and print from the browser.',
           helpPrivacyTitle: 'Privacy',
           helpPrivacyBody: 'Ticket numbers, Counter settings, Display settings, and queue state are processed inside the same browser. The app uses no external API, analytics, or telemetry and does not send session data outside.',
-          helpNotesTitle: 'v0.7.0 scope',
+          helpNotesTitle: 'v0.8.0 scope',
           helpNoteDisplay: 'The Display syncs in a separate window of the same browser. It does not transmit data to another device.',
           helpNoteFeatures: 'Fullscreen and Wake Lock use feature detection. Unsupported environments disable only that optional feature.',
-          helpNoteHistory: 'Ending reception saves the Session history locally and enables CSV export and Session Summary.',
+          helpNotePrinting: 'Ticket creation works independently of the current Session and uses print CSS with A4 as the default paper size.',
 
           helpOffline: 'The distributable HTML needs no runtime external network access, and Display synchronization stays inside the browser.',
           footer: 'Local tool for issuing numbers and calling them in order',
@@ -2662,6 +2688,32 @@
           historySaveFailed: 'Reception was not ended because the history could not be saved locally. Check storage settings or available space.',
           csvSaved: 'CSV saved.',
           csvSaveFailed: 'CSV could not be saved.',
+          printTicketsTitle: 'Create number tickets',
+          printKicker: 'Ticket Printing',
+          printViewTitle: 'Create number tickets',
+          printViewBody: 'Choose a number range and layout, then print tickets with the browser print dialog.',
+          closePrintView: 'Back',
+          printStartNumber: 'Starting number',
+          printEndNumber: 'Ending number',
+          printDigits: 'Digits',
+          printTicketTitle: 'Title',
+          printPaperSize: 'Paper size',
+          printPerPage: 'Tickets per page',
+          printPerPageHelp: 'Choose from 1 to 20 tickets per page.',
+          printNow: 'Print',
+          refreshPreview: 'Refresh preview',
+          printTicketCount: 'Tickets',
+          printPageCount: 'Pages',
+          printLimitNote: 'Up to 1000 tickets can be generated at once.',
+          printPreviewTitle: 'Print preview',
+          printPreviewNote: 'Dashed lines are cutting guides. Actual margins can vary by browser and printer settings.',
+          printDefaultTitle: 'Queue Number',
+          printInvalidNumber: 'Starting and ending numbers must be integers from 0 to 999999.',
+          printInvalidRange: 'Ending number must be greater than or equal to the starting number.',
+          printTooMany: 'Up to 1000 tickets can be generated at once.',
+          printInvalidPerPage: 'Tickets per page must be from 1 to 20.',
+          printPreviewUpdated: 'Print preview refreshed.',
+          printDialogOpened: 'Browser print dialog opened.',
           sessionReset: 'Reception reset.'
         }
       };
@@ -2698,6 +2750,9 @@
       let endedSession = null;
       let historyVisible = false;
       let historyFilter = 'all';
+      let printVisible = false;
+      let printTitleCustom = false;
+      let printReturnFocus = null;
       let persistenceDbPromise = null;
       let persistenceTimer = 0;
       let saveState = 'saved';
@@ -3540,6 +3595,138 @@
         announce(translate('sessionReset'));
         $('#startNumber').focus();
       }
+      function defaultPrintTitle() {
+        return translate('printDefaultTitle');
+      }
+      function parsePrintNumber(value) {
+        const text = String(value ?? '').trim();
+        if (!/^\d+$/.test(text)) return null;
+        const number = Number(text);
+        if (!Number.isInteger(number) || number < 0 || number > 999999) return null;
+        return number;
+      }
+      function readPrintSettings() {
+        const start = parsePrintNumber($('#printStartNumber').value);
+        const end = parsePrintNumber($('#printEndNumber').value);
+        const digits = Number($('#printDigits').value);
+        const perPage = Number($('#printPerPage').value);
+        const title = $('#printTitleInput').value.trim();
+        const paper = $('#printPaperSize').value === 'letter' ? 'letter' : 'a4';
+        if (start === null || end === null) return { error: translate('printInvalidNumber') };
+        if (end < start) return { error: translate('printInvalidRange') };
+        const count = end - start + 1;
+        if (count > 1000) return { error: translate('printTooMany') };
+        if (!Number.isInteger(digits) || digits < 1 || digits > 6) return { error: translate('printInvalidNumber') };
+        if (!Number.isInteger(perPage) || perPage < 1 || perPage > 20) return { error: translate('printInvalidPerPage') };
+        return { start, end, digits, perPage, title, paper, count };
+      }
+      function printPaperConfig(paper) {
+        return paper === 'letter'
+          ? { width: 215.9, height: 279.4, cssSize: 'letter' }
+          : { width: 210, height: 297, cssSize: 'A4' };
+      }
+      function printGridLayout(perPage) {
+        if (perPage <= 1) return { columns: 1, rows: 1, numberSize: 72, titleSize: 20 };
+        if (perPage <= 2) return { columns: 1, rows: 2, numberSize: 64, titleSize: 18 };
+        if (perPage <= 4) return { columns: 2, rows: 2, numberSize: 54, titleSize: 17 };
+        if (perPage <= 6) return { columns: 2, rows: 3, numberSize: 46, titleSize: 15 };
+        if (perPage <= 9) return { columns: 3, rows: 3, numberSize: 38, titleSize: 14 };
+        if (perPage <= 12) return { columns: 3, rows: 4, numberSize: 32, titleSize: 12 };
+        if (perPage <= 16) return { columns: 4, rows: 4, numberSize: 26, titleSize: 11 };
+        return { columns: 4, rows: 5, numberSize: 22, titleSize: 10 };
+      }
+      function formatPrintNumber(value, digits) {
+        return String(value).padStart(digits, '0');
+      }
+      function applyPrintPageStyle(settings, layout) {
+        const paper = printPaperConfig(settings.paper);
+        const root = $('#printView');
+        root.style.setProperty('--print-paper-width', paper.width + 'mm');
+        root.style.setProperty('--print-paper-height', paper.height + 'mm');
+        root.style.setProperty('--print-paper-ratio', paper.width + ' / ' + paper.height);
+        root.style.setProperty('--print-columns', String(layout.columns));
+        root.style.setProperty('--print-rows', String(layout.rows));
+        root.style.setProperty('--print-number-size', layout.numberSize + 'pt');
+        root.style.setProperty('--print-title-size', layout.titleSize + 'pt');
+        let style = $('#dynamicPrintPageStyle');
+        if (!style) {
+          style = document.createElement('style');
+          style.id = 'dynamicPrintPageStyle';
+          document.head.append(style);
+        }
+        style.textContent = '@media print { @page { size: ' + paper.cssSize + ' portrait; margin: 0; } }';
+      }
+      function createPrintTicket(number, settings) {
+        const ticket = document.createElement('article');
+        ticket.className = 'print-ticket';
+        const title = document.createElement('div');
+        title.className = 'print-ticket-title';
+        title.textContent = settings.title;
+        title.hidden = !settings.title;
+        const value = document.createElement('div');
+        value.className = 'print-ticket-number';
+        value.textContent = formatPrintNumber(number, settings.digits);
+        ticket.append(title, value);
+        return ticket;
+      }
+      function renderPrintPreview(options = {}) {
+        const settings = readPrintSettings();
+        const error = $('#printSettingsError');
+        if (settings.error) {
+          error.textContent = settings.error;
+          $('#printSheets').replaceChildren();
+          $('#printTicketCount').textContent = '0';
+          $('#printPageCount').textContent = '0';
+          return false;
+        }
+        error.textContent = '';
+        const layout = printGridLayout(settings.perPage);
+        applyPrintPageStyle(settings, layout);
+        const sheets = $('#printSheets');
+        const fragment = document.createDocumentFragment();
+        let page = null;
+        let grid = null;
+        for (let number = settings.start, index = 0; number <= settings.end; number += 1, index += 1) {
+          if (index % settings.perPage === 0) {
+            page = document.createElement('section');
+            page.className = 'ticket-print-page';
+            page.setAttribute('aria-label', translate('printPageCount') + ' ' + (Math.floor(index / settings.perPage) + 1));
+            grid = document.createElement('div');
+            grid.className = 'ticket-print-grid';
+            page.append(grid);
+            fragment.append(page);
+          }
+          grid.append(createPrintTicket(number, settings));
+        }
+        sheets.replaceChildren(fragment);
+        $('#printTicketCount').textContent = new Intl.NumberFormat(language).format(settings.count);
+        $('#printPageCount').textContent = new Intl.NumberFormat(language).format(Math.ceil(settings.count / settings.perPage));
+        if (options.announce) announce(translate('printPreviewUpdated'));
+        return true;
+      }
+      function openPrintView() {
+        if (displayMode) return;
+        printReturnFocus = document.activeElement;
+        printVisible = true;
+        if (!printTitleCustom) $('#printTitleInput').value = defaultPrintTitle();
+        document.body.classList.add('print-editor-mode');
+        render();
+        renderPrintPreview();
+        $('#printViewTitle').focus();
+      }
+      function closePrintView() {
+        printVisible = false;
+        document.body.classList.remove('print-editor-mode');
+        render();
+        if (printReturnFocus && typeof printReturnFocus.focus === 'function') printReturnFocus.focus();
+        printReturnFocus = null;
+      }
+      function printTickets(event) {
+        event?.preventDefault();
+        if (!renderPrintPreview()) return;
+        announce(translate('printDialogOpened'));
+        window.requestAnimationFrame(() => window.print());
+      }
       function historySession() {
         return session || endedSession || null;
       }
@@ -4206,6 +4393,16 @@
       }
       function render() {
         if (displayMode) return;
+        $('#printView').hidden = !printVisible;
+        if (printVisible) {
+          $('#persistenceGate').hidden = true;
+          $('#recoveryView').hidden = true;
+          $('#setupView').hidden = true;
+          $('#operatorView').hidden = true;
+          $('#historyView').hidden = true;
+          $('#summaryView').hidden = true;
+          return;
+        }
         $('#persistenceGate').hidden = persistenceReady;
         if (!persistenceReady) {
           $('#recoveryView').hidden = true;
@@ -4273,10 +4470,23 @@
           initializeSoundSupport();
           if (recoveryCandidate) renderRecoveryCandidate();
           if (session) setSaveState(saveState);
+          if (!printTitleCustom) $('#printTitleInput').value = defaultPrintTitle();
+          if (printVisible) renderPrintPreview();
         } else updateDisplayFeatureControls();
         render();
       }
 
+      $('#printTicketsButton').addEventListener('click', openPrintView);
+      $('#closePrintViewButton').addEventListener('click', closePrintView);
+      $('#printSettingsForm').addEventListener('submit', printTickets);
+      $('#refreshPrintPreviewButton').addEventListener('click', () => renderPrintPreview({ announce: true }));
+      ['printStartNumber', 'printEndNumber', 'printDigits', 'printPaperSize', 'printPerPage'].forEach(id => {
+        $('#' + id).addEventListener('change', () => renderPrintPreview());
+      });
+      $('#printTitleInput').addEventListener('input', () => {
+        printTitleCustom = true;
+        renderPrintPreview();
+      });
       $('#languageButton').addEventListener('click', () => {
         language = language === 'ja' ? 'en' : 'ja';
         writeStorage(storageKey, language);
