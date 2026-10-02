@@ -2136,13 +2136,13 @@
           helpStep2: '「番号を発行」、または手動追加で待ち列へ番号を登録します。',
           helpStep3: '「表示画面を開く」で待合向けDisplayを別ウィンドウに開きます。外部モニターへ移動して使えます。',
           helpStep4: '空いている窓口の「次を呼ぶ」で、Displayへ番号と窓口がリアルタイム反映されます。',
-          helpStep5: '呼び出し音を試聴・ON/OFFできます。Displayでは全画面表示と対応環境でのWake Lockを利用できます。',
+          helpStep5: '履歴を確認・CSV保存し、受付終了後はSession Summaryから新しい受付を開始できます。',
           helpPrivacyTitle: 'プライバシー',
           helpPrivacyBody: 'Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。',
-          helpNotesTitle: 'v0.6.0 の範囲',
+          helpNotesTitle: 'v0.7.0 の範囲',
           helpNoteDisplay: 'DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。別端末への送信は行いません。',
           helpNoteFeatures: 'Fullscreen / Wake LockはFeature Detectionを行い、非対応環境ではその機能だけを無効化します。',
-          helpNotePersistence: '進行中SessionはIndexedDBを第一候補として端末内へ自動保存します。再読み込み時は「再開 / 新しく始める」を選べます。',
+          helpNoteHistory: '受付終了時は履歴を端末内へ保存し、CSV保存とSession Summaryを利用できます。',
 
           helpOffline: '配布用HTMLは実行時の外部通信を必要とせず、Display同期もブラウザ内だけで行います。',
           footer: '番号を発行して順番に呼び出すローカルツール',
@@ -2167,6 +2167,54 @@
           ticketRestored: '番号 {number} を元に戻しました。',
           undo: '元に戻す', undoUnavailable: '状態が変わったため元に戻せません。',
           noWaiting: '待っている番号はありません。', counterBusy: '{counter} は現在対応中です。',
+          openHistory: '履歴',
+          endSession: '受付を終了',
+          historyKicker: 'Session履歴',
+          historyTitle: '履歴',
+          historyBody: 'Ticketごとの受付・呼び出し・完了・不在を時系列で確認できます。',
+          historyBack: 'Operatorへ戻る',
+          saveCsv: 'CSVを保存',
+          filterAll: 'すべて',
+          filterWaiting: '待機中',
+          filterCalled: '呼び出し中',
+          filterCompleted: '完了',
+          filterAbsent: '不在',
+          historyEmptyTitle: 'まだ履歴はありません。',
+          historyEmptyBody: '番号を呼び出すと、ここに記録されます。',
+          historyNoMatchTitle: '該当する履歴はありません。',
+          historyNoMatchBody: '別の状態を選ぶと表示される場合があります。',
+          statusWaiting: '待機中',
+          statusCalled: '呼び出し中',
+          statusCompleted: '完了',
+          statusAbsent: '不在',
+          eventCreated: '受付',
+          eventCalled: '呼出',
+          eventCompleted: '完了',
+          eventAbsent: '不在',
+          historyCounter: '窓口',
+          historyCallCount: '呼出回数 {count}',
+          summaryKicker: 'Session Summary',
+          summaryTitle: '本日の受付',
+          summaryBody: '受付を終了しました。履歴はこの端末内に保存されています。',
+          summaryIssued: '受付数',
+          summaryCompleted: '完了',
+          summaryAbsent: '不在',
+          summaryWaiting: '現在待機',
+          summaryStarted: '受付開始',
+          summaryEnded: '受付終了',
+          summaryAverageWait: '平均待ち時間',
+          averageWaitUnavailable: '—',
+          durationMinutesSeconds: '{minutes}分 {seconds}秒',
+          durationSeconds: '{seconds}秒',
+          viewHistory: '履歴を見る',
+          startAnotherSession: '新しい受付を開始',
+          endSessionTitle: '受付を終了しますか？',
+          endSessionBody: '現在の待ち列は{count}件です。終了後も履歴は確認できます。',
+          endSessionConfirm: '受付を終了',
+          sessionEnded: '受付を終了し、履歴を保存しました。',
+          historySaveFailed: '履歴を端末へ保存できなかったため、受付を終了しませんでした。ストレージ設定や空き容量を確認してください。',
+          csvSaved: 'CSVを保存しました。',
+          csvSaveFailed: 'CSVを保存できませんでした。',
           sessionReset: '受付をリセットしました。'
         },
         en: {
@@ -2263,13 +2311,13 @@
           helpStep2: 'Use Issue number or manual entry to add a ticket to the waiting queue.',
           helpStep3: 'Use Open display to launch the waiting-room Display in a separate window that can be moved to an external monitor.',
           helpStep4: 'Use Call next at any available counter and the number and Counter will update on the Display in real time.',
-          helpStep5: 'Preview or toggle the call sound. On Display, use Fullscreen and Wake Lock when supported.',
+          helpStep5: 'Review History, save CSV, and start a new reception from Session Summary after ending the current Session.',
           helpPrivacyTitle: 'Privacy',
           helpPrivacyBody: 'Ticket numbers, Counter settings, Display settings, and queue state are processed inside the same browser. The app uses no external API, analytics, or telemetry and does not send session data outside.',
-          helpNotesTitle: 'v0.6.0 scope',
+          helpNotesTitle: 'v0.7.0 scope',
           helpNoteDisplay: 'The Display syncs in a separate window of the same browser. It does not transmit data to another device.',
           helpNoteFeatures: 'Fullscreen and Wake Lock use feature detection. Unsupported environments disable only that optional feature.',
-          helpNotePersistence: 'The in-progress Session is saved locally with IndexedDB as the primary store. After reload, choose Resume or Start new.',
+          helpNoteHistory: 'Ending reception saves the Session history locally and enables CSV export and Session Summary.',
 
           helpOffline: 'The distributable HTML needs no runtime external network access, and Display synchronization stays inside the browser.',
           footer: 'Local tool for issuing numbers and calling them in order',
@@ -2294,6 +2342,54 @@
           ticketRestored: 'Restored number {number}.',
           undo: 'Undo', undoUnavailable: 'The state changed, so this can no longer be undone.',
           noWaiting: 'No tickets are waiting.', counterBusy: '{counter} is currently in service.',
+          openHistory: 'History',
+          endSession: 'End reception',
+          historyKicker: 'Session history',
+          historyTitle: 'History',
+          historyBody: 'Review reception, call, completion, and absent events for each Ticket.',
+          historyBack: 'Back to Operator',
+          saveCsv: 'Save CSV',
+          filterAll: 'All',
+          filterWaiting: 'Waiting',
+          filterCalled: 'Calling',
+          filterCompleted: 'Completed',
+          filterAbsent: 'Absent',
+          historyEmptyTitle: 'No history yet.',
+          historyEmptyBody: 'Called numbers will be recorded here.',
+          historyNoMatchTitle: 'No matching history.',
+          historyNoMatchBody: 'Choose another status to see other Tickets.',
+          statusWaiting: 'Waiting',
+          statusCalled: 'Calling',
+          statusCompleted: 'Completed',
+          statusAbsent: 'Absent',
+          eventCreated: 'Issued',
+          eventCalled: 'Called',
+          eventCompleted: 'Completed',
+          eventAbsent: 'Absent',
+          historyCounter: 'Counter',
+          historyCallCount: '{count} calls',
+          summaryKicker: 'Session Summary',
+          summaryTitle: "Today's reception",
+          summaryBody: 'Reception ended. The history is saved locally on this device.',
+          summaryIssued: 'Issued',
+          summaryCompleted: 'Completed',
+          summaryAbsent: 'Absent',
+          summaryWaiting: 'Still waiting',
+          summaryStarted: 'Started',
+          summaryEnded: 'Ended',
+          summaryAverageWait: 'Average wait',
+          averageWaitUnavailable: '—',
+          durationMinutesSeconds: '{minutes}m {seconds}s',
+          durationSeconds: '{seconds}s',
+          viewHistory: 'View history',
+          startAnotherSession: 'Start new reception',
+          endSessionTitle: 'End reception?',
+          endSessionBody: '{count} Tickets are still waiting. History remains available after ending reception.',
+          endSessionConfirm: 'End reception',
+          sessionEnded: 'Reception ended and history saved.',
+          historySaveFailed: 'Reception was not ended because the history could not be saved locally. Check storage settings or available space.',
+          csvSaved: 'CSV saved.',
+          csvSaveFailed: 'CSV could not be saved.',
           sessionReset: 'Reception reset.'
         }
       };
@@ -2302,6 +2398,7 @@
       const storageKey = APP_CONFIG.slug + ':language';
       const settingsStorageKey = APP_CONFIG.slug + ':settings:v1';
       const fallbackSessionStorageKey = APP_CONFIG.slug + ':active-session:v1';
+      const fallbackHistoryStorageKey = APP_CONFIG.slug + ':latest-history:v1';
       const persistenceDbName = APP_CONFIG.slug + '-db';
       const persistenceStoreName = 'sessions';
       const persistenceRecordKey = 'active';
@@ -2326,6 +2423,9 @@
       let displayFeatureRuntimeMessage = '';
       let persistenceReady = displayMode;
       let recoveryCandidate = null;
+      let endedSession = null;
+      let historyVisible = false;
+      let historyFilter = 'all';
       let persistenceDbPromise = null;
       let persistenceTimer = 0;
       let saveState = 'saved';
@@ -2485,7 +2585,9 @@
         const tickets = candidate.tickets.filter(ticket => ticket && typeof ticket.id === 'string' && Number.isFinite(ticket.number)).map(ticket => ({
           ...ticket,
           displayNumber: typeof ticket.displayNumber === 'string' ? ticket.displayNumber : formatTicketNumber(ticket.number),
+          absentAt: Number.isFinite(ticket.absentAt) ? ticket.absentAt : null,
           counterId: typeof ticket.counterId === 'string' ? ticket.counterId : null,
+          lastCounterId: typeof ticket.lastCounterId === 'string' ? ticket.lastCounterId : (typeof ticket.counterId === 'string' ? ticket.counterId : null),
           callCount: Number.isFinite(ticket.callCount) ? ticket.callCount : 0
         }));
         return {
@@ -2808,7 +2910,9 @@
           createdAt: Date.now(),
           calledAt: null,
           completedAt: null,
+          absentAt: null,
           counterId: null,
+          lastCounterId: null,
           callCount: 0
         };
         session.usedNumbers.push(number);
@@ -2956,6 +3060,7 @@
         ticket.calledAt = ticket.calledAt || Date.now();
         ticket.lastCalledAt = Date.now();
         ticket.counterId = counter.id;
+        ticket.lastCounterId = counter.id;
         ticket.callCount += 1;
         counter.currentTicketId = ticket.id;
         void playChime('call');
@@ -2989,6 +3094,8 @@
         const ticket = currentTicket(counterId);
         if (!counter || !ticket) return;
         ticket.status = 'absent';
+        ticket.absentAt = Date.now();
+        ticket.lastCounterId = counter.id;
         ticket.counterId = null;
         counter.currentTicketId = null;
         render();
