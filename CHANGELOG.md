@@ -2,6 +2,24 @@
 
 All notable changes to Queue Board are documented here.
 
+## [0.3.0] - 2026-10-02
+
+### Added
+
+- One-to-four Counter configuration before starting a Session.
+- Custom Counter names.
+- Independent current Ticket state for every Counter.
+- Per-Counter call next, recall, complete, absent, and active-Ticket deletion actions.
+- Shared-queue allocation guard so the same waiting Ticket cannot be acquired by multiple Counters.
+- Multi-Counter status cards and active-Counter metric.
+- Desktop Operator layout optimized for multiple Counter cards, with stacked mobile behavior.
+
+### Changed
+
+- The former single Counter controls are now generated from the Session Counter configuration.
+- Operator Session metadata shows the configured Counter count.
+- Help and README now describe the v0.3.0 Multi Counter workflow.
+
 ## [0.2.0] - 2026-10-02
 
 ### Added
