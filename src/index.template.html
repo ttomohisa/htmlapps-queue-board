@@ -1342,7 +1342,7 @@
           <div class="sound-setup-actions">
             <label class="sound-switch" for="soundEnabled">
               <input id="soundEnabled" type="checkbox" checked>
-              <span data-i18n="soundEnabledLabel">ON</span>
+              <span data-i18n="soundEnabledLabel">呼び出し音を鳴らす</span>
             </label>
             <button class="button with-icon" id="previewChimeButton" type="button">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10v4h4l5 4V6L8 10H4Z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg>
@@ -1722,7 +1722,7 @@
           showWaitingCountLabel: '待ち人数を表示',
           soundSettingTitle: '呼び出し音',
           soundSettingNote: '呼び出し・再呼び出し時に内蔵チャイムを鳴らします。',
-          soundEnabledLabel: 'ON',
+          soundEnabledLabel: '呼び出し音を鳴らす',
           previewChime: '試聴',
           soundOn: '呼び出し音 ON',
           soundOff: '呼び出し音 OFF',
@@ -1829,7 +1829,7 @@
           showWaitingCountLabel: 'Show waiting count',
           soundSettingTitle: 'Call sound',
           soundSettingNote: 'Play the built-in chime for calls and recalls.',
-          soundEnabledLabel: 'ON',
+          soundEnabledLabel: 'Play call sound',
           previewChime: 'Preview',
           soundOn: 'Call sound ON',
           soundOff: 'Call sound OFF',
@@ -2926,6 +2926,7 @@
         $('#issuedCount').textContent = new Intl.NumberFormat(language).format(session.usedNumbers.length);
         $('#nextNumber').textContent = session.nextNumber === null ? '—' : formatTicketNumber(session.nextNumber);
         $('#issueButton').disabled = session.nextNumber === null;
+        $('#toggleSoundButton').disabled = !audioContextConstructor();
         $('#toggleSoundButton').setAttribute('aria-pressed', String(session.soundEnabled));
         $('#toggleSoundButtonText').textContent = translate(session.soundEnabled ? 'soundOn' : 'soundOff');
         $('#lastIssuedPanel').hidden = !lastIssued;
