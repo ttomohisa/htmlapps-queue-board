@@ -84,7 +84,7 @@ $componentContracts = @(
 )
 foreach ($contract in $componentContracts) {
   $componentText = Get-Content -Raw -Encoding UTF8 (Join-Path $Root $contract.Path)
-  foreach ($token in @($contract.Tokens)) {
+  foreach ($token in @("bytesAsync", "blobUrlAsync", "window.AppToast", "startSession", "issueTicket", "addManualTicket", "renderCounterSetupFields", "renderCounters", "getCounter", "currentTicket", "callNextTicket", "recallCurrentTicket", "markCurrentAbsent", "returnAbsentTicket", "deleteQueuedTicket", "completeCurrentTicket", "counterCount", "countersGrid", "localBadge")) {
     if (-not $componentText.Contains([string]$token)) {
       throw "$($contract.Path) is missing required behavior marker: $token"
     }
