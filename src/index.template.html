@@ -41,9 +41,9 @@
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
     }
-    button, textarea, input { font: inherit; }
+    button, textarea, input, select { font: inherit; }
     button { color: inherit; }
-    button:focus-visible, textarea:focus-visible, input:focus-visible, summary:focus-visible {
+    button:focus-visible, textarea:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible, a:focus-visible {
       outline: 3px solid color-mix(in srgb, var(--focus) 55%, transparent);
       outline-offset: 2px;
     }
@@ -176,6 +176,7 @@
       font-size: clamp(21px, 3vw, 26px);
       line-height: 1.3;
       letter-spacing: -.025em;
+      overflow-wrap: anywhere;
     }
     .page-intro p { margin: 5px 0 0; max-width: 760px; color: var(--muted); font-size: 13px; }
     .local-badge {
@@ -467,7 +468,7 @@
       margin: 0 auto;
       padding: clamp(18px, 3vw, 28px);
     }
-    .setup-card h2, .panel-title { margin: 0; letter-spacing: -.02em; }
+    .setup-card h2, .panel-title { margin: 0; letter-spacing: -.02em; overflow-wrap: anywhere; }
     .setup-card h2 { font-size: clamp(22px, 4vw, 28px); }
     .setup-card > p { margin: 7px 0 22px; color: var(--muted); }
     .field { display: grid; gap: 7px; }
@@ -668,6 +669,8 @@
     .button.warning { color: #8a5a00; }
     .ticket-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
     .ticket-item {
+      content-visibility: auto;
+      contain-intrinsic-size: 58px;
       display: grid;
       grid-template-columns: auto minmax(0, 1fr) auto;
       align-items: center;
@@ -1344,6 +1347,9 @@
 
 
     /* Queue Board history / export */
+    .history-shell {
+      padding: clamp(18px, 3vw, 26px);
+    }
     .history-toolbar {
       display: flex;
       align-items: center;
@@ -1385,6 +1391,8 @@
       list-style: none;
     }
     .history-item {
+      content-visibility: auto;
+      contain-intrinsic-size: 94px;
       display: grid;
       grid-template-columns: minmax(84px, .34fr) minmax(0, 1.66fr) auto;
       gap: 14px;
@@ -1513,6 +1521,107 @@
       .history-filter { width: 100%; }
     }
 
+
+    /* Queue Board v0.9.0 mobile / UX / accessibility */
+    .mobile-session-nav { display: none; }
+    @media (max-width: 600px) {
+      body.mobile-session-active {
+        padding-bottom: calc(74px + env(safe-area-inset-bottom));
+      }
+      body.mobile-session-active .queue-intro { display: none; }
+      body.mobile-session-active .queue-main {
+        padding-top: 14px;
+        padding-bottom: 28px;
+      }
+      body.mobile-session-active footer {
+        padding-bottom: calc(92px + env(safe-area-inset-bottom));
+      }
+      body.mobile-session-active .app-toast {
+        bottom: calc(82px + env(safe-area-inset-bottom));
+      }
+      body.mobile-session-active #operatorView,
+      body.mobile-session-active #historyView {
+        scroll-margin-top: calc(var(--header-height) + 12px);
+      }
+      body.mobile-session-active[data-mobile-tab="operate"] #operatorView [data-mobile-page="queue"],
+      body.mobile-session-active[data-mobile-tab="queue"] #operatorView [data-mobile-page="operate"] {
+        display: none !important;
+      }
+      body.mobile-session-active #openHistoryButton { display: none; }
+      body.mobile-session-active .session-actions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+      body.mobile-session-active .session-actions .button {
+        width: 100%;
+        min-width: 0;
+        min-height: 44px;
+        white-space: normal;
+      }
+      body.mobile-session-active .save-status,
+      body.mobile-session-active .display-status {
+        min-width: 0;
+        justify-content: center;
+        white-space: normal;
+        text-align: center;
+      }
+      body.mobile-session-active .history-toolbar-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+      body.mobile-session-active #historyBackButton { display: none; }
+      body.mobile-session-active .history-filter { min-height: 44px; }
+      .mobile-session-nav {
+        position: fixed;
+        z-index: 80;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 4px;
+        padding: 6px 10px calc(6px + env(safe-area-inset-bottom));
+        border-top: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
+        background: rgba(255, 255, 255, .96);
+        box-shadow: 0 -8px 24px rgba(20, 22, 20, .07);
+        backdrop-filter: blur(18px) saturate(1.3);
+      }
+      body.mobile-session-active .mobile-session-nav { display: grid; }
+      .mobile-session-nav-button {
+        min-width: 0;
+        min-height: 54px;
+        padding: 5px 4px;
+        border: 0;
+        border-radius: 12px;
+        background: transparent;
+        color: var(--muted);
+        display: grid;
+        place-items: center;
+        align-content: center;
+        gap: 3px;
+        font: inherit;
+        font-size: 10px;
+        font-weight: 800;
+        line-height: 1.15;
+        cursor: pointer;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .mobile-session-nav-button svg { width: 21px; height: 21px; }
+      .mobile-session-nav-button span {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .mobile-session-nav-button:hover,
+      .mobile-session-nav-button:focus-visible,
+      .mobile-session-nav-button[aria-current="page"] {
+        color: var(--accent);
+        background: var(--accent-soft);
+      }
+    }
 
     /* Queue Board v0.8.0 ticket printing */
     .print-view {
@@ -1662,6 +1771,7 @@
       body > header,
       body > footer,
       body > .app-toast,
+      body > .mobile-session-nav,
       body > dialog,
       .queue-intro,
       #persistenceGate,
@@ -1753,7 +1863,7 @@
       </div>
     </section>
 
-    <!-- APP:BEGIN Queue Board v0.8.0 ticket printing -->
+    <!-- APP:BEGIN Queue Board v0.9.0 Mobile / UX / Accessibility RC -->
     <section class="queue-card persistence-gate" id="persistenceGate" aria-live="polite">
       <div class="persistence-gate-inner">
         <span class="persistence-spinner" aria-hidden="true"></span>
@@ -1872,7 +1982,7 @@
     </section>
 
     <section class="operator-shell" id="operatorView" hidden aria-labelledby="operatorTitle">
-      <div class="queue-card session-bar">
+      <div class="queue-card session-bar" data-mobile-page="operate">
         <div class="session-status">
           <span class="status-dot" aria-hidden="true"></span>
           <div>
@@ -1912,14 +2022,14 @@
         </div>
       </div>
 
-      <div class="metrics" aria-live="polite">
+      <div class="metrics" data-mobile-page="operate" aria-live="polite">
         <div class="queue-card metric"><span class="metric-value" id="waitingCount">0</span><span class="metric-label" data-i18n="waitingCount">待ち</span></div>
         <div class="queue-card metric"><span class="metric-value" id="currentMetric">0</span><span class="metric-label" data-i18n="activeCounterCount">対応中</span></div>
         <div class="queue-card metric"><span class="metric-value" id="completedCount">0</span><span class="metric-label" data-i18n="completedCount">完了</span></div>
         <div class="queue-card metric"><span class="metric-value" id="issuedCount">0</span><span class="metric-label" data-i18n="issuedCount">登録</span></div>
       </div>
 
-      <div class="operator-workspace">
+      <div class="operator-workspace" data-mobile-page="operate">
         <section class="queue-card action-panel" aria-labelledby="issueTitle">
           <p class="panel-kicker" data-i18n="nextTicket">次の発行番号</p>
           <h2 class="panel-title" id="issueTitle" data-i18n="issueTitle">番号を発行</h2>
@@ -1958,7 +2068,7 @@
         </section>
       </div>
 
-      <section class="queue-card queue-panel" aria-labelledby="waitingTitle">
+      <section class="queue-card queue-panel" data-mobile-page="queue" aria-labelledby="waitingTitle">
         <div class="queue-panel-head">
           <div>
             <h2 class="panel-title" id="waitingTitle" data-i18n="waitingTitle">待機中</h2>
@@ -1972,7 +2082,7 @@
         </div>
       </section>
 
-      <section class="queue-card queue-panel absent-panel" aria-labelledby="absentTitle">
+      <section class="queue-card queue-panel absent-panel" data-mobile-page="queue" aria-labelledby="absentTitle">
         <div class="queue-panel-head">
           <div>
             <h2 class="panel-title" id="absentTitle" data-i18n="absentTitle">不在</h2>
@@ -2164,6 +2274,21 @@
     <!-- APP:END -->
   </main>
 
+  <nav class="mobile-session-nav" id="mobileSessionNav" data-i18n-aria-label="mobileNavLabel" aria-label="受付画面のナビゲーション">
+    <button class="mobile-session-nav-button" type="button" data-mobile-tab="operate" aria-current="page">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/><path d="M16.5 15.5h.01"/></svg>
+      <span data-i18n="mobileOperate">操作</span>
+    </button>
+    <button class="mobile-session-nav-button" type="button" data-mobile-tab="queue">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>
+      <span data-i18n="mobileQueue">待ち列</span>
+    </button>
+    <button class="mobile-session-nav-button" type="button" data-mobile-tab="history">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 7v5l3 2"/></svg>
+      <span data-i18n="mobileHistory">履歴</span>
+    </button>
+  </nav>
+
   <footer><span id="footerName">Queue Board</span> · MIT License · <span data-i18n="footer">番号を発行して順番に呼び出すローカルツール</span></footer>
   <div class="app-toast" id="appToast" role="status" aria-live="polite" aria-atomic="true" data-tone="default">
     <span class="app-toast-message" id="appToastMessage"></span>
@@ -2195,7 +2320,7 @@
       </button>
     </div>
     <div class="dialog-body">
-      <!-- APP:HELP:BEGIN Queue Board v0.8.0 -->
+      <!-- APP:HELP:BEGIN Queue Board v0.9.0 -->
       <h3 data-i18n="helpBasicsTitle">基本操作</h3>
       <ol>
         <li data-i18n="helpStep1">開始番号と窓口数、必要なら各窓口名と表示画面設定を決めて受付を開始します。</li>
@@ -2203,16 +2328,19 @@
         <li data-i18n="helpStep3">「表示画面を開く」で待合向けDisplayを別ウィンドウに開きます。外部モニターへ移動して使えます。</li>
         <li data-i18n="helpStep4">空いている窓口の「次を呼ぶ」で、Displayへ番号と窓口がリアルタイム反映されます。</li>
         <li data-i18n="helpStep5">ヘッダーのプリンターアイコンから番号札を作成し、印刷プレビューを確認してブラウザから印刷できます。</li>
+        <li data-i18n="helpMobileNavigation">スマートフォンでは下部の「操作 / 待ち列 / 履歴」で画面を切り替えます。</li>
       </ol>
       <h3 data-i18n="helpPrivacyTitle">プライバシー</h3>
       <p data-i18n="helpPrivacyBody">Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。</p>
-      <h3 data-i18n="helpNotesTitle">v0.8.0 の範囲</h3>
+      <h3 data-i18n="helpNotesTitle">対応・制約</h3>
       <ul>
-        <li data-i18n="helpNoteDisplay">DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。別端末への送信は行いません。</li>
-        <li data-i18n="helpNoteFeatures">Fullscreen / Wake LockはFeature Detectionを行い、非対応環境ではその機能だけを無効化します。</li>
-        <li data-i18n="helpNotePrinting">番号札作成は現在のSessionと独立して利用でき、A4を既定とした印刷用CSSを使用します。</li>
+        <li data-i18n="helpNoteDisplay">DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。受付データを別端末やサーバーへ送信しません。</li>
+        <li data-i18n="helpNoteFeatures">Fullscreen / Wake Lockは対応ブラウザでのみ利用できます。非対応でも受付・呼び出しは利用できます。</li>
+        <li data-i18n="helpNotePrinting">番号札作成は現在のSessionと独立して利用でき、A4 / Letterに対応します。印刷結果はブラウザやプリンター設定で変わる場合があります。</li>
+        <li data-i18n="helpBrowserSupport">Chrome / Edgeを主対象とし、Safari / Firefoxは可能な範囲で対応します。</li>
+        <li data-i18n="helpStorageRisk">進行中Sessionはこの端末のブラウザ保存領域に保存します。サイトデータの削除や保存制限がある環境では復旧できない場合があります。</li>
       </ul>
-      <p class="dialog-note" data-i18n="helpOffline">配布用HTMLは実行時の外部通信を必要とせず、Display同期もブラウザ内だけで行います。</p>
+      <p class="dialog-note" data-i18n="helpOffline">受付データ処理とDisplay同期にはサーバー通信を使いません。配布用の単一HTMLはオフラインでも利用できます。</p>
       <!-- APP:HELP:END -->
     </div>
   </dialog>
@@ -2415,20 +2543,24 @@
           absentTitle: '不在', absentBody: '戻ってきた番号は待ち列の末尾へ戻せます。',
           absentEmptyTitle: '不在の番号はありません。', absentEmptyBody: '呼び出し中の番号を「不在」にすると、ここへ移動します。',
           returnToWaiting: '待ち列へ戻す', acceptedAt: '受付', calls: '呼出',
+          mobileNavLabel: '受付画面のナビゲーション', mobileOperate: '操作', mobileQueue: '待ち列', mobileHistory: '履歴',
           helpBasicsTitle: '基本操作',
           helpStep1: '開始番号と窓口数、必要なら各窓口名と表示画面設定を決めて受付を開始します。',
           helpStep2: '「番号を発行」、または手動追加で待ち列へ番号を登録します。',
           helpStep3: '「表示画面を開く」で待合向けDisplayを別ウィンドウに開きます。外部モニターへ移動して使えます。',
           helpStep4: '空いている窓口の「次を呼ぶ」で、Displayへ番号と窓口がリアルタイム反映されます。',
           helpStep5: 'ヘッダーのプリンターアイコンから番号札を作成し、印刷プレビューを確認してブラウザから印刷できます。',
+          helpMobileNavigation: 'スマートフォンでは下部の「操作 / 待ち列 / 履歴」で画面を切り替えます。',
           helpPrivacyTitle: 'プライバシー',
           helpPrivacyBody: 'Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。',
-          helpNotesTitle: 'v0.8.0 の範囲',
-          helpNoteDisplay: 'DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。別端末への送信は行いません。',
-          helpNoteFeatures: 'Fullscreen / Wake LockはFeature Detectionを行い、非対応環境ではその機能だけを無効化します。',
-          helpNotePrinting: '番号札作成は現在のSessionと独立して利用でき、A4を既定とした印刷用CSSを使用します。',
+          helpNotesTitle: '対応・制約',
+          helpNoteDisplay: 'DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。受付データを別端末やサーバーへ送信しません。',
+          helpNoteFeatures: 'Fullscreen / Wake Lockは対応ブラウザでのみ利用できます。非対応でも受付・呼び出しは利用できます。',
+          helpNotePrinting: '番号札作成は現在のSessionと独立して利用でき、A4 / Letterに対応します。印刷結果はブラウザやプリンター設定で変わる場合があります。',
+          helpBrowserSupport: 'Chrome / Edgeを主対象とし、Safari / Firefoxは可能な範囲で対応します。',
+          helpStorageRisk: '進行中Sessionはこの端末のブラウザ保存領域に保存します。サイトデータの削除や保存制限がある環境では復旧できない場合があります。',
 
-          helpOffline: '配布用HTMLは実行時の外部通信を必要とせず、Display同期もブラウザ内だけで行います。',
+          helpOffline: '受付データ処理とDisplay同期にはサーバー通信を使いません。配布用の単一HTMLはオフラインでも利用できます。',
           footer: '番号を発行して順番に呼び出すローカルツール',
           confirmTitle: '確認', confirmAction: '実行する', cancel: 'キャンセル',
           resetTitle: '受付をリセットしますか？', resetBody: '現在の受付番号と状態を破棄して、開始画面へ戻ります。', resetConfirm: 'リセット',
@@ -2618,20 +2750,24 @@
           absentTitle: 'Absent', absentBody: 'Returned visitors can be moved to the end of the waiting queue.',
           absentEmptyTitle: 'No absent numbers.', absentEmptyBody: 'Mark an active ticket Absent to move it here.',
           returnToWaiting: 'Return to queue', acceptedAt: 'Issued', calls: 'Calls',
+          mobileNavLabel: 'Reception screen navigation', mobileOperate: 'Operate', mobileQueue: 'Queue', mobileHistory: 'History',
           helpBasicsTitle: 'Basics',
           helpStep1: 'Set the starting number, counter count, optional counter names, and Display settings, then start reception.',
           helpStep2: 'Use Issue number or manual entry to add a ticket to the waiting queue.',
           helpStep3: 'Use Open display to launch the waiting-room Display in a separate window that can be moved to an external monitor.',
           helpStep4: 'Use Call next at any available counter and the number and Counter will update on the Display in real time.',
           helpStep5: 'Use the printer icon in the header to create number tickets, review the print preview, and print from the browser.',
+          helpMobileNavigation: 'On smartphones, use the bottom Operate / Queue / History navigation to switch views.',
           helpPrivacyTitle: 'Privacy',
-          helpPrivacyBody: 'Ticket numbers, Counter settings, Display settings, and queue state are processed inside the same browser. The app uses no external API, analytics, or telemetry and does not send session data outside.',
-          helpNotesTitle: 'v0.8.0 scope',
-          helpNoteDisplay: 'The Display syncs in a separate window of the same browser. It does not transmit data to another device.',
-          helpNoteFeatures: 'Fullscreen and Wake Lock use feature detection. Unsupported environments disable only that optional feature.',
-          helpNotePrinting: 'Ticket creation works independently of the current Session and uses print CSS with A4 as the default paper size.',
+          helpPrivacyBody: 'Ticket numbers, Counter settings, Display settings, and queue state are processed inside the same browser. The app uses no external API, analytics, or telemetry and does not send Session data outside.',
+          helpNotesTitle: 'Support & limitations',
+          helpNoteDisplay: 'The Display syncs with a separate window in the same browser. Reception data is not sent to another device or server.',
+          helpNoteFeatures: 'Fullscreen and Wake Lock are available only in supported browsers. Reception and calling still work without them.',
+          helpNotePrinting: 'Ticket creation works independently of the current Session and supports A4 / Letter. Printed output can vary by browser and printer settings.',
+          helpBrowserSupport: 'Chrome and Edge are the primary targets; Safari and Firefox are supported where practical.',
+          helpStorageRisk: 'The active Session is stored in this browser on this device. Clearing site data or restricted storage can prevent recovery.',
 
-          helpOffline: 'The distributable HTML needs no runtime external network access, and Display synchronization stays inside the browser.',
+          helpOffline: 'Reception data processing and Display synchronization do not use server communication. The distributable single HTML also works offline.',
           footer: 'Local tool for issuing numbers and calling them in order',
           confirmTitle: 'Confirm', confirmAction: 'Continue', cancel: 'Cancel',
           resetTitle: 'Reset reception?', resetBody: 'Discard the current ticket numbers and state, then return to the start screen.', resetConfirm: 'Reset',
@@ -2766,6 +2902,7 @@
       let endedSession = null;
       let historyVisible = false;
       let historyFilter = 'all';
+      let mobileSessionTab = 'operate';
       let printVisible = false;
       let printTitleCustom = false;
       let printReturnFocus = null;
@@ -3065,6 +3202,7 @@
         if (!session) return;
         endedSession = null;
         historyVisible = false;
+        mobileSessionTab = 'operate';
         recoveryCandidate = null;
         lastIssuedId = null;
         setupDisplayChannel();
@@ -3372,6 +3510,7 @@
         });
         endedSession = null;
         historyVisible = false;
+        mobileSessionTab = 'operate';
         session = {
           id: makeId(),
           startedAt: Date.now(),
@@ -3893,14 +4032,43 @@
           announce(translate('csvSaveFailed'), { tone: 'warning' });
         }
       }
+      function syncMobileSessionNav(activeTab = mobileSessionTab) {
+        const nav = $('#mobileSessionNav');
+        if (!nav) return;
+        const enabled = Boolean(session && !printVisible && !displayMode);
+        document.body.classList.toggle('mobile-session-active', enabled);
+        if (!enabled) {
+          document.body.removeAttribute('data-mobile-tab');
+          nav.querySelectorAll('[data-mobile-tab]').forEach(button => button.removeAttribute('aria-current'));
+          return;
+        }
+        const tab = ['operate', 'queue', 'history'].includes(activeTab) ? activeTab : 'operate';
+        document.body.dataset.mobileTab = tab;
+        nav.querySelectorAll('[data-mobile-tab]').forEach(button => {
+          if (button.dataset.mobileTab === tab) button.setAttribute('aria-current', 'page');
+          else button.removeAttribute('aria-current');
+        });
+      }
+      function setMobileSessionTab(tab) {
+        if (!session || !['operate', 'queue', 'history'].includes(tab)) return;
+        mobileSessionTab = tab;
+        historyVisible = tab === 'history';
+        render();
+        if (window.matchMedia?.('(max-width: 600px)').matches) {
+          const target = tab === 'history' ? $('#historyView') : $('#operatorView');
+          target?.scrollIntoView({ block: 'start', behavior: 'auto' });
+        }
+      }
       function openHistoryView() {
         if (!historySession()) return;
+        mobileSessionTab = 'history';
         historyVisible = true;
         historyFilter = 'all';
         render();
         $('#historyTitle').focus?.();
       }
       function closeHistoryView() {
+        mobileSessionTab = 'operate';
         historyVisible = false;
         render();
       }
@@ -3932,6 +4100,7 @@
         recoveryCandidate = null;
         lastIssuedId = null;
         historyVisible = false;
+        mobileSessionTab = 'operate';
         if (displayChannel) {
           try { displayChannel.close(); } catch { }
           displayChannel = null;
@@ -3942,6 +4111,7 @@
       function startNewAfterSummary() {
         endedSession = null;
         historyVisible = false;
+        mobileSessionTab = 'operate';
         historyFilter = 'all';
         loadSetupSettings();
         renderCounterSetupFields();
@@ -4409,6 +4579,7 @@
       }
       function render() {
         if (displayMode) return;
+        syncMobileSessionNav();
         $('#printView').hidden = !printVisible;
         if (printVisible) {
           $('#persistenceGate').hidden = true;
@@ -4432,6 +4603,7 @@
         const recovering = Boolean(recoveryCandidate && !session);
         const ended = Boolean(endedSession && !session);
         const historyShown = Boolean(historyVisible && (session || endedSession));
+        syncMobileSessionNav(historyShown ? 'history' : mobileSessionTab);
         $('#recoveryView').hidden = !recovering;
         $('#setupView').hidden = active || recovering || ended || historyShown;
         $('#operatorView').hidden = !active || historyShown;
@@ -4492,6 +4664,11 @@
         render();
       }
 
+      $('#mobileSessionNav').addEventListener('click', event => {
+        const button = event.target.closest('[data-mobile-tab]');
+        if (!button) return;
+        setMobileSessionTab(button.dataset.mobileTab);
+      });
       $('#printTicketsButton').addEventListener('click', openPrintView);
       $('#closePrintViewButton').addEventListener('click', closePrintView);
       $('#printSettingsForm').addEventListener('submit', printTickets);

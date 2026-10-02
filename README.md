@@ -2,7 +2,7 @@
 
 Queue Board is a Browser Kitty app for temporary reception desks and small events. It issues numbered Tickets, manages a shared queue, shows a waiting-room Display, records History, and can prepare printable number tickets.
 
-The project is currently at **v0.8.0 — Ticket Printing**.
+The project is currently at **v0.9.0 — Mobile / UX / Accessibility RC**.
 
 ## Features
 
@@ -16,8 +16,17 @@ The project is currently at **v0.8.0 — Ticket Printing**.
 - Number-ticket creation
 - Print preview
 - Browser printing
+- Smartphone Operate / Queue / History bottom navigation
+- Safe-area-aware mobile controls and dialogs
+- Keyboard focus / ARIA polish
 - Japanese / English UI
 - Fully local processing
+
+## Mobile / UX
+
+On smartphones, an active reception is split into three bottom-navigation views: **Operate / Queue / History**. The fixed navigation respects the device safe area, and transient messages are raised above it so controls and status text are not covered.
+
+Long titles and Counter names wrap safely, touch targets are kept practical, and large Ticket / History lists use browser rendering containment where supported.
 
 ## Number-ticket creation
 
@@ -57,7 +66,7 @@ Select **Print** to open the browser's standard print dialog.
 
 Printer margins and scaling can still vary depending on the browser, operating system, and printer driver.
 
-## v0.8.0 limitations
+## Printing limitations
 
 To avoid freezing the browser, one print job can generate up to **1000 tickets**.
 
@@ -88,7 +97,9 @@ The active Session uses IndexedDB as the primary local store with localStorage f
 
 Tickets, Session History, printable number tickets, settings, and Display state are processed in the browser. Printing does not send ticket data to an external service.
 
-The app uses no external API, analytics, or telemetry, and its Content Security Policy blocks runtime external connections.
+The waiting-room Display is another window of the same app. Queue state is synchronized with same-browser messaging (`postMessage` / `BroadcastChannel`), not a server or another device. When the hosted app opens that window, the browser may request the same HTML document again, but the Session state is not included in that request; the `#display=...` fragment stays in the browser.
+
+The app uses no external API, analytics, telemetry, or runtime package dependency, and its Content Security Policy uses `connect-src 'none'`.
 
 ## Single HTML
 
