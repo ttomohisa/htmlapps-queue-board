@@ -2,6 +2,26 @@
 
 All notable changes to Queue Board are documented here.
 
+## [0.6.0] - 2026-10-02
+
+### Added
+
+- Automatic persistence for the active Session.
+- IndexedDB as the primary Session store with localStorage fallback.
+- Startup detection of an in-progress saved Session.
+- Recovery screen with Resume reception and confirmed Start new actions.
+- Local persistence for setup preferences.
+- Saving / Saved / Save failed status in the Operator UI.
+- Visible error messaging when Session or settings storage fails.
+- Background-page save attempt for active Sessions.
+- Serialized persistence operations to prevent delayed writes from recreating a reset Session.
+
+### Changed
+
+- Session reset preserves the previous setup preferences.
+- Startup waits for local recovery detection before exposing the setup screen.
+- Help and README now describe local persistence and recovery behavior.
+
 ## [0.5.0] - 2026-10-02
 
 ### Added

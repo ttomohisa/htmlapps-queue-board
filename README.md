@@ -2,7 +2,7 @@
 
 Queue Board is a Browser Kitty app for temporary reception desks and small events. It issues numbered Tickets, keeps a shared waiting queue, and calls people in order.
 
-The project is currently at **v0.5.0 — Sound / Fullscreen / Wake**.
+The project is currently at **v0.6.0 — Persistence / Recovery**.
 
 ## Features
 
@@ -11,53 +11,67 @@ The project is currently at **v0.5.0 — Sound / Fullscreen / Wake**.
 - Issue sequential or manual Tickets
 - Prevent duplicate numbers within the same Session
 - Let each Counter call from the same shared queue
-- Recall, complete, mark absent, or delete independently at each Counter
+- Recall, complete, mark absent, or delete independently
 - Return absent Tickets to the end of the queue
 - Open a waiting-room Display in a separate window
-- Sync active numbers, Counter names, recent calls, waiting count, and Display title
-- Play a built-in chime on calls and recalls
-- Turn call sound on or off
-- Preview the chime before starting reception
-- Use Fullscreen on the Display
-- Use Screen Wake Lock on supported browsers
-- Feature detection and graceful fallback for Fullscreen / Wake Lock
-- Portrait and landscape Display layouts
+- Built-in chime, Fullscreen, and Wake Lock
+- Autosave the in-progress Session
+- Resume a Session after a page reload
+- Discard a saved Session and start new with confirmation
+- Save starting-number, Counter, sound, and Display settings
+- Show Saving / Saved / Save failed state
 - Japanese / English UI
 - Fully local processing
 
-## Call sound
+## Autosave and recovery
 
-Call sound is ON by default and can be previewed before starting reception.
+The in-progress Session is saved locally on the device.
 
-The chime is generated locally with the Web Audio API. The app does not fetch an external audio file at runtime. Normal calls and recalls use slightly different chime patterns.
+**IndexedDB is the primary Session store.** If IndexedDB is unavailable, Queue Board falls back to localStorage. Lightweight setup values such as starting number, Counter count and names, call sound, and Display settings are stored in localStorage.
 
-The Operator can toggle call sound during a Session. If Web Audio is unavailable, only the sound feature is disabled; the queue and Display remain usable.
+After a reload, if an in-progress Session exists, Queue Board does not silently open a blank setup screen. It presents:
 
-## Display
+- Resume reception
+- Start new
 
-Select **Open display** after starting reception to open the same HTML in Display mode in a separate window.
+Starting new requires confirmation before the saved Session is discarded.
 
-Optional Display features:
+Ticket changes are saved after a short debounce. Queue Board also attempts a save when the page moves into the background. Save and delete operations are serialized so a delayed save cannot recreate a Session immediately after reset.
 
-- **Fullscreen** when the browser supports the Fullscreen API
-- **Keep screen awake** when the browser supports the Screen Wake Lock API
+## Reused settings
 
-Wake Lock is reacquired when appropriate after the Display becomes visible again. Unsupported or failed optional APIs do not block the Display itself.
+The following settings are stored locally and reused for the next reception:
 
-## v0.5.0 limitations
+- Starting number
+- Counter count
+- Counter names
+- Call sound ON/OFF
+- Display title
+- Recent-call count
+- Waiting-count visibility
+
+Resetting the active Session does not reset these setup preferences.
+
+## Save errors
+
+If Session or settings storage fails, Queue Board exposes a Save failed state and shows an explanatory toast. Core queue operation can continue, but recovery after reload cannot be guaranteed.
+
+## v0.6.0 limitations
 
 - Up to four Counters
 - Display is limited to another window in the same browser
-- No autosave or Session recovery
+- No Session history screen
 - No CSV export
+- No Session Summary
 - No ticket printing
-- No spoken number announcements
+
+History, CSV, and the formal Session-ending flow are planned for the next milestone.
 
 ## Privacy
 
-Ticket numbers, Counter settings, Display settings, and Session state are processed in the browser. The app uses no external API, analytics, or telemetry, and its Content Security Policy blocks runtime external connections.
+Ticket numbers, Counter settings, Display settings, and Session state are processed in the browser. Persistence uses only local device storage such as IndexedDB / localStorage.
 
-The chime is generated in-app, and Display synchronization stays inside the same browser.
+The app uses no external API, analytics, or telemetry, and its Content Security Policy blocks runtime external connections.
 
 ## Single HTML
 

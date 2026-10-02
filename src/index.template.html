@@ -1188,7 +1188,7 @@
     }
 
 
-    /* Queue Board v0.5.0 sound / fullscreen / wake */
+    /* Queue Board sound / fullscreen / wake */
     .sound-setup {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
@@ -1270,6 +1270,75 @@
       .display-feature-note { display: none; }
     }
 
+
+    /* Queue Board v0.6.0 persistence / recovery */
+    .persistence-gate {
+      min-height: 180px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+    .persistence-gate[hidden] { display: none; }
+    .persistence-gate-inner { display: grid; gap: 8px; justify-items: center; }
+    .persistence-spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid var(--line);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: persistenceSpin .75s linear infinite;
+    }
+    @keyframes persistenceSpin { to { transform: rotate(360deg); } }
+    .recovery-card { border-color: color-mix(in srgb, var(--accent) 28%, var(--line)); }
+    .recovery-card[hidden] { display: none; }
+    .recovery-head { display: grid; gap: 5px; }
+    .recovery-head h2 { margin: 0; font-size: 21px; }
+    .recovery-head p { margin: 0; color: var(--muted); }
+    .recovery-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .recovery-stat {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: var(--surface-muted);
+    }
+    .recovery-stat-label { display: block; color: var(--muted); font-size: 10px; font-weight: 800; }
+    .recovery-stat-value { display: block; margin-top: 3px; font-size: 18px; font-weight: 900; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+    .recovery-actions { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 16px; }
+    .save-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 32px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--surface-muted);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .save-status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line-strong); }
+    .save-status[data-state="saving"] .save-status-dot { background: #ad7a15; }
+    .save-status[data-state="saved"] { color: var(--accent); background: var(--accent-soft); }
+    .save-status[data-state="saved"] .save-status-dot { background: var(--accent); }
+    .save-status[data-state="error"] { color: var(--danger); background: #fff1f0; }
+    .save-status[data-state="error"] .save-status-dot { background: var(--danger); }
+    body.display-mode #persistenceGate,
+    body.display-mode #recoveryView { display: none !important; }
+    @media (max-width: 620px) {
+      .recovery-summary { grid-template-columns: 1fr; }
+      .recovery-actions { display: grid; grid-template-columns: 1fr; }
+      .recovery-actions .button { width: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .persistence-spinner { animation: none; }
+    }
+
   </style>
 </head>
 <body>
@@ -1305,8 +1374,45 @@
       </div>
     </section>
 
-    <!-- APP:BEGIN Queue Board v0.5.0 sound fullscreen wake -->
-    <section class="queue-card setup-card" id="setupView" aria-labelledby="setupTitle">
+    <!-- APP:BEGIN Queue Board v0.6.0 persistence recovery -->
+    <section class="queue-card persistence-gate" id="persistenceGate" aria-live="polite">
+      <div class="persistence-gate-inner">
+        <span class="persistence-spinner" aria-hidden="true"></span>
+        <strong data-i18n="checkingSavedSession">端末内の受付を確認しています</strong>
+        <span class="field-help" data-i18n="checkingSavedSessionBody">保存済みの進行中Sessionがないか確認します。</span>
+      </div>
+    </section>
+
+    <section class="queue-card recovery-card" id="recoveryView" hidden aria-labelledby="recoveryTitle">
+      <div class="recovery-head">
+        <h2 id="recoveryTitle" data-i18n="recoveryTitle">進行中の受付があります</h2>
+        <p data-i18n="recoveryBody">前回の受付状態がこの端末に保存されています。</p>
+      </div>
+      <div class="recovery-summary">
+        <div class="recovery-stat">
+          <span class="recovery-stat-label" data-i18n="recoveryStarted">開始</span>
+          <strong class="recovery-stat-value" id="recoveryStartedAt">--:--</strong>
+        </div>
+        <div class="recovery-stat">
+          <span class="recovery-stat-label" data-i18n="recoveryWaiting">待ち</span>
+          <strong class="recovery-stat-value" id="recoveryWaitingCount">0</strong>
+        </div>
+        <div class="recovery-stat">
+          <span class="recovery-stat-label" data-i18n="recoveryCounters">窓口</span>
+          <strong class="recovery-stat-value" id="recoveryCounterCount">1</strong>
+        </div>
+      </div>
+      <div class="recovery-actions">
+        <button class="button primary large with-icon" id="resumeSessionButton" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h12"/><path d="m13 8 4 4-4 4"/></svg>
+          <span data-i18n="resumeSession">受付を再開</span>
+        </button>
+        <button class="button danger" id="discardSavedSessionButton" type="button" data-i18n="startNewSession">新しく始める</button>
+      </div>
+    </section>
+
+
+    <section class="queue-card setup-card" id="setupView" hidden aria-labelledby="setupTitle">
       <h2 id="setupTitle" data-i18n="setupTitle">受付を始める</h2>
       <p data-i18n="setupBody">開始番号と窓口を設定します。窓口は1〜4個まで使えます。</p>
       <form id="setupForm" novalidate>
@@ -1383,7 +1489,7 @@
           </button>
         </div>
       </form>
-      <div class="notice" data-i18n="setupNote">この開発段階では受付状態を自動保存しません。ページを再読み込みすると現在のSessionは失われます。</div>
+      <div class="notice" data-i18n="setupNote">受付状態はこの端末内へ自動保存されます。再読み込みしても、進行中の受付を再開できます。</div>
     </section>
 
     <section class="operator-shell" id="operatorView" hidden aria-labelledby="operatorTitle">
@@ -1396,6 +1502,10 @@
           </div>
         </div>
         <div class="session-actions">
+          <span class="save-status" id="saveStatus" data-state="saved">
+            <span class="save-status-dot" aria-hidden="true"></span>
+            <span id="saveStatusText" data-i18n="saveStatusSaved">保存済み</span>
+          </span>
           <span class="display-status" id="operatorDisplayStatus">
             <span class="display-status-dot" aria-hidden="true"></span>
             <span id="operatorDisplayStatusText" data-i18n="displayDisconnected">表示画面 未接続</span>
@@ -1570,7 +1680,7 @@
       </button>
     </div>
     <div class="dialog-body">
-      <!-- APP:HELP:BEGIN Queue Board v0.5.0 -->
+      <!-- APP:HELP:BEGIN Queue Board v0.6.0 -->
       <h3 data-i18n="helpBasicsTitle">基本操作</h3>
       <ol>
         <li data-i18n="helpStep1">開始番号と窓口数、必要なら各窓口名と表示画面設定を決めて受付を開始します。</li>
@@ -1581,11 +1691,11 @@
       </ol>
       <h3 data-i18n="helpPrivacyTitle">プライバシー</h3>
       <p data-i18n="helpPrivacyBody">Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。</p>
-      <h3 data-i18n="helpNotesTitle">v0.5.0 の範囲</h3>
+      <h3 data-i18n="helpNotesTitle">v0.6.0 の範囲</h3>
       <ul>
         <li data-i18n="helpNoteDisplay">DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。別端末への送信は行いません。</li>
         <li data-i18n="helpNoteFeatures">Fullscreen / Wake LockはFeature Detectionを行い、非対応環境ではその機能だけを無効化します。</li>
-        <li data-i18n="helpNoteNoRecovery">自動保存とSession復旧はまだありません。再読み込み・タブを閉じる・リセットで現在の受付状態は失われます。</li>
+        <li data-i18n="helpNotePersistence">進行中SessionはIndexedDBへ自動保存します。再読み込み時は「再開 / 新しく始める」を選べます。</li>
       </ul>
       <p class="dialog-note" data-i18n="helpOffline">配布用HTMLは実行時の外部通信を必要とせず、Display同期もブラウザ内だけで行います。</p>
       <!-- APP:HELP:END -->
@@ -1755,7 +1865,27 @@
           displayEndedTitle: '表示を終了しました',
           displayEndedBody: 'Operator画面から再び表示画面を開くと再接続できます。',
           startSession: '受付を開始',
-          setupNote: 'この開発段階では受付状態を自動保存しません。ページを再読み込みすると現在のSessionは失われます。',
+          setupNote: '受付状態はこの端末内へ自動保存されます。再読み込みしても、進行中の受付を再開できます。',
+          checkingSavedSession: '端末内の受付を確認しています',
+          checkingSavedSessionBody: '保存済みの進行中Sessionがないか確認します。',
+          recoveryTitle: '進行中の受付があります',
+          recoveryBody: '前回の受付状態がこの端末に保存されています。',
+          recoveryStarted: '開始',
+          recoveryWaiting: '待ち',
+          recoveryCounters: '窓口',
+          resumeSession: '受付を再開',
+          startNewSession: '新しく始める',
+          resumeSuccess: '保存されていた受付を再開しました。',
+          discardSavedTitle: '保存されている受付を破棄しますか？',
+          discardSavedBody: '進行中として保存されている受付を破棄し、新しい受付の設定画面へ進みます。',
+          discardSavedConfirm: '破棄して新しく始める',
+          savedSessionDiscarded: '保存されていた受付を破棄しました。',
+          saveStatusSaving: '保存中',
+          saveStatusSaved: '保存済み',
+          saveStatusError: '保存失敗',
+          saveFailed: '受付状態を端末へ保存できませんでした。ブラウザのストレージ設定や空き容量を確認してください。',
+          settingsSaveFailed: '設定を端末へ保存できませんでした。ブラウザのストレージ設定や空き容量を確認してください。',
+          loadFailed: '保存済みの受付を読み込めませんでした。新しい受付は開始できますが、自動保存が利用できない可能性があります。',
           sessionRunning: '受付中', startedAt: '開始', resetSession: '受付をリセット',
           counterSummary: '{count}窓口',
           waitingCount: '待ち', activeCounterCount: '対応中', completedCount: '完了', issuedCount: '登録',
@@ -1778,10 +1908,10 @@
           helpStep5: '呼び出し音を試聴・ON/OFFできます。Displayでは全画面表示と対応環境でのWake Lockを利用できます。',
           helpPrivacyTitle: 'プライバシー',
           helpPrivacyBody: 'Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。',
-          helpNotesTitle: 'v0.5.0 の範囲',
+          helpNotesTitle: 'v0.6.0 の範囲',
           helpNoteDisplay: 'DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。別端末への送信は行いません。',
           helpNoteFeatures: 'Fullscreen / Wake LockはFeature Detectionを行い、非対応環境ではその機能だけを無効化します。',
-          helpNoteNoRecovery: '自動保存とSession復旧はまだありません。再読み込み・タブを閉じる・リセットで現在の受付状態は失われます。',
+          helpNotePersistence: '進行中SessionはIndexedDBを第一候補として端末内へ自動保存します。再読み込み時は「再開 / 新しく始める」を選べます。',
 
           helpOffline: '配布用HTMLは実行時の外部通信を必要とせず、Display同期もブラウザ内だけで行います。',
           footer: '番号を発行して順番に呼び出すローカルツール',
@@ -1862,7 +1992,27 @@
           displayEndedTitle: 'Display ended',
           displayEndedBody: 'Open the display again from the Operator screen to reconnect.',
           startSession: 'Start reception',
-          setupNote: 'This development version does not save an active session yet. Reloading the page loses the current session.',
+          setupNote: 'The active reception is saved automatically on this device so it can be resumed after a reload.',
+          checkingSavedSession: 'Checking this device for active reception',
+          checkingSavedSessionBody: 'Looking for a locally saved in-progress Session.',
+          recoveryTitle: 'An active reception was found',
+          recoveryBody: 'The previous reception state is saved on this device.',
+          recoveryStarted: 'Started',
+          recoveryWaiting: 'Waiting',
+          recoveryCounters: 'Counters',
+          resumeSession: 'Resume reception',
+          startNewSession: 'Start new',
+          resumeSuccess: 'Saved reception resumed.',
+          discardSavedTitle: 'Discard the saved reception?',
+          discardSavedBody: 'Discard the in-progress reception saved on this device and return to the setup screen.',
+          discardSavedConfirm: 'Discard and start new',
+          savedSessionDiscarded: 'Saved reception discarded.',
+          saveStatusSaving: 'Saving',
+          saveStatusSaved: 'Saved',
+          saveStatusError: 'Save failed',
+          saveFailed: 'The reception state could not be saved on this device. Check browser storage settings or available space.',
+          settingsSaveFailed: 'Settings could not be saved on this device. Check browser storage settings or available space.',
+          loadFailed: 'The saved reception could not be loaded. You can start a new reception, but autosave may be unavailable.',
           sessionRunning: 'Reception in progress', startedAt: 'Started', resetSession: 'Reset reception',
           counterSummary: '{count} counters',
           waitingCount: 'Waiting', activeCounterCount: 'In service', completedCount: 'Completed', issuedCount: 'Registered',
@@ -1885,10 +2035,10 @@
           helpStep5: 'Preview or toggle the call sound. On Display, use Fullscreen and Wake Lock when supported.',
           helpPrivacyTitle: 'Privacy',
           helpPrivacyBody: 'Ticket numbers, Counter settings, Display settings, and queue state are processed inside the same browser. The app uses no external API, analytics, or telemetry and does not send session data outside.',
-          helpNotesTitle: 'v0.5.0 scope',
+          helpNotesTitle: 'v0.6.0 scope',
           helpNoteDisplay: 'The Display syncs in a separate window of the same browser. It does not transmit data to another device.',
           helpNoteFeatures: 'Fullscreen and Wake Lock use feature detection. Unsupported environments disable only that optional feature.',
-          helpNoteNoRecovery: 'Autosave and session recovery are not implemented yet. Reloading, closing the tab, or resetting loses the current queue.',
+          helpNotePersistence: 'The in-progress Session is saved locally with IndexedDB as the primary store. After reload, choose Resume or Start new.',
 
           helpOffline: 'The distributable HTML needs no runtime external network access, and Display synchronization stays inside the browser.',
           footer: 'Local tool for issuing numbers and calling them in order',
@@ -1919,6 +2069,11 @@
 
       const $ = selector => document.querySelector(selector);
       const storageKey = APP_CONFIG.slug + ':language';
+      const settingsStorageKey = APP_CONFIG.slug + ':settings:v1';
+      const fallbackSessionStorageKey = APP_CONFIG.slug + ':active-session:v1';
+      const persistenceDbName = APP_CONFIG.slug + '-db';
+      const persistenceStoreName = 'sessions';
+      const persistenceRecordKey = 'active';
       let language = readStorage(storageKey) || detectLanguage();
       let session = null;
       let lastIssuedId = null;
@@ -1938,12 +2093,277 @@
       let wakeLockSentinel = null;
       let wakeLockRequested = false;
       let displayFeatureRuntimeMessage = '';
+      let persistenceReady = displayMode;
+      let recoveryCandidate = null;
+      let persistenceDbPromise = null;
+      let persistenceTimer = 0;
+      let saveState = 'saved';
+      let saveFailureNotified = false;
+      let settingsFailureNotified = false;
+      let persistenceOperation = Promise.resolve();
+      let persistenceSaveSerial = 0;
 
       function readStorage(key) {
         try { return localStorage.getItem(key); } catch { return null; }
       }
       function writeStorage(key, value) {
-        try { localStorage.setItem(key, value); } catch { }
+        try { localStorage.setItem(key, value); return true; } catch { return false; }
+      }
+      function removeStorage(key) {
+        try { localStorage.removeItem(key); return true; } catch { return false; }
+      }
+      function openPersistenceDb() {
+        if (persistenceDbPromise) return persistenceDbPromise;
+        persistenceDbPromise = new Promise((resolve, reject) => {
+          if (typeof indexedDB === 'undefined') {
+            reject(new Error('IndexedDB unavailable'));
+            return;
+          }
+          const request = indexedDB.open(persistenceDbName, 1);
+          request.onupgradeneeded = () => {
+            const db = request.result;
+            if (!db.objectStoreNames.contains(persistenceStoreName)) db.createObjectStore(persistenceStoreName, { keyPath: 'key' });
+          };
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = () => reject(request.error || new Error('IndexedDB open failed'));
+          request.onblocked = () => reject(new Error('IndexedDB open blocked'));
+        }).catch(error => {
+          persistenceDbPromise = null;
+          throw error;
+        });
+        return persistenceDbPromise;
+      }
+      async function readPersistedSessionRecord() {
+        try {
+          const db = await openPersistenceDb();
+          const value = await new Promise((resolve, reject) => {
+            const tx = db.transaction(persistenceStoreName, 'readonly');
+            const request = tx.objectStore(persistenceStoreName).get(persistenceRecordKey);
+            request.onsuccess = () => resolve(request.result || null);
+            request.onerror = () => reject(request.error || new Error('IndexedDB read failed'));
+          });
+          if (value) return value;
+        } catch { }
+        const fallback = readStorage(fallbackSessionStorageKey);
+        if (!fallback) return null;
+        try { return JSON.parse(fallback); } catch { return null; }
+      }
+      async function writePersistedSessionRecord(record) {
+        let indexedDbSaved = false;
+        try {
+          const db = await openPersistenceDb();
+          await new Promise((resolve, reject) => {
+            const tx = db.transaction(persistenceStoreName, 'readwrite');
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error || new Error('IndexedDB write failed'));
+            tx.onabort = () => reject(tx.error || new Error('IndexedDB write aborted'));
+            tx.objectStore(persistenceStoreName).put(record);
+          });
+          indexedDbSaved = true;
+          removeStorage(fallbackSessionStorageKey);
+        } catch { }
+        if (indexedDbSaved) return true;
+        return writeStorage(fallbackSessionStorageKey, JSON.stringify(record));
+      }
+      async function deletePersistedSessionRecord() {
+        let indexedDbAvailable = false;
+        let indexedDbDeleted = false;
+        try {
+          const db = await openPersistenceDb();
+          indexedDbAvailable = true;
+          await new Promise((resolve, reject) => {
+            const tx = db.transaction(persistenceStoreName, 'readwrite');
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error || new Error('IndexedDB delete failed'));
+            tx.onabort = () => reject(tx.error || new Error('IndexedDB delete aborted'));
+            tx.objectStore(persistenceStoreName).delete(persistenceRecordKey);
+          });
+          indexedDbDeleted = true;
+        } catch { }
+        const fallbackDeleted = removeStorage(fallbackSessionStorageKey);
+        return indexedDbAvailable ? indexedDbDeleted && fallbackDeleted : fallbackDeleted;
+      }
+      function enqueuePersistenceOperation(task) {
+        const operation = persistenceOperation.catch(() => undefined).then(task);
+        persistenceOperation = operation.catch(() => undefined);
+        return operation;
+      }
+      function setSaveState(state) {
+        saveState = state;
+        const root = $('#saveStatus');
+        const text = $('#saveStatusText');
+        if (!root || !text) return;
+        root.dataset.state = state;
+        text.textContent = translate(state === 'saving' ? 'saveStatusSaving' : state === 'error' ? 'saveStatusError' : 'saveStatusSaved');
+      }
+      function collectSetupSettings() {
+        return {
+          schemaVersion: 1,
+          startNumber: $('#startNumber')?.value || '001',
+          counterCount: Math.min(4, Math.max(1, Number($('#counterCount')?.value) || 1)),
+          counterNames: counterDraftNames.slice(0, 4),
+          soundEnabled: Boolean($('#soundEnabled')?.checked),
+          displayTitle: $('#displayTitleInput')?.value || defaultDisplayTitle(),
+          recentCallCount: Math.min(5, Math.max(0, Number($('#recentCallCount')?.value) || 0)),
+          showWaitingCount: Boolean($('#showWaitingCount')?.checked)
+        };
+      }
+      function saveSetupSettings() {
+        if (displayMode) return true;
+        const ok = writeStorage(settingsStorageKey, JSON.stringify(collectSetupSettings()));
+        if (ok) {
+          settingsFailureNotified = false;
+          return true;
+        }
+        if (!settingsFailureNotified) {
+          settingsFailureNotified = true;
+          announce(translate('settingsSaveFailed'), { tone: 'warning', duration: 6500 });
+        }
+        return false;
+      }
+      function loadSetupSettings() {
+        if (displayMode) return;
+        const raw = readStorage(settingsStorageKey);
+        if (!raw) return;
+        try {
+          const settings = JSON.parse(raw);
+          if (!settings || settings.schemaVersion !== 1) return;
+          $('#startNumber').value = typeof settings.startNumber === 'string' ? settings.startNumber : '001';
+          $('#counterCount').value = String(Math.min(4, Math.max(1, Number(settings.counterCount) || 1)));
+          if (Array.isArray(settings.counterNames)) {
+            counterDraftNames = Array.from({ length: 4 }, (_, index) => String(settings.counterNames[index] || ''));
+            counterDraftCustom = counterDraftNames.map((name, index) => Boolean(name && name !== defaultCounterName(index)));
+          }
+          $('#soundEnabled').checked = settings.soundEnabled !== false;
+          $('#displayTitleInput').value = typeof settings.displayTitle === 'string' && settings.displayTitle.trim() ? settings.displayTitle : defaultDisplayTitle();
+          displayTitleCustom = $('#displayTitleInput').value !== defaultDisplayTitle();
+          $('#recentCallCount').value = String(Math.min(5, Math.max(0, Number(settings.recentCallCount) || 0)));
+          $('#showWaitingCount').checked = settings.showWaitingCount !== false;
+        } catch { }
+      }
+      function normalizeRecoveredSession(value) {
+        const candidate = value && typeof value === 'object' ? value : null;
+        if (!candidate || typeof candidate.id !== 'string' || !Number.isFinite(candidate.startedAt)) return null;
+        if (!Array.isArray(candidate.counters) || candidate.counters.length < 1 || candidate.counters.length > 4) return null;
+        if (!Array.isArray(candidate.tickets) || !Array.isArray(candidate.usedNumbers)) return null;
+        const counters = candidate.counters.map((counter, index) => ({
+          id: typeof counter?.id === 'string' ? counter.id : 'counter-' + (index + 1),
+          name: typeof counter?.name === 'string' && counter.name.trim() ? counter.name : defaultCounterName(index),
+          currentTicketId: typeof counter?.currentTicketId === 'string' ? counter.currentTicketId : null
+        }));
+        const tickets = candidate.tickets.filter(ticket => ticket && typeof ticket.id === 'string' && Number.isFinite(ticket.number)).map(ticket => ({
+          ...ticket,
+          displayNumber: typeof ticket.displayNumber === 'string' ? ticket.displayNumber : formatTicketNumber(ticket.number),
+          counterId: typeof ticket.counterId === 'string' ? ticket.counterId : null,
+          callCount: Number.isFinite(ticket.callCount) ? ticket.callCount : 0
+        }));
+        return {
+          ...candidate,
+          counters,
+          tickets,
+          usedNumbers: candidate.usedNumbers.filter(Number.isFinite),
+          nextNumber: candidate.nextNumber === null ? null : Number(candidate.nextNumber),
+          title: typeof candidate.title === 'string' && candidate.title.trim() ? candidate.title : defaultDisplayTitle(),
+          soundEnabled: candidate.soundEnabled !== false,
+          showWaitingCount: candidate.showWaitingCount !== false,
+          recentCallCount: Math.min(5, Math.max(0, Number(candidate.recentCallCount) || 0))
+        };
+      }
+      async function persistSessionNow() {
+        clearTimeout(persistenceTimer);
+        persistenceTimer = 0;
+        if (displayMode || !session) return true;
+        const serial = ++persistenceSaveSerial;
+        setSaveState('saving');
+        const record = {
+          key: persistenceRecordKey,
+          schemaVersion: 1,
+          savedAt: Date.now(),
+          session: typeof structuredClone === 'function' ? structuredClone(session) : JSON.parse(JSON.stringify(session))
+        };
+        const ok = await enqueuePersistenceOperation(() => writePersistedSessionRecord(record));
+        if (serial !== persistenceSaveSerial) return ok;
+        if (ok) {
+          setSaveState('saved');
+          saveFailureNotified = false;
+          return true;
+        }
+        setSaveState('error');
+        if (!saveFailureNotified) {
+          saveFailureNotified = true;
+          announce(translate('saveFailed'), { tone: 'warning', duration: 6500 });
+        }
+        return false;
+      }
+      function schedulePersistSession() {
+        if (displayMode || !persistenceReady || !session) return;
+        setSaveState('saving');
+        clearTimeout(persistenceTimer);
+        persistenceTimer = window.setTimeout(() => { void persistSessionNow(); }, 120);
+      }
+      function renderRecoveryCandidate() {
+        if (!recoveryCandidate) return;
+        const recovered = recoveryCandidate;
+        const waiting = recovered.tickets.filter(ticket => ticket.status === 'waiting').length;
+        $('#recoveryStartedAt').textContent = formatTime(recovered.startedAt);
+        $('#recoveryWaitingCount').textContent = new Intl.NumberFormat(language).format(waiting);
+        $('#recoveryCounterCount').textContent = new Intl.NumberFormat(language).format(recovered.counters.length);
+      }
+      async function initializePersistence() {
+        if (displayMode) {
+          persistenceReady = true;
+          $('#persistenceGate').hidden = true;
+          return;
+        }
+        loadSetupSettings();
+        renderCounterSetupFields();
+        initializeSoundSupport();
+        let record = null;
+        try {
+          record = await readPersistedSessionRecord();
+        } catch {
+          announce(translate('loadFailed'), { tone: 'warning', duration: 6500 });
+        }
+        if (record?.schemaVersion === 1) {
+          recoveryCandidate = normalizeRecoveredSession(record.session);
+          if (!recoveryCandidate && record.session) announce(translate('loadFailed'), { tone: 'warning', duration: 6500 });
+        }
+        persistenceReady = true;
+        render();
+      }
+      function resumeSavedSession() {
+        if (!recoveryCandidate) return;
+        session = normalizeRecoveredSession(recoveryCandidate);
+        if (!session) return;
+        recoveryCandidate = null;
+        lastIssuedId = null;
+        setupDisplayChannel();
+        render();
+        schedulePersistSession();
+        announce(translate('resumeSuccess'), { tone: 'success' });
+      }
+      async function discardSavedSession() {
+        if (!recoveryCandidate) return;
+        const ok = await AppConfirm.ask({
+          title: translate('discardSavedTitle'),
+          message: translate('discardSavedBody'),
+          confirmLabel: translate('discardSavedConfirm'),
+          cancelLabel: translate('cancel'),
+          tone: 'danger'
+        });
+        if (!ok) return;
+        clearTimeout(persistenceTimer);
+        persistenceTimer = 0;
+        persistenceSaveSerial += 1;
+        const deleted = await enqueuePersistenceOperation(deletePersistedSessionRecord);
+        if (!deleted) {
+          announce(translate('saveFailed'), { tone: 'warning', duration: 6500 });
+          return;
+        }
+        recoveryCandidate = null;
+        render();
+        announce(translate('savedSessionDiscarded'));
+        $('#startNumber').focus();
       }
       function detectLanguage() {
         if (APP_CONFIG.defaultLanguage === 'ja' || APP_CONFIG.defaultLanguage === 'en') return APP_CONFIG.defaultLanguage;
@@ -2188,6 +2608,7 @@
           input.addEventListener('input', () => {
             counterDraftNames[index] = input.value;
             counterDraftCustom[index] = input.value.trim() !== '' && input.value !== defaultCounterName(index);
+            saveSetupSettings();
           });
           label.append(labelText, input);
           host.append(label);
@@ -2198,6 +2619,7 @@
         if (value === null) return;
         $('#startNumber').value = formatTicketNumber(value);
         $('#startNumberError').textContent = '';
+        saveSetupSettings();
       }
       function startSession(event) {
         event.preventDefault();
@@ -2231,6 +2653,7 @@
           recentCallCount: Math.min(5, Math.max(0, Number($('#recentCallCount').value) || 0))
         };
         lastIssuedId = null;
+        saveSetupSettings();
         setupDisplayChannel();
         render();
         announce(translate('sessionStarted', { count: counters.length }), { tone: 'success' });
@@ -2427,21 +2850,24 @@
           tone: 'danger'
         });
         if (!ok) return;
+        clearTimeout(persistenceTimer);
+        persistenceTimer = 0;
+        persistenceSaveSerial += 1;
+        const deleted = await enqueuePersistenceOperation(deletePersistedSessionRecord);
+        if (!deleted) {
+          setSaveState('error');
+          announce(translate('saveFailed'), { tone: 'warning', duration: 6500 });
+          return;
+        }
         sendDisplayEnded();
         session = null;
         lastIssuedId = null;
-        counterDraftNames = ['', '', '', ''];
-        counterDraftCustom = [false, false, false, false];
-        displayTitleCustom = false;
-        $('#startNumber').value = '001';
-        $('#counterCount').value = '1';
-        $('#displayTitleInput').value = defaultDisplayTitle();
-        $('#soundEnabled').checked = true;
-        $('#showWaitingCount').checked = true;
-        $('#recentCallCount').value = '3';
+        recoveryCandidate = null;
         $('#manualNumber').value = '';
         $('#manualNumberError').textContent = '';
+        loadSetupSettings();
         renderCounterSetupFields();
+        initializeSoundSupport();
         render();
         announce(translate('sessionReset'));
         $('#startNumber').focus();
@@ -2906,9 +3332,19 @@
       }
       function render() {
         if (displayMode) return;
+        $('#persistenceGate').hidden = persistenceReady;
+        if (!persistenceReady) {
+          $('#recoveryView').hidden = true;
+          $('#setupView').hidden = true;
+          $('#operatorView').hidden = true;
+          return;
+        }
         const active = Boolean(session);
-        $('#setupView').hidden = active;
+        const recovering = Boolean(recoveryCandidate && !session);
+        $('#recoveryView').hidden = !recovering;
+        $('#setupView').hidden = active || recovering;
         $('#operatorView').hidden = !active;
+        if (recovering) renderRecoveryCandidate();
         if (!session) return;
 
         syncNextNumber();
@@ -2934,6 +3370,7 @@
         renderCounters(waiting);
         renderTicketLists(waiting, absent);
         syncDisplayState();
+        schedulePersistSession();
       }
       function applyLanguage() {
         document.documentElement.lang = language;
@@ -2950,8 +3387,11 @@
           if (!displayTitleCustom) $('#displayTitleInput').value = defaultDisplayTitle();
         }
         if (displayMode && lastDisplaySnapshot) renderDisplaySnapshot(lastDisplaySnapshot);
-        if (!displayMode) initializeSoundSupport();
-        else updateDisplayFeatureControls();
+        if (!displayMode) {
+          initializeSoundSupport();
+          if (recoveryCandidate) renderRecoveryCandidate();
+          if (session) setSaveState(saveState);
+        } else updateDisplayFeatureControls();
         render();
       }
 
@@ -2968,10 +3408,12 @@
         const outside = event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom;
         if (outside) helpDialog.close();
       });
+      $('#resumeSessionButton').addEventListener('click', resumeSavedSession);
+      $('#discardSavedSessionButton').addEventListener('click', discardSavedSession);
       $('#setupForm').addEventListener('submit', startSession);
       $('#startNumber').addEventListener('blur', normalizeStartNumber);
-      $('#startNumber').addEventListener('input', () => { $('#startNumberError').textContent = ''; });
-      $('#counterCount').addEventListener('change', renderCounterSetupFields);
+      $('#startNumber').addEventListener('input', () => { $('#startNumberError').textContent = ''; saveSetupSettings(); });
+      $('#counterCount').addEventListener('change', () => { renderCounterSetupFields(); saveSetupSettings(); });
       $('#issueButton').addEventListener('click', issueTicket);
       $('#manualAddForm').addEventListener('submit', addManualTicket);
       $('#manualNumber').addEventListener('input', () => { $('#manualNumberError').textContent = ''; });
@@ -2988,16 +3430,23 @@
         }
       });
       $('#previewChimeButton').addEventListener('click', previewChime);
+      $('#soundEnabled').addEventListener('change', saveSetupSettings);
       $('#toggleSoundButton').addEventListener('click', toggleSessionSound);
       $('#openDisplayButton').addEventListener('click', openDisplayWindow);
       $('#fullscreenButton').addEventListener('click', toggleFullscreen);
       $('#wakeLockButton').addEventListener('click', toggleWakeLock);
       document.addEventListener('fullscreenchange', updateDisplayFeatureControls);
       document.addEventListener('visibilitychange', () => {
-        if (!displayMode || !wakeLockRequested || document.visibilityState !== 'visible') return;
-        if (!wakeLockSentinel || wakeLockSentinel.released) void acquireWakeLock();
+        if (displayMode) {
+          if (!wakeLockRequested || document.visibilityState !== 'visible') return;
+          if (!wakeLockSentinel || wakeLockSentinel.released) void acquireWakeLock();
+          return;
+        }
+        if (session && document.visibilityState === 'hidden') void persistSessionNow();
       });
-      $('#displayTitleInput').addEventListener('input', () => { displayTitleCustom = true; });
+      $('#displayTitleInput').addEventListener('input', () => { displayTitleCustom = true; saveSetupSettings(); });
+      $('#recentCallCount').addEventListener('change', saveSetupSettings);
+      $('#showWaitingCount').addEventListener('change', saveSetupSettings);
       window.addEventListener('message', event => {
         const allowedOrigin = location.protocol === 'file:' || event.origin === location.origin;
         if (!allowedOrigin) return;
@@ -3010,7 +3459,10 @@
           if (wakeLockSentinel && !wakeLockSentinel.released) {
             try { wakeLockSentinel.release(); } catch { }
           }
-        } else if (session) sendDisplayEnded();
+        } else if (session) {
+          void persistSessionNow();
+          sendDisplayEnded();
+        }
         if (displayChannel) {
           try { displayChannel.close(); } catch { }
         }
@@ -3030,6 +3482,7 @@
       applyLanguage();
       initializeSoundSupport();
       initializeDisplayMode();
+      if (!displayMode) void initializePersistence();
     })();
   </script>
 </body>
