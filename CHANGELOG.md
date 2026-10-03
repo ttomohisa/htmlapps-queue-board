@@ -2,6 +2,22 @@
 
 All notable changes to Queue Board are documented here.
 
+## [1.0.0] - 2026-10-03
+
+### Release
+
+- First stable Queue Board release.
+- Finalized the v0.1.0–v0.9.0 queue, Display, sound, persistence, History/CSV, ticket-printing, mobile, and accessibility work as the v1.0.0 feature set.
+- Rewrote the Japanese and English READMEs for end users, following the finished-app structure used by Browser Kitty tools.
+- Added release screenshots captured from the actual rendered application.
+- Rechecked the standalone build, local-processing boundary, CSP, favicon source, and release documentation.
+
+### Privacy
+
+- Queue / Session data remains local to the browser.
+- Display synchronization remains same-browser only via `postMessage` / `BroadcastChannel`.
+- Runtime outbound connections remain blocked by `connect-src 'none'`; no runtime package dependency, analytics, telemetry, or external API is used.
+
 ## [0.9.0] - 2026-10-03
 
 ### Added
