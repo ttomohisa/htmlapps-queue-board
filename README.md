@@ -58,6 +58,10 @@ Queue Board has no runtime third-party package dependency, so normal application
 6. Use **History** to review Ticket timelines and filters. When reception ends, Queue Board saves the completed Session locally and shows a Session Summary.
 7. Save History as CSV when needed.
 
+Automatic numbers run from 0 to 999999 and stop at the upper limit; they never wrap to 000. You can still add unused numbers manually. Start a new reception to restart the automatic sequence.
+
+While ending, resetting, or discarding a saved reception, ticket-changing controls pause until storage finishes. If storage fails, the reception stays available and you can retry. Canceling the confirmation leaves it unchanged.
+
 ### Smartphone operation
 
 During an active Session, smartphones use bottom navigation for **Operate / Queue / History**. Primary operation stays separate from the waiting / absent lists so the desktop layout is not simply squeezed into a narrow screen.
@@ -137,6 +141,8 @@ See [VERIFY_OFFLINE.md](VERIFY_OFFLINE.md) for the offline verification procedur
 ├─ scripts/check-repository.ps1  # Repository / release validation
 └─ dist/                         # Generated standalone artifacts
 ```
+
+Repository checks require Node.js 24 (development only; no npm install is needed) for deterministic session-state regression tests. They run against the editable source and both readable output copies, including deferred/rejected storage, repeated confirmation, recovery, and number exhaustion.
 
 Run the repository checks with:
 

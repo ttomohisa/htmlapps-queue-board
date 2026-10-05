@@ -2022,6 +2022,8 @@
         </div>
       </div>
 
+      <p class="notice" id="sessionTransitionStatus" role="status" data-i18n="sessionTransitionSaving" hidden>受付データを保存しています。完了まで番号操作をお待ちください。</p>
+
       <div class="metrics" data-mobile-page="operate" aria-live="polite">
         <div class="queue-card metric"><span class="metric-value" id="waitingCount">0</span><span class="metric-label" data-i18n="waitingCount">待ち</span></div>
         <div class="queue-card metric"><span class="metric-value" id="currentMetric">0</span><span class="metric-label" data-i18n="activeCounterCount">対応中</span></div>
@@ -2040,6 +2042,7 @@
               <span data-i18n="issueTicket">番号を発行</span>
             </button>
           </div>
+          <p class="notice" id="numberExhaustedNote" data-i18n="numberExhaustedNote" hidden>連番は999999で終了です。未使用番号は手動で追加できます。連番を再開するには新しい受付を開始してください。</p>
           <div class="issue-summary" id="lastIssuedPanel" hidden>
             <span class="issue-summary-label" data-i18n="justIssued">今追加した番号</span>
             <span class="issue-summary-number" id="lastIssuedNumber">001</span>
@@ -2130,7 +2133,7 @@
     <section class="summary-shell" id="summaryView" hidden aria-labelledby="summaryTitle">
       <div class="summary-hero">
         <p class="panel-kicker" data-i18n="summaryKicker">Session Summary</p>
-        <h2 id="summaryTitle" data-i18n="summaryTitle">本日の受付</h2>
+        <h2 id="summaryTitle" tabindex="-1" data-i18n="summaryTitle">本日の受付</h2>
         <p data-i18n="summaryBody">受付を終了しました。履歴はこの端末内に保存されています。</p>
       </div>
       <div class="summary-grid">
@@ -2338,6 +2341,8 @@
         <li data-i18n="helpNoteFeatures">Fullscreen / Wake Lockは対応ブラウザでのみ利用できます。非対応でも受付・呼び出しは利用できます。</li>
         <li data-i18n="helpNotePrinting">番号札作成は現在のSessionと独立して利用でき、A4 / Letterに対応します。印刷結果はブラウザやプリンター設定で変わる場合があります。</li>
         <li data-i18n="helpBrowserSupport">Chrome / Edgeを主対象とし、Safari / Firefoxは可能な範囲で対応します。</li>
+        <li data-i18n="helpSessionTransition">受付の終了・リセット・保存済み受付の破棄中は番号操作を一時停止します。保存に失敗した場合は受付状態を保持します。画面の案内を確認して再試行してください。</li>
+        <li data-i18n="helpNumberLimit">連番は999999で終了し、000には戻りません。未使用番号の手動追加は引き続き利用できます。連番の再開には新しい受付が必要です。</li>
         <li data-i18n="helpStorageRisk">進行中Sessionはこの端末のブラウザ保存領域に保存します。サイトデータの削除や保存制限がある環境では復旧できない場合があります。</li>
       </ul>
       <p class="dialog-note" data-i18n="helpOffline">受付データ処理とDisplay同期にはサーバー通信を使いません。配布用の単一HTMLはオフラインでも利用できます。</p>
@@ -2523,6 +2528,12 @@
           discardSavedBody: '進行中として保存されている受付を破棄し、新しい受付の設定画面へ進みます。',
           discardSavedConfirm: '破棄して新しく始める',
           savedSessionDiscarded: '保存されていた受付を破棄しました。',
+          sessionTransitionSaving: '受付データを保存しています。完了まで番号操作をお待ちください。',
+          resetSaveFailed: '受付をリセットできませんでした。現在の受付は保持されています。ストレージ設定や空き容量を確認して再試行してください。',
+          discardSaveFailed: '保存済みの受付を破棄できませんでした。受付は再開できます。ストレージ設定や空き容量を確認して再試行してください。',
+          numberExhaustedNote: '連番は999999で終了です。未使用番号は手動で追加できます。連番を再開するには新しい受付を開始してください。',
+          helpSessionTransition: '受付の終了・リセット・保存済み受付の破棄中は番号操作を一時停止します。保存に失敗した場合は受付状態を保持します。画面の案内を確認して再試行してください。',
+          helpNumberLimit: '連番は999999で終了し、000には戻りません。未使用番号の手動追加は引き続き利用できます。連番の再開には新しい受付が必要です。',
           saveStatusSaving: '保存中',
           saveStatusSaved: '保存済み',
           saveStatusError: '保存失敗',
@@ -2730,6 +2741,12 @@
           discardSavedBody: 'Discard the in-progress reception saved on this device and return to the setup screen.',
           discardSavedConfirm: 'Discard and start new',
           savedSessionDiscarded: 'Saved reception discarded.',
+          sessionTransitionSaving: 'Saving reception data. Please wait before changing tickets.',
+          resetSaveFailed: 'Reception could not be reset. The current reception is retained. Check storage settings or available space and try again.',
+          discardSaveFailed: 'The saved reception could not be discarded. You can still resume it. Check storage settings or available space and try again.',
+          numberExhaustedNote: 'Automatic numbering ends at 999999. You can still add unused numbers manually. Start a new reception to restart automatic numbering.',
+          helpSessionTransition: 'Ending, resetting or discarding a saved reception temporarily pauses ticket changes. If saving fails, the reception state is retained. Check the message and try again.',
+          helpNumberLimit: 'Automatic numbering ends at 999999 and never wraps to 000. Unused numbers can still be added manually. Start a new reception to restart automatic numbering.',
           saveStatusSaving: 'Saving',
           saveStatusSaved: 'Saved',
           saveStatusError: 'Save failed',
@@ -2880,6 +2897,7 @@
       const persistenceRecordKey = 'active';
       let language = readStorage(storageKey) || detectLanguage();
       let session = null;
+      let sessionTransition = null;
       let lastIssuedId = null;
       let counterDraftNames = ['', '', '', ''];
       let counterDraftCustom = [false, false, false, false];
@@ -2991,6 +3009,8 @@
           });
           indexedDbDeleted = true;
         } catch { }
+        // Keep the recovery copy if the primary deletion did not commit.
+        if (indexedDbAvailable && !indexedDbDeleted) return false;
         const fallbackDeleted = removeStorage(fallbackSessionStorageKey);
         return indexedDbAvailable ? indexedDbDeleted && fallbackDeleted : fallbackDeleted;
       }
@@ -3037,7 +3057,11 @@
           });
           indexedDbSaved = true;
         } catch { }
+        // A failed IndexedDB transaction leaves its active record intact; do not
+        // report fallback success or remove the fallback recovery copy in that case.
+        if (indexedDbAvailable && !indexedDbSaved) return false;
         const fallbackHistorySaved = writeStorage(fallbackHistoryStorageKey, JSON.stringify(record));
+        if (!indexedDbSaved && !fallbackHistorySaved) return false;
         const fallbackActiveCleared = removeStorage(fallbackSessionStorageKey) || readStorage(fallbackSessionStorageKey) === null;
         if (indexedDbSaved) return fallbackActiveCleared;
         return fallbackHistorySaved && fallbackActiveCleared;
@@ -3134,6 +3158,7 @@
         clearTimeout(persistenceTimer);
         persistenceTimer = 0;
         if (displayMode || !session) return true;
+        if (sessionTransition) return false;
         const serial = ++persistenceSaveSerial;
         setSaveState('saving');
         const record = {
@@ -3142,7 +3167,7 @@
           savedAt: Date.now(),
           session: typeof structuredClone === 'function' ? structuredClone(session) : JSON.parse(JSON.stringify(session))
         };
-        const ok = await enqueuePersistenceOperation(() => writePersistedSessionRecord(record));
+        const ok = await enqueuePersistenceOperation(() => writePersistedSessionRecord(record)).catch(() => false);
         if (serial !== persistenceSaveSerial) return ok;
         if (ok) {
           setSaveState('saved');
@@ -3157,7 +3182,7 @@
         return false;
       }
       function schedulePersistSession() {
-        if (displayMode || !persistenceReady || !session) return;
+        if (displayMode || !persistenceReady || !session || sessionTransition) return;
         setSaveState('saving');
         clearTimeout(persistenceTimer);
         persistenceTimer = window.setTimeout(() => { void persistSessionNow(); }, 120);
@@ -3197,7 +3222,7 @@
         render();
       }
       function resumeSavedSession() {
-        if (!recoveryCandidate) return;
+        if (!recoveryCandidate || sessionTransition) return;
         session = normalizeRecoveredSession(recoveryCandidate);
         if (!session) return;
         endedSession = null;
@@ -3211,27 +3236,21 @@
         announce(translate('resumeSuccess'), { tone: 'success' });
       }
       async function discardSavedSession() {
-        if (!recoveryCandidate) return;
-        const ok = await AppConfirm.ask({
-          title: translate('discardSavedTitle'),
-          message: translate('discardSavedBody'),
-          confirmLabel: translate('discardSavedConfirm'),
-          cancelLabel: translate('cancel'),
-          tone: 'danger'
+        return runSessionTransition({
+          target: recoveryCandidate,
+          confirmation: {
+            title: translate('discardSavedTitle'),
+            message: translate('discardSavedBody'),
+            confirmLabel: translate('discardSavedConfirm'),
+            cancelLabel: translate('cancel'),
+            tone: 'danger'
+          },
+          persist: deletePersistedSessionRecord,
+          commit: () => { recoveryCandidate = null; },
+          failureKey: 'discardSaveFailed',
+          successKey: 'savedSessionDiscarded',
+          focus: '#startNumber'
         });
-        if (!ok) return;
-        clearTimeout(persistenceTimer);
-        persistenceTimer = 0;
-        persistenceSaveSerial += 1;
-        const deleted = await enqueuePersistenceOperation(deletePersistedSessionRecord);
-        if (!deleted) {
-          announce(translate('saveFailed'), { tone: 'warning', duration: 6500 });
-          return;
-        }
-        recoveryCandidate = null;
-        render();
-        announce(translate('savedSessionDiscarded'));
-        $('#startNumber').focus();
       }
       function detectLanguage() {
         if (APP_CONFIG.defaultLanguage === 'ja' || APP_CONFIG.defaultLanguage === 'en') return APP_CONFIG.defaultLanguage;
@@ -3306,7 +3325,7 @@
         if (played) announce(translate('chimePreviewed'), { tone: 'success' });
       }
       function toggleSessionSound() {
-        if (!session) return;
+        if (!session || sessionTransition) return;
         if (!audioContextConstructor()) {
           announce(translate('audioUnsupported'), { tone: 'warning', duration: 5200 });
           return;
@@ -3414,6 +3433,58 @@
         $('#liveStatus').textContent = message;
         AppToast.show({ message, ...(options || {}) });
       }
+      function beginSessionTransition(target) {
+        if (!target || sessionTransition) return null;
+        // Keep one owner across confirmation and storage. Rendering and pagehide
+        // must not enqueue an active-session save behind a finalization/deletion.
+        const transition = { target, phase: 'confirming', restoreFocus: document.activeElement };
+        sessionTransition = transition;
+        render({ persist: false });
+        return transition;
+      }
+      function ownsSessionTransition(transition) {
+        return sessionTransition === transition && (session || recoveryCandidate) === transition.target;
+      }
+      async function runSessionTransition({ target, confirmation, persist, commit, failureKey, successKey, focus }) {
+        const transition = beginSessionTransition(target);
+        if (!transition) return;
+        let outcome = 'cancelled';
+        try {
+          const confirmed = await AppConfirm.ask(confirmation);
+          if (!confirmed || !ownsSessionTransition(transition)) return;
+          transition.phase = 'saving';
+          clearTimeout(persistenceTimer);
+          persistenceTimer = 0;
+          persistenceSaveSerial += 1;
+          setSaveState('saving');
+          render({ persist: false });
+          const saved = await enqueuePersistenceOperation(() => {
+            if (!ownsSessionTransition(transition)) return false;
+            return persist(target);
+          }).catch(() => false);
+          if (!ownsSessionTransition(transition)) return;
+          if (!saved) {
+            outcome = 'failed';
+            setSaveState('error');
+            announce(translate(failureKey), { tone: 'warning', duration: 7000 });
+            return;
+          }
+          commit(target);
+          outcome = 'completed';
+          announce(translate(successKey), { tone: 'success' });
+        } finally {
+          if (sessionTransition === transition) {
+            sessionTransition = null;
+            // On failure keep the error visible; only a real later action retries.
+            render({ persist: false });
+            if (outcome === 'cancelled') schedulePersistSession();
+            const focusTarget = outcome === 'completed' ? $(focus) : transition.restoreFocus;
+            if (focusTarget instanceof HTMLElement && focusTarget.isConnected && !focusTarget.disabled) {
+              focusTarget.focus({ preventScroll: true });
+            }
+          }
+        }
+      }
       function parseNumber(raw) {
         const value = String(raw || '').trim();
         if (!/^\d+$/.test(value)) return null;
@@ -3433,8 +3504,10 @@
         return null;
       }
       function syncNextNumber() {
-        if (!session) return;
-        session.nextNumber = findNextAvailableNumber(session.nextNumber ?? 0);
+        // null is terminal automatic exhaustion, including after reload and
+        // manual additions. Only a newly started reception resets the sequence.
+        if (!session || session.nextNumber === null) return;
+        session.nextNumber = findNextAvailableNumber(session.nextNumber);
       }
       function createTicket(number) {
         const ticket = {
@@ -3493,6 +3566,7 @@
       }
       function startSession(event) {
         event.preventDefault();
+        if (session || recoveryCandidate || sessionTransition) return;
         const startNumber = parseNumber($('#startNumber').value);
         if (startNumber === null) {
           $('#startNumberError').textContent = translate('invalidStart');
@@ -3533,7 +3607,7 @@
         $('#issueButton').focus();
       }
       function issueTicket() {
-        if (!session) return;
+        if (!session || sessionTransition) return;
         syncNextNumber();
         if (session.nextNumber === null) {
           announce(translate('noNumbersLeft'), { tone: 'warning' });
@@ -3545,7 +3619,7 @@
       }
       function addManualTicket(event) {
         event.preventDefault();
-        if (!session) return;
+        if (!session || sessionTransition) return;
         const input = $('#manualNumber');
         const error = $('#manualNumberError');
         const number = parseNumber(input.value);
@@ -3577,7 +3651,7 @@
         return ticket;
       }
       function callNextTicket(counterId) {
-        if (!session) return;
+        if (!session || sessionTransition) return;
         const counter = getCounter(counterId);
         if (!counter) return;
         if (currentTicket(counterId)) {
@@ -3607,6 +3681,7 @@
         announce(translate('ticketCalled', { counter: counter.name, number: ticket.displayNumber }), { tone: 'success' });
       }
       function recallCurrentTicket(counterId) {
+        if (sessionTransition) return;
         const counter = getCounter(counterId);
         const ticket = currentTicket(counterId);
         if (!counter || !ticket) return;
@@ -3618,6 +3693,7 @@
         announce(translate('ticketRecalled', { counter: counter.name, number: ticket.displayNumber }));
       }
       function completeCurrentTicket(counterId) {
+        if (sessionTransition) return;
         const counter = getCounter(counterId);
         const ticket = currentTicket(counterId);
         if (!counter || !ticket) return;
@@ -3628,6 +3704,7 @@
         announce(translate('ticketCompleted', { counter: counter.name, number: ticket.displayNumber }), { tone: 'success' });
       }
       function markCurrentAbsent(counterId) {
+        if (sessionTransition) return;
         const counter = getCounter(counterId);
         const ticket = currentTicket(counterId);
         if (!counter || !ticket) return;
@@ -3640,7 +3717,7 @@
         announce(translate('ticketAbsent', { counter: counter.name, number: ticket.displayNumber }), { tone: 'warning' });
       }
       function returnAbsentTicket(ticketId) {
-        if (!session) return;
+        if (!session || sessionTransition) return;
         const sessionId = session.id;
         const originalIndex = session.tickets.findIndex(ticket => ticket.id === ticketId);
         if (originalIndex < 0) return;
@@ -3655,7 +3732,7 @@
           actionLabel: translate('undo'),
           duration: 5000,
           onAction: () => {
-            if (!session || session.id !== sessionId || ticket.status !== 'waiting' || session.counters.some(counter => counter.currentTicketId === ticket.id)) {
+            if (sessionTransition || !session || session.id !== sessionId || ticket.status !== 'waiting' || session.counters.some(counter => counter.currentTicketId === ticket.id)) {
               announce(translate('undoUnavailable'), { tone: 'warning' });
               return;
             }
@@ -3669,7 +3746,7 @@
         });
       }
       function deleteQueuedTicket(ticketId) {
-        if (!session) return;
+        if (!session || sessionTransition) return;
         const sessionId = session.id;
         const index = session.tickets.findIndex(ticket => ticket.id === ticketId);
         if (index < 0) return;
@@ -3682,7 +3759,7 @@
           actionLabel: translate('undo'),
           duration: 5000,
           onAction: () => {
-            if (!session || session.id !== sessionId || session.counters.some(counter => counter.currentTicketId === ticket.id)) {
+            if (sessionTransition || !session || session.id !== sessionId || session.counters.some(counter => counter.currentTicketId === ticket.id)) {
               announce(translate('undoUnavailable'), { tone: 'warning' });
               return;
             }
@@ -3694,6 +3771,7 @@
         });
       }
       async function deleteCurrentTicket(counterId) {
+        if (sessionTransition) return;
         const counter = getCounter(counterId);
         const ticket = currentTicket(counterId);
         if (!counter || !ticket) return;
@@ -3705,7 +3783,7 @@
           cancelLabel: translate('cancel'),
           tone: 'danger'
         });
-        if (!ok || !session || session.id !== sessionId) return;
+        if (!ok || sessionTransition || !session || session.id !== sessionId) return;
         const liveCounter = getCounter(counterId);
         const liveTicket = currentTicket(counterId);
         if (!liveCounter || !liveTicket || liveTicket.id !== ticket.id) return;
@@ -3717,38 +3795,33 @@
         announce(translate('ticketDeleted', { number: ticket.displayNumber }));
       }
       async function resetSession() {
-        if (!session) return;
-        const ok = await AppConfirm.ask({
-          title: translate('resetTitle'),
-          message: translate('resetBody'),
-          confirmLabel: translate('resetConfirm'),
-          cancelLabel: translate('cancel'),
-          tone: 'danger'
+        return runSessionTransition({
+          target: session,
+          confirmation: {
+            title: translate('resetTitle'),
+            message: translate('resetBody'),
+            confirmLabel: translate('resetConfirm'),
+            cancelLabel: translate('cancel'),
+            tone: 'danger'
+          },
+          persist: deletePersistedSessionRecord,
+          commit: () => {
+            sendDisplayEnded();
+            session = null;
+            endedSession = null;
+            lastIssuedId = null;
+            recoveryCandidate = null;
+            historyVisible = false;
+            $('#manualNumber').value = '';
+            $('#manualNumberError').textContent = '';
+            loadSetupSettings();
+            renderCounterSetupFields();
+            initializeSoundSupport();
+          },
+          failureKey: 'resetSaveFailed',
+          successKey: 'sessionReset',
+          focus: '#startNumber'
         });
-        if (!ok) return;
-        clearTimeout(persistenceTimer);
-        persistenceTimer = 0;
-        persistenceSaveSerial += 1;
-        const deleted = await enqueuePersistenceOperation(deletePersistedSessionRecord);
-        if (!deleted) {
-          setSaveState('error');
-          announce(translate('saveFailed'), { tone: 'warning', duration: 6500 });
-          return;
-        }
-        sendDisplayEnded();
-        session = null;
-        endedSession = null;
-        lastIssuedId = null;
-        recoveryCandidate = null;
-        historyVisible = false;
-        $('#manualNumber').value = '';
-        $('#manualNumberError').textContent = '';
-        loadSetupSettings();
-        renderCounterSetupFields();
-        initializeSoundSupport();
-        render();
-        announce(translate('sessionReset'));
-        $('#startNumber').focus();
       }
       function defaultPrintTitle() {
         return translate('printDefaultTitle');
@@ -4073,42 +4146,43 @@
         render();
       }
       async function endSession() {
-        if (!session) return;
+        if (!session || sessionTransition) return;
         const waitingCount = session.tickets.filter(ticket => ticket.status === 'waiting').length;
-        const ok = await AppConfirm.ask({
-          title: translate('endSessionTitle'),
-          message: translate('endSessionBody', { count: waitingCount }),
-          confirmLabel: translate('endSessionConfirm'),
-          cancelLabel: translate('cancel'),
-          tone: 'danger'
+        let snapshot = null;
+        return runSessionTransition({
+          target: session,
+          confirmation: {
+            title: translate('endSessionTitle'),
+            message: translate('endSessionBody', { count: waitingCount }),
+            confirmLabel: translate('endSessionConfirm'),
+            cancelLabel: translate('cancel'),
+            tone: 'danger'
+          },
+          persist: target => {
+            snapshot = typeof structuredClone === 'function' ? structuredClone(target) : JSON.parse(JSON.stringify(target));
+            snapshot.endedAt = Date.now();
+            return finalizeSessionPersistence(snapshot);
+          },
+          commit: () => {
+            sendDisplayEnded();
+            endedSession = normalizeRecoveredSession(snapshot);
+            session = null;
+            recoveryCandidate = null;
+            lastIssuedId = null;
+            historyVisible = false;
+            mobileSessionTab = 'operate';
+            if (displayChannel) {
+              try { displayChannel.close(); } catch { }
+              displayChannel = null;
+            }
+          },
+          failureKey: 'historySaveFailed',
+          successKey: 'sessionEnded',
+          focus: '#summaryTitle'
         });
-        if (!ok || !session) return;
-        clearTimeout(persistenceTimer);
-        persistenceTimer = 0;
-        persistenceSaveSerial += 1;
-        const snapshot = typeof structuredClone === 'function' ? structuredClone(session) : JSON.parse(JSON.stringify(session));
-        snapshot.endedAt = Date.now();
-        const saved = await enqueuePersistenceOperation(() => finalizeSessionPersistence(snapshot));
-        if (!saved) {
-          setSaveState('error');
-          announce(translate('historySaveFailed'), { tone: 'warning', duration: 7000 });
-          return;
-        }
-        sendDisplayEnded();
-        endedSession = normalizeRecoveredSession(snapshot);
-        session = null;
-        recoveryCandidate = null;
-        lastIssuedId = null;
-        historyVisible = false;
-        mobileSessionTab = 'operate';
-        if (displayChannel) {
-          try { displayChannel.close(); } catch { }
-          displayChannel = null;
-        }
-        render();
-        announce(translate('sessionEnded'), { tone: 'success' });
       }
       function startNewAfterSummary() {
+        if (session || sessionTransition) return;
         endedSession = null;
         historyVisible = false;
         mobileSessionTab = 'operate';
@@ -4178,17 +4252,17 @@
           const actions = document.createElement('div');
           actions.className = 'counter-card-actions';
           const callButton = createActionButton('call', counter, translate('callNext'), iconCall(), 'primary call-next');
-          callButton.disabled = Boolean(ticket) || waiting.length === 0;
+          callButton.disabled = Boolean(sessionTransition || ticket) || waiting.length === 0;
           actions.append(callButton);
 
           const recallButton = createActionButton('recall', counter, translate('recall'), iconRecall(), '');
-          recallButton.disabled = !ticket;
+          recallButton.disabled = Boolean(sessionTransition) || !ticket;
           const completeButton = createActionButton('complete', counter, translate('complete'), iconComplete(), '');
-          completeButton.disabled = !ticket;
+          completeButton.disabled = Boolean(sessionTransition) || !ticket;
           const absentButton = createActionButton('absent', counter, translate('markAbsent'), iconAbsent(), 'warning');
-          absentButton.disabled = !ticket;
+          absentButton.disabled = Boolean(sessionTransition) || !ticket;
           const deleteButton = createActionButton('delete', counter, translate('deleteTicket'), iconDelete(), 'danger');
-          deleteButton.disabled = !ticket;
+          deleteButton.disabled = Boolean(sessionTransition) || !ticket;
           actions.append(recallButton, completeButton, absentButton, deleteButton);
 
           card.append(head, number, actions);
@@ -4215,6 +4289,7 @@
         if (absent) {
           const returnButton = document.createElement('button');
           returnButton.type = 'button';
+          returnButton.disabled = Boolean(sessionTransition);
           returnButton.className = 'ticket-button';
           returnButton.innerHTML = iconReturn() + '<span></span>';
           returnButton.querySelector('span').textContent = translate('returnToWaiting');
@@ -4224,6 +4299,7 @@
         }
         const deleteButton = document.createElement('button');
         deleteButton.type = 'button';
+        deleteButton.disabled = Boolean(sessionTransition);
         deleteButton.className = 'ticket-button danger';
         deleteButton.innerHTML = iconDelete() + '<span></span>';
         deleteButton.querySelector('span').textContent = translate('deleteTicket');
@@ -4577,8 +4653,15 @@
         updateDisplayFeatureControls();
         notifyDisplayReady();
       }
-      function render() {
+      function render({ persist = true } = {}) {
         if (displayMode) return;
+        const transitioning = Boolean(sessionTransition);
+        ['#endSessionButton', '#resetButton', '#manualNumber', '#manualAddForm button',
+          '#resumeSessionButton', '#discardSavedSessionButton'].forEach(selector => {
+          $(selector).disabled = transitioning;
+        });
+        $('#appToastAction').disabled = transitioning;
+        $('#sessionTransitionStatus').hidden = !transitioning || sessionTransition.phase !== 'saving';
         syncMobileSessionNav();
         $('#printView').hidden = !printVisible;
         if (printVisible) {
@@ -4614,7 +4697,7 @@
         if (ended && !historyShown) renderSummary();
         if (!session) return;
 
-        syncNextNumber();
+        if (!transitioning) syncNextNumber();
         const waiting = session.tickets.filter(ticket => ticket.status === 'waiting');
         const absent = session.tickets.filter(ticket => ticket.status === 'absent');
         const completed = session.tickets.filter(ticket => ticket.status === 'completed');
@@ -4628,8 +4711,9 @@
         $('#completedCount').textContent = new Intl.NumberFormat(language).format(completed.length);
         $('#issuedCount').textContent = new Intl.NumberFormat(language).format(session.usedNumbers.length);
         $('#nextNumber').textContent = session.nextNumber === null ? '—' : formatTicketNumber(session.nextNumber);
-        $('#issueButton').disabled = session.nextNumber === null;
-        $('#toggleSoundButton').disabled = !audioContextConstructor();
+        $('#issueButton').disabled = transitioning || session.nextNumber === null;
+        $('#numberExhaustedNote').hidden = session.nextNumber !== null;
+        $('#toggleSoundButton').disabled = transitioning || !audioContextConstructor();
         $('#toggleSoundButton').setAttribute('aria-pressed', String(session.soundEnabled));
         $('#toggleSoundButtonText').textContent = translate(session.soundEnabled ? 'soundOn' : 'soundOff');
         $('#lastIssuedPanel').hidden = !lastIssued;
@@ -4637,7 +4721,7 @@
         renderCounters(waiting);
         renderTicketLists(waiting, absent);
         syncDisplayState();
-        schedulePersistSession();
+        if (persist) schedulePersistSession();
       }
       function applyLanguage() {
         document.documentElement.lang = language;
