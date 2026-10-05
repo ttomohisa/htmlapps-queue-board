@@ -2,6 +2,15 @@
 
 All notable changes to Queue Board are documented here.
 
+## [Unreleased]
+
+### Fixed
+
+- Keep one owner for end/reset/discard confirmation and persistence; block competing ticket changes and stale autosaves until the operation settles.
+- Preserve the current reception after failed or rejected storage, restore controls and focus, and allow retry. Failed archive writes no longer remove the fallback recovery record or claim success while an IndexedDB active record remains.
+- Stop automatic numbering at 999999 across renders, language changes, reload/resume, and manual additions. Unused manual numbers remain available.
+- Add bilingual in-app guidance and deterministic regression coverage against source and generated readable HTML.
+
 ## [1.0.0] - 2026-10-03
 
 ### Release

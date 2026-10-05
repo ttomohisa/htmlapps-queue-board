@@ -294,6 +294,20 @@ if ($rootHtmlHash -ne $readableOutputHash) {
 }
 
 Write-Host "[OK] Repository-root HTML matches the readable standalone build: $rootHtmlPath" -ForegroundColor Green
+# Exercise the same runtime behavior in source and generated readable copies.
+if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
+  throw "Node.js 24 is required for session-state regression tests (no npm install needed)."
+}
+$previousQueueSource = $env:QUEUE_BOARD_SOURCE
+try {
+  foreach ($runtimePath in @("src/index.template.html", "dist/index.html", ($rootHtmlBaseName + ".html"))) {
+    $env:QUEUE_BOARD_SOURCE = $runtimePath
+    & node --test (Join-Path $Root "tests/session-state.test.cjs")
+    if ($LASTEXITCODE -ne 0) { throw "Session-state regression tests failed: $runtimePath" }
+  }
+} finally {
+  $env:QUEUE_BOARD_SOURCE = $previousQueueSource
+}
 Write-Host "[OK] Repository check passed." -ForegroundColor Green
 
 # WebRTC readiness DataChannel regression
