@@ -23,7 +23,7 @@ GitHub Pages delivers the initial HTML. After it loads, Ticket numbers, queue st
 - **Show a waiting-room Display** — Open a large Display in another window of the same browser and move it to an external monitor.
 - **Handle real reception flow** — Keep waiting and absent lists, return absent Tickets to the queue, delete queued Tickets, and undo supported deletions.
 - **Keep the Session recoverable** — The active Session is automatically saved on the device and can be resumed after a reload.
-- **Review and export the day** — Filter History, end the Session with a summary, and save UTF-8 BOM CSV.
+- **Review and export the day** — Save all History or the current status filter as UTF-8 BOM CSV, with a visible ticket count and editable filename. Session Summary always exports all tickets.
 - **Prepare number tickets** — Generate printable number tickets with A4 / Letter layouts, a live preview, and browser printing.
 - **Use it on desktop or mobile** — Smartphone operation uses fixed Operate / Queue / History navigation with safe-area support.
 - **Use it in Japanese or English** — The application UI, Help, and release documentation are bilingual.
@@ -56,7 +56,9 @@ Queue Board has no runtime third-party package dependency, so normal application
 4. Use **Call again**, **Complete**, or **Absent** as needed. Absent Tickets can be returned to the end of the waiting queue.
 5. Choose **Open display** to open the waiting-room Display in another window of the same browser.
 6. Use **History** to review Ticket timelines and filters. When reception ends, Queue Board saves the completed Session locally and shows a Session Summary.
-7. Save History as CSV when needed.
+7. In History, choose **All tickets** (the default) or **Current filter** under **CSV scope**, check the ticket count, edit the filename if needed, and save CSV. An empty filtered result cannot be exported. Session Summary always saves all tickets.
+
+History and Session Summary share the filename for the same reception, including after it ends and when switching language or views. The `.csv` extension is fixed; unsupported filename characters are removed only when saving. Names and export scope are kept in memory and reset after a page reload or when a new reception starts. They are not added to saved Session data.
 
 Automatic numbers run from 0 to 999999 and stop at the upper limit; they never wrap to 000. You can still add unused numbers manually. Start a new reception to restart the automatic sequence.
 
@@ -142,7 +144,7 @@ See [VERIFY_OFFLINE.md](VERIFY_OFFLINE.md) for the offline verification procedur
 └─ dist/                         # Generated standalone artifacts
 ```
 
-Repository checks require Node.js 24 (development only; no npm install is needed) for deterministic session-state regression tests. They run against the editable source and both readable output copies, including deferred/rejected storage, repeated confirmation, recovery, and number exhaustion.
+Repository checks require Node.js 24 (development only; no npm install is needed) for deterministic session-state and CSV-export regression tests. They run against the editable source and both readable output copies, including deferred/rejected storage, repeated confirmation, recovery, number exhaustion, full/filtered exports, filenames, and download errors.
 
 Run the repository checks with:
 

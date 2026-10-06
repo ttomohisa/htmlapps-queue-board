@@ -4,8 +4,16 @@ All notable changes to Queue Board are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- Add explicit All tickets / Current filter CSV scope in History, with the active status, matching count, and export count. Empty filtered results cannot create a CSV; Session Summary always exports all tickets.
+- Share an editable filename between History and Summary for the same reception, retaining it through language/view changes and session end without changing persisted Session data.
+
 ### Fixed
 
+- Replace the hard-coded-only CSV filename with an editable name and visible `.csv` suffix. Sanitize unsafe characters and normalize the suffix only at export; use a valid default for empty or reserved names.
+- Clean up temporary download links and Blob URLs even when a CSV download fails, keeping the session and export choices available for retry.
+- Add CSV-export regression tests to the source and generated readable artifact checks, preserving the seven-column BOM/CRLF format and queue state.
 - Keep one owner for end/reset/discard confirmation and persistence; block competing ticket changes and stale autosaves until the operation settles.
 - Preserve the current reception after failed or rejected storage, restore controls and focus, and allow retry. Failed archive writes no longer remove the fallback recovery record or claim success while an IndexedDB active record remains.
 - Stop automatic numbering at 999999 across renders, language changes, reload/resume, and manual additions. Unused manual numbers remain available.

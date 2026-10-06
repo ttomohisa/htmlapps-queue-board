@@ -1366,6 +1366,14 @@
       flex-wrap: wrap;
     }
     .history-filters { margin-top: 16px; }
+    .csv-export-controls { display: flex; align-items: end; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+    .csv-export-controls .field { flex: 1 1 240px; min-width: 0; }
+    .csv-export-controls select { width: 100%; min-width: 0; min-height: 44px; }
+    .csv-filename-control { display: flex; align-items: center; gap: 8px; }
+    .csv-filename-control input { flex: 1; width: 100%; min-width: 0; min-height: 44px; }
+    .csv-filename-suffix { flex: none; color: var(--muted); }
+    .csv-export-count { margin: 8px 0 0; color: var(--muted); font-size: 13px; }
+    .summary-action-card .csv-export-controls { margin: 0 0 16px; }
     .history-filter {
       min-height: 38px;
       padding: 7px 11px;
@@ -2112,7 +2120,7 @@
           <button class="button" id="historyBackButton" type="button" data-i18n="historyBack">Operatorへ戻る</button>
           <button class="button with-icon" id="historyCsvButton" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M5 20h14"/></svg>
-            <span data-i18n="saveCsv">CSVを保存</span>
+            <span data-i18n="saveAllCsv">すべてをCSV保存</span>
           </button>
         </div>
       </div>
@@ -2123,6 +2131,24 @@
         <button class="history-filter" type="button" data-history-filter="completed" aria-pressed="false" data-i18n="filterCompleted">完了</button>
         <button class="history-filter" type="button" data-history-filter="absent" aria-pressed="false" data-i18n="filterAbsent">不在</button>
       </div>
+      <div class="csv-export-controls">
+        <label class="field" for="historyCsvScope">
+          <span class="field-label" data-i18n="csvScope">CSVの保存範囲</span>
+          <select class="select-input" id="historyCsvScope" aria-describedby="historyExportCount">
+            <option value="all">すべて</option>
+            <option value="filtered">現在の絞り込み</option>
+          </select>
+        </label>
+        <label class="field" for="historyCsvFilename">
+          <span class="field-label" data-i18n="csvFilenameLabel">ファイル名</span>
+          <span class="csv-filename-control">
+            <input class="text-input" id="historyCsvFilename" type="text" autocomplete="off" spellcheck="false" aria-describedby="historyCsvFilenameHelp">
+            <span class="csv-filename-suffix">.csv</span>
+          </span>
+          <span class="field-help" id="historyCsvFilenameHelp" data-i18n="csvFilenameHelp">.csv形式で保存します。使用できない文字は保存時に取り除きます。</span>
+        </label>
+      </div>
+      <p class="csv-export-count" id="historyExportCount" role="status" aria-live="polite" aria-atomic="true"></p>
       <ul class="history-list" id="historyList"></ul>
       <div class="history-empty" id="historyEmpty">
         <strong data-i18n="historyEmptyTitle">まだ履歴はありません。</strong>
@@ -2148,10 +2174,20 @@
         <div class="summary-card"><span class="summary-card-label" data-i18n="summaryAverageWait">平均待ち時間</span><strong class="summary-card-value" id="summaryAverageWait">—</strong></div>
       </div>
       <div class="queue-card summary-action-card">
+        <div class="csv-export-controls">
+          <label class="field" for="summaryCsvFilename">
+            <span class="field-label" data-i18n="csvFilenameLabel">ファイル名</span>
+            <span class="csv-filename-control">
+              <input class="text-input" id="summaryCsvFilename" type="text" autocomplete="off" spellcheck="false" aria-describedby="summaryCsvFilenameHelp">
+              <span class="csv-filename-suffix">.csv</span>
+            </span>
+            <span class="field-help" id="summaryCsvFilenameHelp" data-i18n="csvFilenameHelp">.csv形式で保存します。使用できない文字は保存時に取り除きます。</span>
+          </label>
+        </div>
         <div class="summary-actions">
           <button class="button primary large with-icon" id="summaryCsvButton" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M5 20h14"/></svg>
-            <span data-i18n="saveCsv">CSVを保存</span>
+            <span data-i18n="saveAllCsv">すべてをCSV保存</span>
           </button>
           <button class="button" id="summaryHistoryButton" type="button" data-i18n="viewHistory">履歴を見る</button>
           <button class="button" id="newSessionButton" type="button" data-i18n="startAnotherSession">新しい受付を開始</button>
@@ -2331,6 +2367,7 @@
         <li data-i18n="helpStep3">「表示画面を開く」で待合向けDisplayを別ウィンドウに開きます。外部モニターへ移動して使えます。</li>
         <li data-i18n="helpStep4">空いている窓口の「次を呼ぶ」で、Displayへ番号と窓口がリアルタイム反映されます。</li>
         <li data-i18n="helpStep5">ヘッダーのプリンターアイコンから番号札を作成し、印刷プレビューを確認してブラウザから印刷できます。</li>
+        <li data-i18n="helpCsvExport">履歴のCSVは「すべて」または「現在の絞り込み」を選び、件数とファイル名を確認して保存します。サマリーは常にすべてを保存します。ファイル名は履歴とサマリーで共通で、同じ受付の終了後も保持します。再読み込みや新しい受付で初期値に戻ります。</li>
         <li data-i18n="helpMobileNavigation">スマートフォンでは下部の「操作 / 待ち列 / 履歴」で画面を切り替えます。</li>
       </ol>
       <h3 data-i18n="helpPrivacyTitle">プライバシー</h3>
@@ -2355,7 +2392,7 @@
       'use strict';
 
       const APP_CONFIG = {"$schema":"./schemas/app-config.schema.json","name":"Queue Board","nameJa":"呼び出し番号","slug":"queue-board","version":"1.0.0","description":"Issue numbered tickets, keep a waiting queue, and call people in order from one browser.","descriptionJa":"番号を発行し、待ち列を管理して、順番に呼び出すためのブラウザー用ツールです。","defaultLanguage":"auto","repository":{"owner":"ttomohisa","name":"htmlapps-queue-board"},"build":{"output":"dist/index.html","blockRuntimeNetwork":true,"selfExtract":{"enabled":true,"output":"dist/index.self-extract.html"},"sizeBudget":{"readableWarningMb":25,"selfExtractWarningMb":12}}};
-      const BUILD_MANIFEST = {"schemaVersion":2,"builder":"single-html-app-template/1.3","generatedAtUtc":"2026-10-05T08:48:33.7165352Z","app":{"name":"Queue Board","slug":"queue-board","version":"1.0.0"},"dependencies":[]};
+      const BUILD_MANIFEST = {"schemaVersion":2,"builder":"single-html-app-template/1.3","generatedAtUtc":"2026-10-06T00:36:43.7892736Z","app":{"name":"Queue Board","slug":"queue-board","version":"1.0.0"},"dependencies":[]};
       // Asset payloads are Base64 exactly once. The JSON bundle itself is embedded directly.
       const assetBundle = {"schemaVersion":2,"dependencies":{}};
       const blobUrls = new Set();
@@ -2561,6 +2598,7 @@
           helpStep3: '「表示画面を開く」で待合向けDisplayを別ウィンドウに開きます。外部モニターへ移動して使えます。',
           helpStep4: '空いている窓口の「次を呼ぶ」で、Displayへ番号と窓口がリアルタイム反映されます。',
           helpStep5: 'ヘッダーのプリンターアイコンから番号札を作成し、印刷プレビューを確認してブラウザから印刷できます。',
+          helpCsvExport: '履歴のCSVは「すべて」または「現在の絞り込み」を選び、件数とファイル名を確認して保存します。サマリーは常にすべてを保存します。ファイル名は履歴とサマリーで共通で、同じ受付の終了後も保持します。再読み込みや新しい受付で初期値に戻ります。',
           helpMobileNavigation: 'スマートフォンでは下部の「操作 / 待ち列 / 履歴」で画面を切り替えます。',
           helpPrivacyTitle: 'プライバシー',
           helpPrivacyBody: 'Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。',
@@ -2603,6 +2641,14 @@
           historyBackSummary: 'サマリーへ戻る',
           historyFiltersLabel: '履歴の状態フィルタ',
           saveCsv: 'CSVを保存',
+          saveAllCsv: 'すべてをCSV保存',
+          saveFilteredCsv: '絞り込み結果をCSV保存',
+          csvScope: 'CSVの保存範囲',
+          csvScopeAll: 'すべて（{count}件）',
+          csvScopeFiltered: '現在の絞り込み: {status}（{count}件）',
+          csvExportCount: '保存対象: {count}件',
+          csvFilenameLabel: 'ファイル名',
+          csvFilenameHelp: '.csv形式で保存します。使用できない文字は保存時に取り除きます。',
           filterAll: 'すべて',
           filterWaiting: '待機中',
           filterCalled: '呼び出し中',
@@ -2774,6 +2820,7 @@
           helpStep3: 'Use Open display to launch the waiting-room Display in a separate window that can be moved to an external monitor.',
           helpStep4: 'Use Call next at any available counter and the number and Counter will update on the Display in real time.',
           helpStep5: 'Use the printer icon in the header to create number tickets, review the print preview, and print from the browser.',
+          helpCsvExport: 'In History, choose All tickets or Current filter, check the count and filename, then save CSV. Summary always exports all tickets. History and Summary share the filename, including after the same reception ends. Reloading or starting a new reception restores the default.',
           helpMobileNavigation: 'On smartphones, use the bottom Operate / Queue / History navigation to switch views.',
           helpPrivacyTitle: 'Privacy',
           helpPrivacyBody: 'Ticket numbers, Counter settings, Display settings, and queue state are processed inside the same browser. The app uses no external API, analytics, or telemetry and does not send Session data outside.',
@@ -2816,6 +2863,14 @@
           historyBackSummary: 'Back to summary',
           historyFiltersLabel: 'History status filters',
           saveCsv: 'Save CSV',
+          saveAllCsv: 'Save all as CSV',
+          saveFilteredCsv: 'Save filtered as CSV',
+          csvScope: 'CSV scope',
+          csvScopeAll: 'All tickets ({count})',
+          csvScopeFiltered: 'Current filter: {status} ({count})',
+          csvExportCount: 'Tickets to export: {count}',
+          csvFilenameLabel: 'Filename',
+          csvFilenameHelp: 'Saved as .csv. Unsupported filename characters are removed when saving.',
           filterAll: 'All',
           filterWaiting: 'Waiting',
           filterCalled: 'Calling',
@@ -2920,6 +2975,8 @@
       let endedSession = null;
       let historyVisible = false;
       let historyFilter = 'all';
+      // Export preferences belong to this in-memory Session only, never its saved schema.
+      let csvExportState = null;
       let mobileSessionTab = 'operate';
       let printVisible = false;
       let printTitleCustom = false;
@@ -3958,6 +4015,29 @@
       function historySession() {
         return session || endedSession || null;
       }
+      function selectHistoryTickets(targetSession, filter = 'all') {
+        return (targetSession?.tickets || []).filter(ticket => filter === 'all' || ticket.status === filter)
+          .sort((a, b) => a.createdAt - b.createdAt || a.number - b.number);
+      }
+      function sessionCsvExportState(targetSession) {
+        if (!csvExportState || csvExportState.sessionId !== targetSession.id) {
+          csvExportState = { sessionId: targetSession.id, filename: csvFilename(targetSession).slice(0, -4), scope: 'all' };
+        }
+        return csvExportState;
+      }
+      function syncCsvFilename(targetSession) {
+        const state = sessionCsvExportState(targetSession);
+        ['historyCsvFilename', 'summaryCsvFilename'].forEach(id => {
+          const input = $('#' + id);
+          if (input.value !== state.filename) input.value = state.filename;
+        });
+      }
+      function updateCsvFilename(value) {
+        const targetSession = historySession();
+        if (!targetSession) return;
+        sessionCsvExportState(targetSession).filename = value;
+        syncCsvFilename(targetSession);
+      }
       function counterNameForTicket(targetSession, ticket) {
         const counterId = ticket.lastCounterId || ticket.counterId;
         if (!counterId) return '';
@@ -4017,8 +4097,8 @@
         document.querySelectorAll('[data-history-filter]').forEach(button => {
           button.setAttribute('aria-pressed', String(button.dataset.historyFilter === historyFilter));
         });
-        const allTickets = targetSession.tickets.slice().sort((a, b) => a.createdAt - b.createdAt || a.number - b.number);
-        const tickets = historyFilter === 'all' ? allTickets : allTickets.filter(ticket => ticket.status === historyFilter);
+        const allTickets = selectHistoryTickets(targetSession);
+        const tickets = selectHistoryTickets(targetSession, historyFilter);
         const list = $('#historyList');
         list.replaceChildren(...tickets.map(ticket => createHistoryItem(targetSession, ticket)));
         const empty = $('#historyEmpty');
@@ -4028,7 +4108,18 @@
           empty.querySelector('span').textContent = translate(allTickets.length ? 'historyNoMatchBody' : 'historyEmptyBody');
         }
         $('#historyBackButton').textContent = session ? translate('historyBack') : translate('historyBackSummary');
-        $('#historyCsvButton').disabled = allTickets.length === 0;
+        const state = sessionCsvExportState(targetSession);
+        const count = value => new Intl.NumberFormat(language).format(value);
+        $('#historyCsvScope').value = state.scope;
+        $('#historyCsvScope option[value="all"]').textContent = translate('csvScopeAll', { count: count(allTickets.length) });
+        $('#historyCsvScope option[value="filtered"]').textContent = translate('csvScopeFiltered', {
+          status: translate(historyFilter === 'all' ? 'filterAll' : statusTranslationKey(historyFilter)), count: count(tickets.length)
+        });
+        const exportCount = state.scope === 'filtered' ? tickets.length : allTickets.length;
+        $('#historyExportCount').textContent = translate('csvExportCount', { count: count(exportCount) });
+        $('#historyCsvButton span').textContent = translate(state.scope === 'filtered' ? 'saveFilteredCsv' : 'saveAllCsv');
+        $('#historyCsvButton').disabled = exportCount === 0;
+        syncCsvFilename(targetSession);
       }
       function calculateAverageWait(targetSession) {
         const waits = targetSession.tickets
@@ -4059,6 +4150,8 @@
         $('#summaryEnded').textContent = Number.isFinite(endedSession.endedAt) ? formatTime(endedSession.endedAt) : '—';
         $('#summaryAverageWait').textContent = formatDuration(calculateAverageWait(endedSession));
         $('#summaryCsvButton').disabled = endedSession.tickets.length === 0;
+        $('#summaryCsvButton span').textContent = translate('saveAllCsv');
+        syncCsvFilename(endedSession);
       }
       function csvEscape(value) {
         const text = value === null || value === undefined ? '' : String(value);
@@ -4075,11 +4168,19 @@
         const dd = String(date.getDate()).padStart(2, '0');
         return 'queue-board-' + yyyy + '-' + mm + '-' + dd + '.csv';
       }
-      function saveHistoryCsv() {
-        const targetSession = historySession();
-        if (!targetSession || !targetSession.tickets.length) return;
+      function safeCsvFilename(value, targetSession) {
+        const basename = String(value).replace(/[\u0000-\u001f\u007f-\u009f<>:"/\\|?*]/g, '')
+          .replace(/[.\s]+$/g, '').replace(/(?:\.csv[.\s]*)+$/i, '').replace(/^[.\s]+|[.\s]+$/g, '');
+        if (!basename || /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(basename)) return csvFilename(targetSession);
+        return basename + '.csv';
+      }
+      function saveHistoryCsv(scope = 'all', targetSession = historySession()) {
+        if (!targetSession) return;
+        const tickets = selectHistoryTickets(targetSession, scope === 'filtered' ? historyFilter : 'all');
+        if (!tickets.length) return;
+        const state = sessionCsvExportState(targetSession);
         const header = ['number', 'status', 'created_at', 'called_at', 'completed_at', 'counter', 'call_count'];
-        const rows = targetSession.tickets.slice().sort((a, b) => a.createdAt - b.createdAt || a.number - b.number).map(ticket => [
+        const rows = tickets.map(ticket => [
           ticket.displayNumber,
           ticket.status,
           csvTimestamp(ticket.createdAt),
@@ -4089,20 +4190,23 @@
           ticket.callCount || 0
         ]);
         const csv = [header, ...rows].map(row => row.map(csvEscape).join(',')).join('\r\n');
+        let url = null;
+        let link = null;
         try {
           const blob = new Blob(['\uFEFF', csv], { type: 'text/csv;charset=utf-8' });
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement('a');
+          url = URL.createObjectURL(blob);
+          link = document.createElement('a');
           link.href = url;
-          link.download = csvFilename(targetSession);
+          link.download = safeCsvFilename(state.filename, targetSession);
           link.hidden = true;
           document.body.append(link);
           link.click();
-          link.remove();
-          window.setTimeout(() => URL.revokeObjectURL(url), 1000);
           announce(translate('csvSaved'), { tone: 'success' });
         } catch {
           announce(translate('csvSaveFailed'), { tone: 'warning' });
+        } finally {
+          link?.remove();
+          if (url) window.setTimeout(() => URL.revokeObjectURL(url), 1000);
         }
       }
       function syncMobileSessionNav(activeTab = mobileSessionTab) {
@@ -4782,8 +4886,20 @@
       $('#openHistoryButton').addEventListener('click', openHistoryView);
       $('#endSessionButton').addEventListener('click', endSession);
       $('#historyBackButton').addEventListener('click', closeHistoryView);
-      $('#historyCsvButton').addEventListener('click', saveHistoryCsv);
-      $('#summaryCsvButton').addEventListener('click', saveHistoryCsv);
+      $('#historyCsvButton').addEventListener('click', () => {
+        const targetSession = historySession();
+        if (targetSession) saveHistoryCsv(sessionCsvExportState(targetSession).scope, targetSession);
+      });
+      $('#summaryCsvButton').addEventListener('click', () => saveHistoryCsv('all', endedSession));
+      $('#historyCsvScope').addEventListener('change', event => {
+        const targetSession = historySession();
+        if (!targetSession) return;
+        sessionCsvExportState(targetSession).scope = event.target.value === 'filtered' ? 'filtered' : 'all';
+        renderHistory();
+      });
+      ['historyCsvFilename', 'summaryCsvFilename'].forEach(id => {
+        $('#' + id).addEventListener('input', event => updateCsvFilename(event.target.value));
+      });
       $('#summaryHistoryButton').addEventListener('click', openHistoryView);
       $('#newSessionButton').addEventListener('click', startNewAfterSummary);
       $('#historyFilters').addEventListener('click', event => {
