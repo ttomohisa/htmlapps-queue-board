@@ -304,6 +304,8 @@ try {
     $env:QUEUE_BOARD_SOURCE = $runtimePath
     & node --test (Join-Path $Root "tests/session-state.test.cjs")
     if ($LASTEXITCODE -ne 0) { throw "Session-state regression tests failed: $runtimePath" }
+    & node --test (Join-Path $Root "tests/history-export.test.cjs")
+    if ($LASTEXITCODE -ne 0) { throw "History-export regression tests failed: $runtimePath" }
   }
 } finally {
   $env:QUEUE_BOARD_SOURCE = $previousQueueSource
