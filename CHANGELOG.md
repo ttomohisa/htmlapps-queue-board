@@ -19,6 +19,13 @@ All notable changes to Queue Board are documented here.
 - Stop automatic numbering at 999999 across renders, language changes, reload/resume, and manual additions. Unused manual numbers remain available.
 - Add bilingual in-app guidance and deterministic regression coverage against source and generated readable HTML.
 
+## [1.0.1] - 2026-10-07
+
+### Fixed
+
+- Standardize the header language target to EN / JA, with localized target-language accessible labels and matching tooltips. Preserve the exact local-processing badge and adjacent Help.
+- Add regression coverage for the JA → EN → JA round trip without losing queue, History filter, or CSV export state.
+
 ## [1.0.0] - 2026-10-03
 
 ### Release

@@ -64,7 +64,8 @@ function fixture(language = 'en') {
     Blob, URL: { createObjectURL(b) { if (c.failBlob) throw Error('synthetic Blob failure'); blobs.push(b); return 'blob:test-' + blobs.length; }, revokeObjectURL(url) { revoked.push(url); } },
     window: { setTimeout(fn) { timers.push(fn); }, matchMedia: () => ({ matches: false }) },
     formatTime: () => '09:00', announce: (msg, opts) => notices.push({ msg, ...opts }),
-    localStorage: { setItem: forbidden }, schedulePersistSession: forbidden, syncDisplayState: forbidden,
+    localStorage: { setItem: forbidden }, storageKey: 'queue-board:language', writeStorage() {},
+    schedulePersistSession: forbidden, syncDisplayState: forbidden,
     postDisplayMessage: forbidden, sendDisplayEnded() {}, setSaveState() {}, initializeSoundSupport() {},
     renderCounterSetupFields() {}, loadSetupSettings() {}, renderRecoveryCandidate() {},
     normalizeRecoveredSession: value => structuredClone(value), finalizeSessionPersistence: async () => true,
@@ -74,6 +75,7 @@ function fixture(language = 'en') {
     span('      const translations = {', '      const $ = selector'),
     span('      function historySession()', '      function iconDelete('),
     span('      function applyLanguage()', "      $('#mobileSessionNav').addEventListener"),
+    span("      $('#languageButton').addEventListener", "      const helpDialog ="),
     span("      $('#openHistoryButton').addEventListener", "      $('#setupForm').addEventListener")
   ].join('\n'), c, { filename: sourcePath });
   c.translate = (key, params = {}) => vm.runInContext('translations', c)[c.language][key]?.replace(/\{(\w+)\}/g, (_, k) => params[k] ?? '') ?? key;
@@ -262,4 +264,31 @@ test('export UI has native labeled controls, a visible fixed suffix and live res
   assert.match(source, /<select[^>]*id="historyCsvScope"/);
   assert.match(source, /id="historyExportCount"[^>]*role="status"/);
   assert.equal((source.match(/class="csv-filename-suffix">\.csv<\/span>/g) || []).length, 2);
+});
+
+
+test('language control initially describes its EN target in Japanese', () => {
+  const button = source.match(/<button\b[^>]*id="languageButton"[^>]*>EN<\/button>/)?.[0];
+  assert(button, 'Initial EN language control exists');
+  assert.match(button, /aria-label="英語に切り替え"/);
+  assert.match(button, /title="英語に切り替え"/);
+});
+
+test('language switch uses EN / JA with localized target labels and preserves loaded queue/export state', () => {
+  const h = fixture('ja'); h.c.historyFilter = 'absent'; h.c.renderHistory();
+  h.scope('filtered'); h.name('受付 合成テスト');
+  const before = JSON.stringify(h.c.session), session = h.c.session;
+  for (const [language, visible, target] of [['ja', 'EN', '英語に切り替え'], ['en', 'JA', 'Switch to Japanese'], ['ja', 'EN', '英語に切り替え']]) {
+    if (h.c.language === language) h.c.applyLanguage(); else h.get('#languageButton').trigger('click');
+    assert.equal(h.c.document.documentElement.lang, language);
+    assert.equal(h.get('#languageButton').textContent, visible);
+    assert.equal(h.get('#languageButton')['aria-label'], target);
+    assert.equal(h.get('#languageButton').title, target);
+    assert.equal(h.c.translate('localBadge'), language === 'ja' ? '完全ローカル処理' : 'Fully local processing');
+    assert.equal(h.c.translate('helpTitle'), language === 'ja' ? '使い方と注意事項' : 'How to use & notes');
+    assert.equal(h.c.session, session); assert.equal(JSON.stringify(h.c.session), before);
+    assert.equal(h.c.historyFilter, 'absent');
+    assert.equal(h.get('#historyCsvScope').value, 'filtered');
+    assert.equal(h.get('#historyCsvFilename').value, '受付 合成テスト');
+  }
 });
