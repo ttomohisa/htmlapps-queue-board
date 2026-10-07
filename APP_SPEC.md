@@ -3,7 +3,7 @@
 
 - Product: Browser Kitty
 - App name: Queue Board / 呼び出し番号
-- Target release: v1.0.0
+- Target release: v1.0.1
 - Status: Release
 - Document version: 1.0
 - Scope: v0.1.0–v1.0.0
@@ -994,6 +994,8 @@ v1.0では単一HTML版を正式成果物とします。
 # 32. 日本語 / 英語
 
 日本語・英語に対応します。
+
+ヘッダーの言語ボタンは切替先を示し、日本語UIでは `EN`、英語UIでは `JA` を表示します。`aria-label` と `title` は日本語UIで `英語に切り替え`、英語UIで `Switch to Japanese` とします。JA→EN→JAでもSession・待ち列・呼び出し状態・履歴フィルタ・CSV保存範囲とファイル名を保持します。プライバシー表示 `完全ローカル処理` / `Fully local processing` と隣接するHelpは維持します。
 
 アプリ名:
 

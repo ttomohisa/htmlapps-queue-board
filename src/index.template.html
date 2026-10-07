@@ -1851,7 +1851,7 @@
         <button class="icon-button header-icon-button" id="printTicketsButton" type="button" data-i18n-title="printTicketsTitle" data-i18n-aria-label="printTicketsTitle" title="番号札を作成" aria-label="番号札を作成">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 8V3h10v5"/><rect x="4" y="8" width="16" height="9" rx="2"/><path d="M7 14h10v7H7z"/><path d="M17 11h.01"/></svg>
         </button>
-        <button class="language-button" id="languageButton" type="button" aria-label="Switch language">EN</button>
+        <button class="language-button" id="languageButton" type="button" aria-label="英語に切り替え" title="英語に切り替え">EN</button>
         <button class="icon-button header-icon-button" id="helpButton" type="button" data-i18n-title="helpTitle" data-i18n-aria-label="helpTitle" title="使い方と注意事項" aria-label="使い方と注意事項">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.35 2.35 0 1 1 3.72 1.9c-.92.67-1.52 1.12-1.52 2.1"/><path d="M12 17h.01"/></svg>
         </button>
@@ -2359,9 +2359,10 @@
       </button>
     </div>
     <div class="dialog-body">
-      <!-- APP:HELP:BEGIN Queue Board v1.0.0 -->
+      <!-- APP:HELP:BEGIN Queue Board v1.0.1 -->
       <h3 data-i18n="helpBasicsTitle">基本操作</h3>
       <ol>
+        <li data-i18n="helpLanguage">ヘッダーのEN / JAで言語を切り替えます。待ち列・呼び出し状態・履歴の絞り込み・CSVの保存範囲とファイル名は保持されます。</li>
         <li data-i18n="helpStep1">開始番号と窓口数、必要なら各窓口名と表示画面設定を決めて受付を開始します。</li>
         <li data-i18n="helpStep2">「番号を発行」、または手動追加で待ち列へ番号を登録します。</li>
         <li data-i18n="helpStep3">「表示画面を開く」で待合向けDisplayを別ウィンドウに開きます。外部モニターへ移動して使えます。</li>
@@ -2498,6 +2499,7 @@
       const translations = {
         ja: {
           brandMeta: '番号を発行して、順番に呼び出す',
+          helpLanguage: 'ヘッダーのEN / JAで言語を切り替えます。待ち列・呼び出し状態・履歴の絞り込み・CSVの保存範囲とファイル名は保持されます。',
           helpTitle: '使い方と注意事項', close: '閉じる',
           localBadge: '完全ローカル処理',
           introTitle: 'その場で使える呼び出し番号',
@@ -2720,6 +2722,7 @@
         },
         en: {
           brandMeta: 'Issue numbers and call them in order',
+          helpLanguage: 'Use EN / JA in the header to switch languages. Queue and call state, History filters, CSV scope, and the filename stay unchanged.',
           helpTitle: 'How to use & notes', close: 'Close',
           localBadge: 'Fully local processing',
           introTitle: 'A simple queue for temporary reception',
@@ -4832,8 +4835,11 @@
         document.querySelectorAll('[data-i18n]').forEach(element => { element.textContent = translate(element.dataset.i18n); });
         document.querySelectorAll('[data-i18n-title]').forEach(element => { element.title = translate(element.dataset.i18nTitle); });
         document.querySelectorAll('[data-i18n-aria-label]').forEach(element => { element.setAttribute('aria-label', translate(element.dataset.i18nAriaLabel)); });
-        $('#languageButton').textContent = language === 'ja' ? 'EN' : '日本語';
-        $('#languageButton').setAttribute('aria-label', language === 'ja' ? '英語に切り替え' : 'Switch to Japanese');
+        const languageButton = $('#languageButton');
+        const languageTarget = language === 'ja' ? '英語に切り替え' : 'Switch to Japanese';
+        languageButton.textContent = language === 'ja' ? 'EN' : 'JA';
+        languageButton.setAttribute('aria-label', languageTarget);
+        languageButton.title = languageTarget;
         document.title = displayMode ? defaultDisplayTitle() + ' | ' + (language === 'ja' ? APP_CONFIG.nameJa : APP_CONFIG.name) : (language === 'ja' ? APP_CONFIG.nameJa + ' | Queue Board' : APP_CONFIG.name);
         $('#brandName').textContent = language === 'ja' ? APP_CONFIG.nameJa : APP_CONFIG.name;
         $('#footerName').textContent = language === 'ja' ? APP_CONFIG.nameJa : APP_CONFIG.name;

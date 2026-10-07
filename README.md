@@ -50,6 +50,8 @@ Queue Board has no runtime third-party package dependency, so normal application
 
 ## How to use
 
+Use EN / JA in the header to switch languages. Queue and call state, History filters, CSV scope, and the filename stay unchanged.
+
 1. Choose the starting number and one to four Counters. Counter names and Display settings are optional.
 2. Start reception and issue sequential Tickets, or add a number manually.
 3. At an available Counter, choose **Call next**. The first waiting Ticket is assigned to that Counter.
