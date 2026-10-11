@@ -1,7 +1,5 @@
 # Queue Board / 呼び出し番号
 
-ダイアログを開いている間は背景ページのスクロールが止まります。
-
 [![GitHub Pages](https://github.com/ttomohisa/htmlapps-queue-board/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/ttomohisa/htmlapps-queue-board/actions/workflows/deploy-pages.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Single HTML](https://img.shields.io/badge/distribution-single%20HTML-0ea5e9)](queue-board.html)
