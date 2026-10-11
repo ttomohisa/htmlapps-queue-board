@@ -10,9 +10,9 @@ if (payload) html = gunzipSync(Buffer.from(payload[1], 'base64')).toString('utf8
 test('native modal root and body locks are scoped to an open modal', () => {
   assert.match(html, /html:has\(dialog:modal\),\s*body:has\(dialog:modal\)\s*\{\s*overflow:\s*hidden;?\s*\}/);
 });
-test('JA and EN Help document the temporary background lock', () => {
-  assert.match(html, /ダイアログを開いている間は背景のスクロールが止まります。/);
-  assert.match(html, /Background scrolling is paused while a dialog is open\./);
+test('Help omits implementation commentary and retains user instructions', () => {
+  assert.doesNotMatch(html, /ダイアログを開いている間は背景のスクロールが止まります。/);
+  assert.doesNotMatch(html, /Background scrolling is paused while a dialog is open\./);
 });
 test('the existing decorative local-processing shield is retained', () => {
   const badge = html.match(/<div class="local-badge">([\s\S]*?)<\/div>/)[1];
