@@ -31,6 +31,7 @@
     }
     * { box-sizing: border-box; }
     html { min-height: 100%; background: var(--bg); scroll-behavior: smooth; }
+    html:has(dialog:modal), body:has(dialog:modal) { overflow: hidden; }
     body {
       margin: 0;
       min-height: 100vh;
@@ -326,6 +327,9 @@
     /* Reusable confirmation component. Canonical source: components/confirm-dialog.html */
     .app-confirm-dialog { width: min(420px, calc(100% - 24px)); max-width: 100%; }
     .app-confirm-dialog::backdrop { background: rgba(15, 17, 14, .48); backdrop-filter: blur(3px); }
+    #appConfirmDialog[open] { display: flex; flex-direction: column; max-height: calc(100dvh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+    #appConfirmDialog .app-confirm-header { flex: 0 0 auto; }
+    #appConfirmDialog .app-confirm-body { min-height: 0; flex: 1 1 auto; overflow: auto; overscroll-behavior: contain; }
     .app-confirm-header {
       display: flex;
       align-items: center;
@@ -1843,7 +1847,7 @@
           <img id="appBrandIcon" src="__APP_ICON_DATA_URI__" alt="">
         </div>
         <div class="brand-copy">
-          <p class="brand-name"><span id="brandName">呼び出し番号</span><span class="version-badge" id="versionBadge">v0.1.0</span></p>
+          <p class="brand-name"><span id="brandName">呼び出し番号</span><span class="version-badge" id="versionBadge">v1.0.2</span></p>
           <p class="brand-meta" data-i18n="brandMeta">番号を発行して、順番に呼び出す</p>
         </div>
       </div>
@@ -2372,7 +2376,7 @@
         <li data-i18n="helpMobileNavigation">スマートフォンでは下部の「操作 / 待ち列 / 履歴」で画面を切り替えます。</li>
       </ol>
       <h3 data-i18n="helpPrivacyTitle">プライバシー</h3>
-      <p data-i18n="helpPrivacyBody">Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。</p>
+      <p data-i18n="helpPrivacyBody">Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。ダイアログを開いている間は背景のスクロールが止まります。</p>
       <h3 data-i18n="helpNotesTitle">対応・制約</h3>
       <ul>
         <li data-i18n="helpNoteDisplay">DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。受付データを別端末やサーバーへ送信しません。</li>
@@ -2603,7 +2607,7 @@
           helpCsvExport: '履歴のCSVは「すべて」または「現在の絞り込み」を選び、件数とファイル名を確認して保存します。サマリーは常にすべてを保存します。ファイル名は履歴とサマリーで共通で、同じ受付の終了後も保持します。再読み込みや新しい受付で初期値に戻ります。',
           helpMobileNavigation: 'スマートフォンでは下部の「操作 / 待ち列 / 履歴」で画面を切り替えます。',
           helpPrivacyTitle: 'プライバシー',
-          helpPrivacyBody: 'Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。',
+          helpPrivacyBody: 'Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。ダイアログを開いている間は背景のスクロールが止まります。',
           helpNotesTitle: '対応・制約',
           helpNoteDisplay: 'DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。受付データを別端末やサーバーへ送信しません。',
           helpNoteFeatures: 'Fullscreen / Wake Lockは対応ブラウザでのみ利用できます。非対応でも受付・呼び出しは利用できます。',
@@ -2826,7 +2830,7 @@
           helpCsvExport: 'In History, choose All tickets or Current filter, check the count and filename, then save CSV. Summary always exports all tickets. History and Summary share the filename, including after the same reception ends. Reloading or starting a new reception restores the default.',
           helpMobileNavigation: 'On smartphones, use the bottom Operate / Queue / History navigation to switch views.',
           helpPrivacyTitle: 'Privacy',
-          helpPrivacyBody: 'Ticket numbers, Counter settings, Display settings, and queue state are processed inside the same browser. The app uses no external API, analytics, or telemetry and does not send Session data outside.',
+          helpPrivacyBody: 'Ticket numbers, Counter settings, Display settings, and queue state are processed inside the same browser. The app uses no external API, analytics, or telemetry and does not send Session data outside. Background scrolling is paused while a dialog is open.',
           helpNotesTitle: 'Support & limitations',
           helpNoteDisplay: 'The Display syncs with a separate window in the same browser. Reception data is not sent to another device or server.',
           helpNoteFeatures: 'Fullscreen and Wake Lock are available only in supported browsers. Reception and calling still work without them.',

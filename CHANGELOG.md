@@ -2,6 +2,13 @@
 
 All notable changes to Queue Board are documented here.
 
+## 1.0.2 - 2026-10-11
+
+- Keep confirmation headers visible and actions reachable through an inner scrolling body on short screens.
+
+- Lock root/body background scrolling while native dialogs are open, preserving their existing layouts and workflow behavior.
+- Add Japanese/English Help guidance and modal/shield regression checks.
+
 ## [Unreleased]
 
 ### Added

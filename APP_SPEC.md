@@ -3,7 +3,7 @@
 
 - Product: Browser Kitty
 - App name: Queue Board / 呼び出し番号
-- Target release: v1.0.1
+- Target release: v1.0.2
 - Status: Release
 - Document version: 1.0
 - Scope: v0.1.0–v1.0.0
@@ -1610,3 +1610,9 @@ Queue Board / 呼び出し番号は、
 と定義します。
 
 v1.0.0では、この用途を迷わず、安定して、PCとスマートフォンの双方で完結できることを最優先とします。
+
+## Modal scrolling audit
+
+Native modal dialogs lock background page scrolling while open. Existing Help and editing/confirmation shells, workflow state and local-processing shield are preserved.
+
+Confirmation dialogs use a fixed header and a shrinkable scrolling body so both actions remain reachable on short screens. This changes layout only; confirmation state and dismissal behavior are unchanged.

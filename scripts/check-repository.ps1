@@ -306,7 +306,12 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "Session-state regression tests failed: $runtimePath" }
     & node --test (Join-Path $Root "tests/history-export.test.cjs")
     if ($LASTEXITCODE -ne 0) { throw "History-export regression tests failed: $runtimePath" }
+    & node --test (Join-Path $Root "tests/modal-layout.test.cjs")
+    if ($LASTEXITCODE -ne 0) { throw "Modal-layout regression tests failed: $runtimePath" }
   }
+  $env:QUEUE_BOARD_SOURCE = "dist/index.self-extract.html"
+  & node --test (Join-Path $Root "tests/modal-layout.test.cjs")
+  if ($LASTEXITCODE -ne 0) { throw "Modal-layout wrapper regression tests failed." }
 } finally {
   $env:QUEUE_BOARD_SOURCE = $previousQueueSource
 }
