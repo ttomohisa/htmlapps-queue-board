@@ -31,6 +31,7 @@
     }
     * { box-sizing: border-box; }
     html { min-height: 100%; background: var(--bg); scroll-behavior: smooth; }
+    html:has(dialog:modal), body:has(dialog:modal) { overflow: hidden; }
     body {
       margin: 0;
       min-height: 100vh;
@@ -1843,7 +1844,7 @@
           <img id="appBrandIcon" src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHZpZXdCb3g9IjAgMCA2NDAgNjQwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHg9IjMyIiB5PSIzMiIgd2lkdGg9IjU3NiIgaGVpZ2h0PSI1NzYiIHJ4PSIxNDQiIGZpbGw9IiMxNjYyNGYiLz48ZyBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMjYiPjxyZWN0IHg9IjExMyIgeT0iMTYyIiB3aWR0aD0iMzgwIiBoZWlnaHQ9IjIxMSIgcng9IjE2IiBzdHJva2Utd2lkdGg9IjI4Ii8+PHBhdGggZD0ibTE4MCAxMDJ2NTltMjc1LTU5djU5bTczIDcwIDMyLTMwbS0zMCA3Mmg0M20tNDUgNDIgMzEgMjkiIHN0cm9rZS13aWR0aD0iMjIiLz48cmVjdCB4PSIxNjIiIHk9IjIxNyIgd2lkdGg9IjcwIiBoZWlnaHQ9IjEwNyIgcng9IjIxIi8+PHBhdGggZD0ibTI3MiAyMzFjMS0xMCA5LTE3IDIwLTE3aDIyYzE0IDAgMjMgOCAyMyAyMCAwIDE1LTggMjMtMjAgMzJsLTI2IDIwYy0xMiA5LTE4IDE4LTE4IDM3aDYzbTMzLTEwNmg3NWwtNjEgMTA3Ii8+PC9nPjxjaXJjbGUgY3g9IjE3NSIgY3k9IjQ0MSIgcj0iMzYiLz48Y2lyY2xlIGN4PSIyNjciIGN5PSI0NTQiIHI9IjMyIi8+PGNpcmNsZSBjeD0iMzQ4IiBjeT0iNDY5IiByPSIyOCIvPjxwYXRoIGQ9Ik0yNDEgNTU2SDEwNnYtMjFjMC0yOSAyMy01MSA1MC01MWgzNWMyOCAwIDUwIDIyIDUwIDUxek0zMjQgNTU2aC0xNS0yNy0xOC05Yy0xLTQtMS04LTEtMTEgMC03IDAtMTQtMS0yMC0xLTctNC0xNC03LTIwLTItMy01LTYtNi0xMCA4LTMgMTgtMiAyNy0yczE5LTEgMjcgMmMyMSA1IDMwIDIyIDMwIDQyIDAgNSAxIDE1IDAgMTl6TTM5OCA1NTVjLTQgMi0xNCAxLTE4IDFoLTI5Yy01IDAtMTAgMS0xNCAwLTEtMy0xLTYtMS05IDAtNSAxLTExIDAtMTdzLTMtMTItNi0xOGMtMS0zLTQtNS01LTggNy0zIDE2LTIgMjQtMiA3IDAgMTUtMSAyMiAxIDE3IDQgMjcgMTkgMjcgMzYgMCA0IDEgMTQtMSAxNnoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgxMSA0ODMgNDg1KSI+PHJlY3QgeD0iNDM0IiB5PSI0MTkiIHdpZHRoPSI5OCIgaGVpZ2h0PSIxMzIiIHJ4PSI3Ii8+PGcgZmlsbD0iIzE2NjI0ZiI+PGNpcmNsZSBjeD0iNDgzIiBjeT0iNDE5IiByPSIxNC41Ii8+PGNpcmNsZSBjeD0iNDgzIiBjeT0iNTUxIiByPSIxNC41Ii8+PC9nPjxwYXRoIGQ9Im00NjMgNDcwaDQxbS00MSAyN2g0MSIgc3Ryb2tlPSIjMTY2MjRmIiBzdHJva2Utd2lkdGg9IjEzIi8+PC9nPjwvc3ZnPg==" alt="">
         </div>
         <div class="brand-copy">
-          <p class="brand-name"><span id="brandName">呼び出し番号</span><span class="version-badge" id="versionBadge">v0.1.0</span></p>
+          <p class="brand-name"><span id="brandName">呼び出し番号</span><span class="version-badge" id="versionBadge">v1.0.2</span></p>
           <p class="brand-meta" data-i18n="brandMeta">番号を発行して、順番に呼び出す</p>
         </div>
       </div>
@@ -2372,7 +2373,7 @@
         <li data-i18n="helpMobileNavigation">スマートフォンでは下部の「操作 / 待ち列 / 履歴」で画面を切り替えます。</li>
       </ol>
       <h3 data-i18n="helpPrivacyTitle">プライバシー</h3>
-      <p data-i18n="helpPrivacyBody">Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。</p>
+      <p data-i18n="helpPrivacyBody">Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。ダイアログを開いている間は背景のスクロールが止まります。</p>
       <h3 data-i18n="helpNotesTitle">対応・制約</h3>
       <ul>
         <li data-i18n="helpNoteDisplay">DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。受付データを別端末やサーバーへ送信しません。</li>
@@ -2392,8 +2393,8 @@
     (() => {
       'use strict';
 
-      const APP_CONFIG = {"$schema":"./schemas/app-config.schema.json","name":"Queue Board","nameJa":"呼び出し番号","slug":"queue-board","version":"1.0.1","description":"Issue numbered tickets, keep a waiting queue, and call people in order from one browser.","descriptionJa":"番号を発行し、待ち列を管理して、順番に呼び出すためのブラウザー用ツールです。","defaultLanguage":"auto","repository":{"owner":"ttomohisa","name":"htmlapps-queue-board"},"build":{"output":"dist/index.html","blockRuntimeNetwork":true,"selfExtract":{"enabled":true,"output":"dist/index.self-extract.html"},"sizeBudget":{"readableWarningMb":25,"selfExtractWarningMb":12}}};
-      const BUILD_MANIFEST = {"schemaVersion":2,"builder":"single-html-app-template/1.3","generatedAtUtc":"2026-10-07T05:47:15.1058524Z","app":{"name":"Queue Board","slug":"queue-board","version":"1.0.1"},"dependencies":[]};
+      const APP_CONFIG = {"$schema":"./schemas/app-config.schema.json","name":"Queue Board","nameJa":"呼び出し番号","slug":"queue-board","version":"1.0.2","description":"Issue numbered tickets, keep a waiting queue, and call people in order from one browser.","descriptionJa":"番号を発行し、待ち列を管理して、順番に呼び出すためのブラウザー用ツールです。","defaultLanguage":"auto","repository":{"owner":"ttomohisa","name":"htmlapps-queue-board"},"build":{"output":"dist/index.html","blockRuntimeNetwork":true,"selfExtract":{"enabled":true,"output":"dist/index.self-extract.html"},"sizeBudget":{"readableWarningMb":25,"selfExtractWarningMb":12}}};
+      const BUILD_MANIFEST = {"schemaVersion":2,"builder":"single-html-app-template/1.3","generatedAtUtc":"2026-10-11T05:04:00.0000000Z","app":{"name":"Queue Board","slug":"queue-board","version":"1.0.2"},"dependencies":[]};
       // Asset payloads are Base64 exactly once. The JSON bundle itself is embedded directly.
       const assetBundle = {"schemaVersion":2,"dependencies":{}};
       const blobUrls = new Set();
@@ -2603,7 +2604,7 @@
           helpCsvExport: '履歴のCSVは「すべて」または「現在の絞り込み」を選び、件数とファイル名を確認して保存します。サマリーは常にすべてを保存します。ファイル名は履歴とサマリーで共通で、同じ受付の終了後も保持します。再読み込みや新しい受付で初期値に戻ります。',
           helpMobileNavigation: 'スマートフォンでは下部の「操作 / 待ち列 / 履歴」で画面を切り替えます。',
           helpPrivacyTitle: 'プライバシー',
-          helpPrivacyBody: 'Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。',
+          helpPrivacyBody: 'Ticket番号、窓口設定、表示設定、操作状態は同一ブラウザ内で処理します。外部API、分析、テレメトリーを使用せず、Sessionデータを外部へ送信しません。ダイアログを開いている間は背景のスクロールが止まります。',
           helpNotesTitle: '対応・制約',
           helpNoteDisplay: 'DisplayはOperatorと同じブラウザ内の別ウィンドウで同期します。受付データを別端末やサーバーへ送信しません。',
           helpNoteFeatures: 'Fullscreen / Wake Lockは対応ブラウザでのみ利用できます。非対応でも受付・呼び出しは利用できます。',
@@ -2826,7 +2827,7 @@
           helpCsvExport: 'In History, choose All tickets or Current filter, check the count and filename, then save CSV. Summary always exports all tickets. History and Summary share the filename, including after the same reception ends. Reloading or starting a new reception restores the default.',
           helpMobileNavigation: 'On smartphones, use the bottom Operate / Queue / History navigation to switch views.',
           helpPrivacyTitle: 'Privacy',
-          helpPrivacyBody: 'Ticket numbers, Counter settings, Display settings, and queue state are processed inside the same browser. The app uses no external API, analytics, or telemetry and does not send Session data outside.',
+          helpPrivacyBody: 'Ticket numbers, Counter settings, Display settings, and queue state are processed inside the same browser. The app uses no external API, analytics, or telemetry and does not send Session data outside. Background scrolling is paused while a dialog is open.',
           helpNotesTitle: 'Support & limitations',
           helpNoteDisplay: 'The Display syncs with a separate window in the same browser. Reception data is not sent to another device or server.',
           helpNoteFeatures: 'Fullscreen and Wake Lock are available only in supported browsers. Reception and calling still work without them.',
