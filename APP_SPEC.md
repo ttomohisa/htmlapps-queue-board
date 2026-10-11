@@ -1614,3 +1614,5 @@ v1.0.0では、この用途を迷わず、安定して、PCとスマートフォ
 ## Modal scrolling audit
 
 Native modal dialogs lock background page scrolling while open. Existing Help and editing/confirmation shells, workflow state and local-processing shield are preserved.
+
+Confirmation dialogs use a fixed header and a shrinkable scrolling body so both actions remain reachable on short screens. This changes layout only; confirmation state and dismissal behavior are unchanged.

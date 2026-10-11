@@ -327,6 +327,9 @@
     /* Reusable confirmation component. Canonical source: components/confirm-dialog.html */
     .app-confirm-dialog { width: min(420px, calc(100% - 24px)); max-width: 100%; }
     .app-confirm-dialog::backdrop { background: rgba(15, 17, 14, .48); backdrop-filter: blur(3px); }
+    #appConfirmDialog[open] { display: flex; flex-direction: column; max-height: calc(100dvh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+    #appConfirmDialog .app-confirm-header { flex: 0 0 auto; }
+    #appConfirmDialog .app-confirm-body { min-height: 0; flex: 1 1 auto; overflow: auto; overscroll-behavior: contain; }
     .app-confirm-header {
       display: flex;
       align-items: center;

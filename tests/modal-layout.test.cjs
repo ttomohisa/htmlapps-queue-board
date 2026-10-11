@@ -20,3 +20,22 @@ test('the existing decorative local-processing shield is retained', () => {
   assert.match(badge, /d="M12 3 5 6v5c0 4\.6 2\.8 8 7 10 4\.2-2 7-5\.4 7-10V6z"/);
   assert.match(badge, /d="m9 12 2 2 4-5"/);
 });
+
+test('confirmation has a modal-only bounded flex shell', () => {
+  const css = html.match(/#appConfirmDialog\[open\]\s*\{([^}]+)\}/)?.[1] || '';
+  assert.match(css, /display:\s*flex/);
+  assert.match(css, /flex-direction:\s*column/);
+  assert.match(css, /max-height:\s*calc\(100dvh - 28px/);
+});
+test('confirmation header cannot shrink away while body scrolls', () => {
+  const css = html.match(/#appConfirmDialog \.app-confirm-header\s*\{([^}]+)\}/)?.[1] || '';
+  assert.match(css, /flex:\s*0 0 auto/);
+});
+test('confirmation body can shrink and scroll to both existing actions', () => {
+  const css = html.match(/#appConfirmDialog \.app-confirm-body\s*\{([^}]+)\}/)?.[1] || '';
+  assert.match(css, /min-height:\s*0/);
+  assert.match(css, /flex:\s*1 1 auto/);
+  assert.match(css, /overflow:\s*auto/);
+  assert.match(css, /overscroll-behavior:\s*contain/);
+  assert.match(html, /<div class="app-confirm-body">[\s\S]*?<div class="app-confirm-actions">[\s\S]*?id="appConfirmCancel"[\s\S]*?id="appConfirmOk"/);
+});
