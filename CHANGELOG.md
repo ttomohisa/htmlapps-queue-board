@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Hide the informational footer on smartphones while preserving functional navigation and desktop visibility.
+
+
 All notable changes to Queue Board are documented here.
 
 ## 1.0.2 - 2026-10-11
