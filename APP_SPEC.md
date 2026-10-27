@@ -3,7 +3,7 @@
 
 - Product: Browser Kitty
 - App name: Queue Board / 呼び出し番号
-- Target release: v1.0.2
+- Target release: v1.0.3
 - Status: Release
 - Document version: 1.0
 - Scope: v0.1.0–v1.0.0
