@@ -97,7 +97,7 @@
       border-radius: 999px;
       color: var(--muted);
       background: var(--surface-muted);
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 650;
       vertical-align: 2px;
     }
@@ -145,6 +145,8 @@
       cursor: pointer;
       transition: border-color .16s ease, background .16s ease, transform .16s ease;
     }
+    .dialog-close { display: grid; place-items: center; width: 34px; height: 34px; padding: 0; border: 0; border-radius: 9px; background: transparent; cursor: pointer; }
+    .dialog-close svg { width: 18px; height: 18px; }
     .icon-button:hover { border-color: var(--line-strong); background: var(--surface-hover); }
     .icon-button:active { transform: translateY(1px); }
     .icon-button svg { width: 18px; height: 18px; display: block; }
@@ -187,13 +189,13 @@
       gap: 7px;
       flex: 0 0 auto;
       margin-top: 3px;
-      padding: 7px 10px;
-      border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--line));
-      border-radius: 999px;
+      padding: 7px 0;
+      border: 0;
+      border-radius: 0;
       color: var(--accent);
-      background: var(--accent-soft);
+      background: transparent;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 500;
       white-space: nowrap;
     }
     .local-badge svg { width: 15px; height: 15px; display: block; }
@@ -2334,7 +2336,7 @@
     </button>
   </nav>
 
-  <footer><span id="footerName">Queue Board</span> · MIT License · <span data-i18n="footer">番号を発行して順番に呼び出すローカルツール</span></footer>
+  <footer><span id="footerName">Queue Board</span> · MIT License · <span data-i18n="footer">呼び出しはブラウザー内で完結</span></footer>
   <div class="app-toast" id="appToast" role="status" aria-live="polite" aria-atomic="true" data-tone="default">
     <span class="app-toast-message" id="appToastMessage"></span>
     <button class="app-toast-action" id="appToastAction" type="button" hidden></button>
@@ -2344,8 +2346,8 @@
   <dialog class="app-confirm-dialog" id="appConfirmDialog" aria-labelledby="appConfirmTitle" aria-describedby="appConfirmMessage">
     <div class="app-confirm-header">
       <h2 class="app-confirm-title" id="appConfirmTitle">確認</h2>
-      <button class="app-confirm-close" id="appConfirmClose" type="button" data-i18n-aria-label="close" aria-label="閉じる">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      <button class="dialog-close" id="appConfirmClose" type="button" data-i18n-aria-label="close" aria-label="閉じる">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12"/><path d="M18 6 6 18"/></svg>
       </button>
     </div>
     <div class="app-confirm-body">
@@ -2360,8 +2362,8 @@
   <dialog id="helpDialog" aria-labelledby="helpTitle">
     <div class="dialog-header">
       <h2 id="helpTitle" data-i18n="helpTitle">使い方と注意事項</h2>
-      <button class="icon-button" id="closeHelpButton" type="button" data-i18n-title="close" data-i18n-aria-label="close" title="閉じる" aria-label="閉じる">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg>
+      <button class="dialog-close" id="closeHelpButton" type="button" data-i18n-title="close" data-i18n-aria-label="close" title="閉じる" aria-label="閉じる">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12"/><path d="M18 6 6 18"/></svg>
       </button>
     </div>
     <div class="dialog-body">
@@ -2399,7 +2401,7 @@
       'use strict';
 
       const APP_CONFIG = {"$schema":"./schemas/app-config.schema.json","name":"Queue Board","nameJa":"呼び出し番号","slug":"queue-board","version":"1.0.3","description":"Issue numbered tickets, keep a waiting queue, and call people in order from one browser.","descriptionJa":"番号を発行し、待ち列を管理して、順番に呼び出すためのブラウザー用ツールです。","defaultLanguage":"auto","repository":{"owner":"ttomohisa","name":"htmlapps-queue-board"},"build":{"output":"dist/index.html","blockRuntimeNetwork":true,"selfExtract":{"enabled":true,"output":"dist/index.self-extract.html"},"sizeBudget":{"readableWarningMb":25,"selfExtractWarningMb":12}}};
-      const BUILD_MANIFEST = {"schemaVersion":2,"builder":"single-html-app-template/1.3","generatedAtUtc":"2026-10-27T03:21:02.2112857Z","app":{"name":"Queue Board","slug":"queue-board","version":"1.0.3"},"dependencies":[]};
+      const BUILD_MANIFEST = {"schemaVersion":2,"builder":"single-html-app-template/1.3","generatedAtUtc":"2026-11-14T00:23:23.5992499Z","app":{"name":"Queue Board","slug":"queue-board","version":"1.0.3"},"dependencies":[]};
       // Asset payloads are Base64 exactly once. The JSON bundle itself is embedded directly.
       const assetBundle = {"schemaVersion":2,"dependencies":{}};
       const blobUrls = new Set();
@@ -2618,7 +2620,7 @@
           helpStorageRisk: '進行中Sessionはこの端末のブラウザ保存領域に保存します。サイトデータの削除や保存制限がある環境では復旧できない場合があります。',
 
           helpOffline: '受付データ処理とDisplay同期にはサーバー通信を使いません。配布用の単一HTMLはオフラインでも利用できます。',
-          footer: '番号を発行して順番に呼び出すローカルツール',
+          footer: '呼び出しはブラウザー内で完結',
           confirmTitle: '確認', confirmAction: '実行する', cancel: 'キャンセル',
           resetTitle: '受付をリセットしますか？', resetBody: '現在の受付番号と状態を破棄して、開始画面へ戻ります。', resetConfirm: 'リセット',
           deleteCurrentTitle: '呼び出し中の番号を削除しますか？',
@@ -2841,7 +2843,7 @@
           helpStorageRisk: 'The active Session is stored in this browser on this device. Clearing site data or restricted storage can prevent recovery.',
 
           helpOffline: 'Reception data processing and Display synchronization do not use server communication. The distributable single HTML also works offline.',
-          footer: 'Local tool for issuing numbers and calling them in order',
+          footer: 'Number calling stays in the browser',
           confirmTitle: 'Confirm', confirmAction: 'Continue', cancel: 'Cancel',
           resetTitle: 'Reset reception?', resetBody: 'Discard the current ticket numbers and state, then return to the start screen.', resetConfirm: 'Reset',
           deleteCurrentTitle: 'Delete the active ticket?',
